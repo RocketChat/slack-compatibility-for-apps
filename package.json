@@ -1,0 +1,27 @@
+{
+  "name": "slack-compatibility-for-apps",
+  "version": "0.0.1",
+  "description": "Initialize your Rocket.Chat App with bindings that make it compatible with your Slack implementation",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RocketChat/slack-compatibility-for-apps.git"
+  },
+  "keywords": [
+    "rocket.chat",
+    "slack",
+    "app",
+    "integration",
+    "plugin",
+    "extension"
+  ],
+  "author": "Rocket.Chat",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/RocketChat/slack-compatibility-for-apps/issues"
+  },
+  "homepage": "https://github.com/RocketChat/slack-compatibility-for-apps#readme"
+}
