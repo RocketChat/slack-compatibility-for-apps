@@ -23,5 +23,12 @@
   "bugs": {
     "url": "https://github.com/RocketChat/slack-compatibility-for-apps/issues"
   },
-  "homepage": "https://github.com/RocketChat/slack-compatibility-for-apps#readme"
+  "homepage": "https://github.com/RocketChat/slack-compatibility-for-apps#readme",
+  "dependencies": {
+    "@rocket.chat/apps-engine": "^1.12.0"
+  },
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "ts-node": "^8.6.2"
+  }
 }
