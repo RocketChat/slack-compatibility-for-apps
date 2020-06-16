@@ -13,7 +13,7 @@
         "moduleResolution": "node",
         "types": ["node"],
         "lib": ["es2017", "dom"],
-        "outDir": "."
+        "outDir": "./dist"
     },
     "exclude": [
         "node_modules",
@@ -24,7 +24,7 @@
     ],
     "include": [
         "src",
-        "tests"
+        "./SlackCompatibleApp.ts"
     ],
     "atom": {
         "rewriteTsconfig": false
