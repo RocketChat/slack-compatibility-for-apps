@@ -1,19 +1,24 @@
-import { IButtonElement as UIKitButton} from '@rocket.chat/apps-engine/definition/uikit';
+import { IButtonElement as UIKitButton } from '@rocket.chat/apps-engine/definition/uikit';
 import { Button as BlockKitButton } from '@slack/types';
-import { ElementConverter } from '../ElementConverter';
+import {
+    camelCaseToSnakeCase,
+    removeObjectProperties,
+    renameObjectProperties,
+} from '../../helpers';
 
-type ConversionButton = UIKitButton | BlockKitButton;
+export function convertToUIKit(originalElement: BlockKitButton): UIKitButton {
+    const target = {
+        ...originalElement,
+        actionId: originalElement.action_id || '',
+    };
 
-export class ButtonConverter extends ElementConverter<ConversionButton> {
-    constructor(button: ConversionButton) {
-        super(button);
-    }
+    return removeObjectProperties(target, ['action_id','confirm']) as UIKitButton;
+}
 
-    public convertToUIKit(): UIKitButton {
-        return super.convertToUIKit() as UIKitButton;
-    }
+export function convertToBlockKit(originalElement: UIKitButton): BlockKitButton {
+    return renameObjectProperties(camelCaseToSnakeCase, originalElement) as BlockKitButton;
+}
 
-    public convertToBlockKit(): BlockKitButton {
-        return super.convertToBlockKit() as BlockKitButton;
-    }
+export function isUIKitButton(button: UIKitButton | BlockKitButton): button is UIKitButton {
+    return (button as UIKitButton).actionId !== undefined;
 }

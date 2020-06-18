@@ -1,7 +1,10 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
-
-import { ButtonConverter } from '../../../src/converters/elements/button';
+import {
+    convertToBlockKit,
+    convertToUIKit,
+    isUIKitButton,
+} from '../../../src/converters/elements/button';
 import {
     Button as BlockKitButtonElement,
     PlainTextElement as BlockKitPlainText,
@@ -39,7 +42,8 @@ describe('Button data structure converter', () => {
                 } as UIKitTextObject,
             };
 
-            const converted: UIKitButtonElement = new ButtonConverter(sourceButton).convertToUIKit();
+            const converted: UIKitButtonElement = convertToUIKit(sourceButton);
+            expect(isUIKitButton(converted)).to.be.true;
             expect(converted).to.deep.equal(targetButton);
         });
     });
@@ -68,7 +72,8 @@ describe('Button data structure converter', () => {
                 } as BlockKitPlainText,
             };
 
-            const converted: BlockKitButtonElement = new ButtonConverter(sourceButton).convertToBlockKit();
+            const converted: BlockKitButtonElement = convertToBlockKit(sourceButton);
+            expect(isUIKitButton(converted)).to.be.false;
             expect(converted).to.deep.equal(targetButton);
         });
     });
