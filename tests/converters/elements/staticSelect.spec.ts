@@ -17,7 +17,7 @@ import {
     Option as BlockKitOptionObject,
 } from '@slack/types';
 
-describe.only('Static Select data structure converter', () => {
+describe('Static Select data structure converter', () => {
     describe('From Block Kit to UIKit', () => {
         it('should convert a static select from slack to rocket.chat format', () => {
             const sourceElement: BlocKitStaticSelectElement = {
