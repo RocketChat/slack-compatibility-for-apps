@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha -r ts-node/register './tests/**/*.spec.ts'",
-    "test:watch": "mocha --require ts-node/register --watch --watch-files src, 'tests/**/*.ts'"
+    "test:watch": "mocha --require ts-node/register --watch --watch-files src, 'tests/**/*.ts'",
+    "postinstall": "node ./postinstall.js"
   },
   "repository": {
     "type": "git",
@@ -26,7 +27,8 @@
   },
   "homepage": "https://github.com/RocketChat/slack-compatibility-for-apps#readme",
   "dependencies": {
-    "@rocket.chat/apps-engine": "^1.12.0"
+    "@rocket.chat/apps-engine": "^1.12.0",
+    "fs-extra": "^9.0.1"
   },
   "devDependencies": {
     "@types/chai": "^4.2.11",
