@@ -2,7 +2,7 @@ import {
     convertToUIKit as convertButtonToUIKit,
     convertToBlockKit as convertButtonToBlockKit,
 } from './button';
-import { Button, Action, Overflow, Select } from '@slack/types';
+import { Button, Action, Overflow, Select } from '../../../vendor/slack-types';
 import {IBlockElement, BlockElementType, IButtonElement} from '@rocket.chat/apps-engine/definition/uikit';
 
 export function convertToUIKit(elements: Array<Button | Overflow | Select | Action>): Array<object> {

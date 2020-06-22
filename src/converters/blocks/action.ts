@@ -1,5 +1,5 @@
 import { IActionsBlock as UIKitActionsBlock, IBlockElement } from '@rocket.chat/apps-engine/definition/uikit';
-import { ActionsBlock as BlockKitActionsBlock, Block} from '@slack/types';
+import { ActionsBlock as BlockKitActionsBlock, Block} from '../../../vendor/slack-types';
 import { renameObjectProperties, snakeCaseToCamelCase, camelCaseToSnakeCase } from '../../helpers';
 import {
     convertToUIKit as convertElementListToUIKit,

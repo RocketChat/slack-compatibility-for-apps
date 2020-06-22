@@ -1,5 +1,5 @@
 import { IImageElement as UIKitImage } from '@rocket.chat/apps-engine/definition/uikit';
-import { ImageElement as BlockKitImage } from '@slack/types';
+import { ImageElement as BlockKitImage } from '../../../vendor/slack-types';
 import { ElementConverter } from '../ElementConverter';
 
 type ConversionImage = UIKitImage | BlockKitImage;

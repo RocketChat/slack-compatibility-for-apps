@@ -1,5 +1,5 @@
 import { IButtonElement as UIKitButton } from '@rocket.chat/apps-engine/definition/uikit';
-import { Button as BlockKitButton } from '@slack/types';
+import { Button as BlockKitButton } from '../../../vendor/slack-types';
 import {
     camelCaseToSnakeCase,
     removeObjectProperties,

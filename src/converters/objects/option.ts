@@ -1,6 +1,6 @@
 import {
     Option as BlockKitOptionObject,
-} from '@slack/types';
+} from '../../../vendor/slack-types';
 import {
     IOptionObject as UIKitOptionObject,
 } from '@rocket.chat/apps-engine/definition/uikit';
@@ -16,7 +16,7 @@ export class OptionObjectConverter extends ElementConverter<ConversionOptionObje
     }
 
     public convertToUIKit(): ConversionOptionObject {
-        const option: any = { 
+        const option: any = {
             ...this.element,
             text: new TextObjectConverter(this.element.text).convertToUIKit(),
         };

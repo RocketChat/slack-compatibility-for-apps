@@ -3,7 +3,7 @@ import { describe, it } from 'mocha';
 import * as faker from 'faker';
 
 import { OverflowMenuConverter } from '../../../src/converters/elements/overflowMenu';
-import { Overflow as BlockKitOverflowMenuElement } from '@slack/types';
+import { Overflow as BlockKitOverflowMenuElement } from '../../../vendor/slack-types';
 import {
     BlockElementType,
     IOptionObject as UIKitOptionObject,

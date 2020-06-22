@@ -3,8 +3,8 @@ import { describe, it } from 'mocha';
 import * as faker from 'faker';
 
 import { ImageConverter } from '../../../src/converters/elements/image';
-import { ImageElement as BlockKitImageElement } from '@slack/types';
-import { 
+import { ImageElement as BlockKitImageElement } from '../../../vendor/slack-types';
+import {
     BlockElementType,
     IImageElement as UIKitImageElement,
 } from '@rocket.chat/apps-engine/definition/uikit';

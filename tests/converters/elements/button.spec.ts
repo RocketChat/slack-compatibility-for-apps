@@ -8,7 +8,7 @@ import {
 import {
     Button as BlockKitButtonElement,
     PlainTextElement as BlockKitPlainText,
-} from '@slack/types';
+} from '../../../vendor/slack-types';
 
 import {
     BlockElementType,

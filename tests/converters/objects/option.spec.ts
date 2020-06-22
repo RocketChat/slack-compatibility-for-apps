@@ -7,8 +7,8 @@ import {
     Option as BlockKitOptionObject,
     PlainTextElement as BlockKitPlainText,
     MrkdwnElement as BlockKitMrkdwnText
-} from '@slack/types';
-import { 
+} from '../../../vendor/slack-types';
+import {
     IOptionObject as UIKitOptionObject,
     ITextObject as UIKitTextObject,
     TextObjectType,

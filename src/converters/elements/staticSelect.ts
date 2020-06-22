@@ -6,7 +6,7 @@ import {
 import {
     StaticSelect as BlockKitStaticSelect,
     Option as BlockKitOptionObject,
-} from '@slack/types';
+} from '../../../vendor/slack-types';
 import { ElementConverter } from '../ElementConverter';
 import { TextObjectConverter } from '../objects/text';
 import { OptionObjectConverter } from '../objects/option';

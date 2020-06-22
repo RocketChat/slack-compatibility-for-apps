@@ -26,8 +26,7 @@
   },
   "homepage": "https://github.com/RocketChat/slack-compatibility-for-apps#readme",
   "dependencies": {
-    "@rocket.chat/apps-engine": "^1.12.0",
-    "@slack/types": "^1.7.0"
+    "@rocket.chat/apps-engine": "^1.12.0"
   },
   "devDependencies": {
     "@types/chai": "^4.2.11",

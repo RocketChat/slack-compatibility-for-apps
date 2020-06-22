@@ -5,7 +5,7 @@ import {
 import {
     Option as BlockKitOptionObject,
     Overflow as BlockKitOverflowMenu,
-} from '@slack/types';
+} from '../../../vendor/slack-types';
 import { ElementConverter } from '../ElementConverter';
 import { OptionObjectConverter } from '../objects/option';
 
@@ -25,7 +25,7 @@ export class OverflowMenuConverter extends ElementConverter<ConversionOverflowMe
 
         for (let i = 0; i < this.element.options.length; i++) {
             const current: BlockKitOptionObject = this.element.options[i] as BlockKitOptionObject;
-            // @NOTE  I don't like this `as any` business, but it works for now 
+            // @NOTE  I don't like this `as any` business, but it works for now
             options.push(new OptionObjectConverter(current).convertToUIKit() as any);
         }
 

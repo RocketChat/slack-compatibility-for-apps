@@ -11,14 +11,14 @@ import {
 import {
     ActionsBlock as BlockKitActionsBlock,
     Button as BlockKitButtonElement,
-} from '@slack/types';
+} from '../../../vendor/slack-types';
 import {
     convertToUIKit,
     convertToBlockKit,
     isUIKitActionsBlock,
 } from '../../../src/converters/blocks/action';
 
-describe.only('Actions Block data structure converter', () => {
+describe('Actions Block data structure converter', () => {
     describe('From Block Kit to UIKit', () => {
         it('should convert am actions block from slack to rocket.chat format', () => {
             const sourceButton: BlockKitButtonElement = {

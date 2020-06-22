@@ -2,14 +2,14 @@ import { expect } from 'chai';
 import { describe, it } from 'mocha';
 
 import { TextObjectConverter } from '../../../src/converters/objects/text';
-import { 
-    ITextObject as UIKitTextObject, 
+import {
+    ITextObject as UIKitTextObject,
     TextObjectType,
 } from '@rocket.chat/apps-engine/definition/uikit';
-import { 
+import {
     PlainTextElement as BlockKitPlainText,
     MrkdwnElement as BlockKitMrkdwnText,
-} from '@slack/types';
+} from '../../../vendor/slack-types';
 
 describe('Text Object data structure converter', () => {
     describe('From  Block Kit to UIKit', () => {

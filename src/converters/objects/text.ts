@@ -1,11 +1,11 @@
-import { 
-    ITextObject as UIKitTextObject, 
+import {
+    ITextObject as UIKitTextObject,
     TextObjectType,
 } from '@rocket.chat/apps-engine/definition/uikit';
-import { 
+import {
     PlainTextElement as BlockKitPlainText,
     MrkdwnElement as BlockKitMrkdwnText,
-} from '@slack/types';
+} from '../../../vendor/slack-types';
 import { ElementConverter } from '../ElementConverter';
 
 type ConversionTextObject = UIKitTextObject | BlockKitPlainText | BlockKitMrkdwnText;
@@ -24,7 +24,7 @@ export class TextObjectConverter extends ElementConverter<ConversionTextObject> 
                 type: TextObjectType.PLAINTEXT,
             };
         } else if(this.element.type === 'mrkdwn') {
-            text = { 
+            text = {
                 ...this.element,
                 type: TextObjectType.MARKDOWN,
             };

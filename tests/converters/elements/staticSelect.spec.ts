@@ -3,7 +3,7 @@ import { describe, it } from 'mocha';
 import * as faker from 'faker';
 
 import { StaticSelectConverter } from '../../../src/converters/elements/staticSelect';
-import { 
+import {
     BlockElementType,
     IOptionObject as UIKitOptionObject,
     IStaticSelectElement as UIKitStaticSelectElement,
@@ -15,7 +15,7 @@ import {
     StaticSelect as BlocKitStaticSelectElement,
     PlainTextElement as BlockKitPlainTextElement,
     Option as BlockKitOptionObject,
-} from '@slack/types';
+} from '../../../vendor/slack-types';
 
 describe('Static Select data structure converter', () => {
     describe('From Block Kit to UIKit', () => {
