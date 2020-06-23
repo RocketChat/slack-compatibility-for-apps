@@ -1,19 +1,11 @@
-import { IImageElement as UIKitImage } from '@rocket.chat/apps-engine/definition/uikit';
-import { ImageElement as BlockKitImage } from '../../../vendor/slack-types';
-import { ElementConverter } from '../ElementConverter';
+import { IImageElement as UIKitImageElement } from '@rocket.chat/apps-engine/definition/uikit';
+import { ImageElement as BlockKitImageElement } from '../../../vendor/slack-types';
+import { snakeCaseToCamelCase, renameObjectProperties, camelCaseToSnakeCase } from '../../helpers';
 
-type ConversionImage = UIKitImage | BlockKitImage;
+export function convertToUIKit(originalElement: BlockKitImageElement): UIKitImageElement {
+    return renameObjectProperties(snakeCaseToCamelCase, originalElement) as UIKitImageElement;
+}
 
-export class ImageConverter extends ElementConverter<ConversionImage> {
-    constructor(image: ConversionImage) {
-        super(image);
-    }
-
-    public convertToUIKit(): UIKitImage {
-        return super.convertToUIKit() as UIKitImage;
-    }
-
-    public convertToBlockKit(): BlockKitImage {
-        return super.convertToBlockKit() as BlockKitImage;
-    }
+export function convertToBlockKit(originalElement: UIKitImageElement): BlockKitImageElement {
+    return renameObjectProperties(camelCaseToSnakeCase, originalElement) as BlockKitImageElement;
 }
