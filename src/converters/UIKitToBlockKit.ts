@@ -1,6 +1,7 @@
 import { IBlock, BlockType, ISectionBlock } from '@rocket.chat/apps-engine/definition/uikit';
 import { snakeCaseToCamelCase } from '../helpers';
 import { SectionBlock } from '../../vendor/slack-types';
+import { convertToUIKit as convertActionBlockToUIKit } from './blocks/action';
 
 export function convertToBlockKit(blocks: Array<IBlock>): Array<object> {
     return blocks.map((block) => {

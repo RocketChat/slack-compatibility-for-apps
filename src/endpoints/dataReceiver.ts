@@ -1,13 +1,36 @@
 import { IHttp, IModify, IPersistence, IRead } from '@rocket.chat/apps-engine/definition/accessors';
 import { ApiEndpoint, IApiEndpointInfo, IApiRequest, IApiResponse } from '@rocket.chat/apps-engine/definition/api';
+import { IRoom } from '@rocket.chat/apps-engine/definition/rooms';
+import { convertToUIKit } from '../converters/BlockKitToUIKit';
 
 export class DataReceiver extends ApiEndpoint {
     public path = 'data-receiver';
 
     // tslint:disable-next-line:max-line-length
     public async post(request: IApiRequest, endpoint: IApiEndpointInfo, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<IApiResponse> {
-        console.log('########## this is the content of the request ##########');
         console.log(request.content);
+
+        const blockKitData = JSON.parse(request.content.blocks);
+
+        const appUsername = this.app.getAppUserUsername();
+
+        const roomName = 'general';
+        const room = await read.getRoomReader().getByName(roomName) as IRoom;
+        const sender = await read.getUserReader().getByUsername(appUsername);
+
+        const blocks = convertToUIKit(blockKitData);
+        const message = 'test message';
+
+        const messageStructure = await modify.getCreator().startMessage();
+
+        messageStructure
+            .setSender(sender)
+            .setRoom(room)
+            .setText(message)
+            .setBlocks(blocks);
+
+        await modify.getCreator().finish(messageStructure);
+
         return this.success();
     }
 }
