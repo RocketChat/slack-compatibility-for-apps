@@ -4,10 +4,17 @@ import { App } from '@rocket.chat/apps-engine/definition/App';
 import { IAppInfo } from '@rocket.chat/apps-engine/definition/metadata';
 import { IUIKitInteractionHandler, IUIKitResponse, UIKitBlockInteractionContext, UIKitViewCloseInteractionContext, UIKitViewSubmitInteractionContext } from '@rocket.chat/apps-engine/definition/uikit';
 import { DataReceiver } from './src/endpoints/dataReceiver';
+import { ISlashCommandDescriptor, registerSlashCommands } from './src/registerSlashCommands';
+
 
 export abstract class SlackCompatibleApp extends App implements IUIKitInteractionHandler {
+    public siteUrl: string;
+    public slashcommands?: Array<ISlashCommandDescriptor>;
+
     constructor(info: IAppInfo, logger: ILogger, accessors?: IAppAccessors) {
         super(info, logger, accessors);
+
+        this.slashcommands = [].concat(this.slashcommands).filter(descriptor => descriptor.command && descriptor.description);
     }
 
     public async initialize(configurationExtend: IConfigurationExtend, environmentRead: IEnvironmentRead): Promise<void> {
@@ -17,7 +24,9 @@ export abstract class SlackCompatibleApp extends App implements IUIKitInteractio
             endpoints: [new DataReceiver(this)],
         });
 
-        await this.extendConfiguration(configurationExtend, environmentRead);
+        await registerSlashCommands(this, configurationExtend);
+
+        return this.extendConfiguration(configurationExtend, environmentRead);
     }
 
     // tslint:disable-next-line:max-line-length
