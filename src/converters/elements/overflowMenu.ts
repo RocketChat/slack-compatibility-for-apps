@@ -10,21 +10,29 @@ import {
     convertToUIKit as convertOptionToUIKit,
     convertToBlockKit as convertOptionToBlockKit,
 } from '../objects/option';
-import {renameObjectProperties, snakeCaseToCamelCase, camelCaseToSnakeCase} from '../../helpers';
+import {renameObjectProperties, snakeCaseToCamelCase, camelCaseToSnakeCase, removeObjectProperties} from '../../helpers';
 
+/**
+ * Converts a Block Kit overflow menu element to UIKit
+ *
+ * @param originalElement Overflow
+ * @returns IOverflowMenuElement
+ */
 export function convertToUIKit(originalElement: BlockKitOverflowMenu): UIKitOverflowMenu {
         let menu = {
-            ...originalElement,
+            ...removeObjectProperties(originalElement, ['confirm']),
             options: originalElement.options.map(option => convertOptionToUIKit(option as BlockKitOptionObject)),
         };
-
-        if (menu.confirm) {
-            delete menu.confirm;
-        }
 
         return renameObjectProperties(snakeCaseToCamelCase, menu) as UIKitOverflowMenu;
 }
 
+/**
+ * Converts an UIKit overflow menu element to Block Kit
+ *
+ * @param originalElement IOverflowMenuElement
+ * @returns Overflow
+ */
 export function convertToBlockKit(originalElement: UIKitOverflowMenu): BlockKitOverflowMenu {
         let menu = {
             ...originalElement,

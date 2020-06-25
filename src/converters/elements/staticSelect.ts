@@ -18,6 +18,12 @@ import {
     convertToBlockKit as convertOptionToBlockKit,
 } from '../objects/option';
 
+/**
+ * Converts a Block Kit static select element to UIKit
+ *
+ * @param originalElement StaticSelect
+ * @returns IStaticSelectElement
+ */
 export function convertToUIKit(originalElement: BlockKitStaticSelect): UIKitStaticSelect {
     const select: any = {
         actionId: originalElement.action_id,
@@ -37,6 +43,12 @@ export function convertToUIKit(originalElement: BlockKitStaticSelect): UIKitStat
     return select as UIKitStaticSelect;
 }
 
+/**
+ * Converts a UIKit static select element to Block Kit
+ *
+ * @param originalElement IStaticSelectElement
+ * @returns StaticSelect
+ */
 export function convertToBlockKit(originalElement: UIKitStaticSelect): BlockKitStaticSelect {
     const select: any = {
         action_id: originalElement.actionId,

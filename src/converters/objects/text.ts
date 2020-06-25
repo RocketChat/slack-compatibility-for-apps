@@ -7,19 +7,21 @@ import {
     MrkdwnElement as BlockKitMrkdwnText,
 } from '../../../vendor/slack-types';
 
+/**
+ * Converts a Block Kit text object to UIKit
+ *
+ * @param originalObject PlainTextElement | MrkdwnElement
+ * @returns ITextObject
+ */
 export function convertToUIKit(originalObject: BlockKitPlainText | BlockKitMrkdwnText): UIKitTextObject {
-    let text: any = {};
+    let text: any = {
+        ...originalObject,
+    };
 
     if (originalObject.type === 'plain_text') {
-        text = {
-            ...originalObject,
-            type: TextObjectType.PLAINTEXT,
-        };
+        text.type = TextObjectType.PLAINTEXT;
     } else if(originalObject.type === 'mrkdwn') {
-        text = {
-            ...originalObject,
-            type: TextObjectType.MARKDOWN,
-        };
+        text.type = TextObjectType.MARKDOWN;
 
         if (text.verbatim) {
             delete text.verbatim;
@@ -29,8 +31,16 @@ export function convertToUIKit(originalObject: BlockKitPlainText | BlockKitMrkdw
     return text as UIKitTextObject;
 }
 
+/**
+ * Converts a UIKit text object to Block Kit
+ *
+ * @param originalObject ITextObject
+ * @returns PlainTextElement | MrkdwnElement
+ */
 export function convertToBlockKit(originalObject: UIKitTextObject): BlockKitPlainText | BlockKitMrkdwnText {
-    const text = { ...originalObject };
+    const text = {
+        ...originalObject
+    };
 
     if (text.type === TextObjectType.PLAINTEXT) {
         return text as BlockKitPlainText;

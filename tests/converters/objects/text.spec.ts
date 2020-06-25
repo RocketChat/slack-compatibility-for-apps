@@ -17,57 +17,71 @@ import {
 describe('Text Object data structure converter', () => {
     describe('From  Block Kit to UIKit', () => {
         it('should convert a plain text object from slack to rocket.chat format', () => {
-            const txt: BlockKitPlainText = {
-                "type": "plain_text",
-                "text": "This is a plain text section block.",
-                "emoji": true
+            const sourceText: BlockKitPlainText = {
+                type: 'plain_text',
+                text: 'This is a plain text section block.',
+                emoji: true
             };
 
-            const converted = convertToUIKit(txt);
-            expect(converted).to.have.property('text').to.equal(txt.text);
-            expect(converted).to.have.property('type').to.equal(TextObjectType.PLAINTEXT);
-            expect(converted).to.have.property('emoji').to.be.true;
+            const targetText: UIKitTextObject= {
+                type: TextObjectType.PLAINTEXT,
+                text: sourceText.text,
+                emoji: sourceText.emoji,
+            }
+
+            const converted = convertToUIKit(sourceText);
+            expect(converted).to.deep.equal(targetText);
         });
 
         it('should convert a mrkdwn text object from slack to rocket.chat format', () => {
-            const txt: BlockKitMrkdwnText = {
-                "type": "mrkdwn",
-                "text": "This is a mrkdwn text section block.",
-                "verbatim": true
+            const sourceText: BlockKitMrkdwnText = {
+                type: 'mrkdwn',
+                text: 'This is a mrkdwn text section block.',
+                verbatim: true
             };
 
-            const converted = convertToUIKit(txt);
-            expect(converted).to.have.property('text').to.equal(txt.text);
-            expect(converted).to.have.property('type').to.equal(TextObjectType.MARKDOWN);
-            expect(converted).not.to.have.property('verbatim');
+            const targetText: UIKitTextObject = {
+                type: TextObjectType.MARKDOWN,
+                text: sourceText.text
+            };
+
+            const converted = convertToUIKit(sourceText);
+            expect(converted).to.deep.equal(targetText);
         });
     });
 
     describe('From UIKit to Block Kit', () => {
         it('should convert a plain text object from rocket.chat to slack format', () => {
-            const txt: UIKitTextObject = {
-                "type": TextObjectType.PLAINTEXT,
-                "text": "This is a plain text section block.",
-                "emoji": true
+            const sourceText: UIKitTextObject = {
+                type: TextObjectType.PLAINTEXT,
+                text: 'This is a *markdown text* section block.',
+                emoji: true
             };
 
-            const converted = convertToBlockKit(txt);
-            expect(converted).to.have.property('text').to.equal(txt.text);
-            expect(converted).to.have.property('type').to.equal('plain_text');
-            expect(converted).to.have.property('emoji').to.be.true;
+            const targetText: BlockKitPlainText = {
+                type: 'plain_text',
+                text: sourceText.text,
+                emoji: sourceText.emoji,
+            };
+
+            const converted = convertToBlockKit(sourceText);
+            expect(converted).to.deep.equal(targetText);
         });
 
         it('should convert a mrkdwn text object from rocket.chat to slack format', () => {
-            const txt: UIKitTextObject = {
-                "type": TextObjectType.MARKDOWN,
-                "text": "This is a plain text section block.",
-                "emoji": true
+            const sourceText: UIKitTextObject = {
+                type: TextObjectType.MARKDOWN,
+                text: 'This is a *markdown text* section block.',
+                emoji: true
             };
 
-            const converted = convertToBlockKit(txt);
-            expect(converted).to.have.property('text').to.equal(txt.text);
-            expect(converted).to.have.property('type').to.equal('mrkdwn');
-            expect(converted).not.to.have.property('emoji');
+            const targetText: BlockKitMrkdwnText = {
+                type: 'mrkdwn',
+                text: sourceText.text,
+            };
+
+            const converted = convertToBlockKit(sourceText);
+            expect(converted).to.deep.equal(targetText);
         });
     });
 });

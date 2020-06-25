@@ -19,6 +19,12 @@ import {
 } from '../elements/convertElement';
 
 
+/**
+ * Converts a Block Kit section block to UIKit
+ *
+ * @param originalBlock SectionBlock
+ * @returns ISectionBlock
+ */
 export function convertToUIKit(originalBlock: BlockKitSectionBlock): UIKitSectionBlock {
     let target: Partial<UIKitSectionBlock> = {
         ...renameObjectProperties(snakeCaseToCamelCase, originalBlock),
@@ -43,6 +49,12 @@ export function convertToUIKit(originalBlock: BlockKitSectionBlock): UIKitSectio
  *}
  */
 
+/**
+ * Type guard to test whether the provided block is ISectionBlock
+ *
+ * @param block ISectionBlock | SectionBlock
+ * @returns Boolean
+ */
 export function isUIKitSectionBlock(block: UIKitSectionBlock | BlockKitSectionBlock): block is UIKitSectionBlock {
     return (block as UIKitSectionBlock).blockId !== undefined;
 }

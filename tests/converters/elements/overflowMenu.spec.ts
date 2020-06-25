@@ -18,7 +18,7 @@ import {
 
 describe('Overflow Menu data structure converter', () => {
     describe('From Block Kit to UIKit', () => {
-        it('should convert a overflow menu from slack to rocket.chat format', () => {
+        it('should convert an overflow menu from slack to rocket.chat format', () => {
             const sourceElement: BlockKitOverflowMenuElement = {
                 action_id: faker.random.word(),
                 type: 'overflow',
@@ -39,7 +39,13 @@ describe('Overflow Menu data structure converter', () => {
                         },
                         value: 'value-1'
                     },
-                ]
+                ],
+                confirm: {
+                    text: {
+                        type: 'plain_text',
+                        text: faker.lorem.sentence(),
+                    },
+                },
             };
 
             const targetElement: UIKitOverflowMenuElement = {
@@ -71,7 +77,7 @@ describe('Overflow Menu data structure converter', () => {
     });
 
     describe('From UIKit to Block Kit', () => {
-        it('should convert a overflow menu from rocket.chat to slack format', () => {
+        it('should convert an overflow menu from rocket.chat to slack format', () => {
             const sourceElement: UIKitOverflowMenuElement = {
                 type: BlockElementType.OVERFLOW_MENU,
                 actionId: faker.random.word(),

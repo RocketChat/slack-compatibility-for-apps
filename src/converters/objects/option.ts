@@ -8,37 +8,34 @@ import {
     convertToUIKit as convertTextToUIKit,
     convertToBlockKit as convertTextToBlockKit,
 } from './text';
+import { removeObjectProperties } from '../../helpers';
 
+/**
+ * Converts a Block Kit option object to UIKit
+ *
+ * @param originalElement Option
+ * @return IOptionObject
+ */
 export function convertToUIKit(originalElement: BlockKitOptionObject): UIKitOptionObject {
     const option: any = {
-        ...originalElement,
+        ...removeObjectProperties(originalElement, ['description','url']),
         text: convertTextToUIKit(originalElement.text),
     };
-
-    if (option.description) {
-        delete option.description;
-    }
-
-    if (option.url) {
-        delete option.url;
-    }
 
     return option as UIKitOptionObject;
 }
 
+/**
+ * Converts an UIKit option object to Block Kit
+ *
+ * @param originalElement IOptionObject
+ * @returns Option
+ */
 export function convertToBlockKit(originalElement: UIKitOptionObject): BlockKitOptionObject {
     const option: any = {
         ...originalElement,
         text: convertTextToBlockKit(originalElement.text),
     };
-
-    if (option.description) {
-        delete option.description;
-    }
-
-    if (option.url) {
-        delete option.url;
-    }
 
     return option as BlockKitOptionObject;
 }
