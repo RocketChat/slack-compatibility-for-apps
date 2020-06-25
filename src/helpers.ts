@@ -26,3 +26,7 @@ export function removeObjectProperties(source: object, properties: string[] = []
     })
     .reduce((acc, curr) => Object.assign(acc, curr), {});
 }
+
+export function generateToken(): string {
+    return  Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+}

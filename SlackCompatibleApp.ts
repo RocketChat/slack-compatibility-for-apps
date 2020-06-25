@@ -5,6 +5,7 @@ import { IAppInfo } from '@rocket.chat/apps-engine/definition/metadata';
 import { IUIKitInteractionHandler, IUIKitResponse, UIKitBlockInteractionContext, UIKitViewCloseInteractionContext, UIKitViewSubmitInteractionContext } from '@rocket.chat/apps-engine/definition/uikit';
 import { DataReceiver } from './src/endpoints/dataReceiver';
 import { ISlashCommandDescriptor, registerSlashCommands } from './src/registerSlashCommands';
+import { ResponseUrlEndpoint } from './src/endpoints/ResponseUrlEndpoint';
 
 
 export abstract class SlackCompatibleApp extends App implements IUIKitInteractionHandler {
@@ -21,7 +22,10 @@ export abstract class SlackCompatibleApp extends App implements IUIKitInteractio
         configurationExtend.api.provideApi({
             security: ApiSecurity.UNSECURE,
             visibility: ApiVisibility.PUBLIC,
-            endpoints: [new DataReceiver(this)],
+            endpoints: [
+                new DataReceiver(this),
+                new ResponseUrlEndpoint(this),
+            ],
         });
 
         await registerSlashCommands(this, configurationExtend);

@@ -47,11 +47,11 @@ export function registerSlashCommands(app: SlackCompatibleApp, configuration: IC
  * a proper slash command executor function
  * with the defined descriptor as context
  */
-function createSlashcommandExecutor(app: SlackCompatibleApp, command: ISlashCommandDescriptor): ISlashCommand['executor'] {
+function createSlashcommandExecutor(app: SlackCompatibleApp, descriptor: ISlashCommandDescriptor): ISlashCommand['executor'] {
     return async (context: SlashCommandContext, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<void> => {
         const payload: ISlashCommandPayload = {
             token: '', // Slack deprecated
-            team_id: '', // Not sure what we could send
+            team_id: await read.getEnvironmentReader().getServerSettings().getValueById('uniqueID'),
             team_domain: await read.getEnvironmentReader().getServerSettings().getValueById('Site_Url'),
             enterprise_id: undefined, // we have no equivalent
             enterprise_name: undefined, // we have no equivalent
@@ -59,13 +59,13 @@ function createSlashcommandExecutor(app: SlackCompatibleApp, command: ISlashComm
             channel_name: context.getRoom().slugifiedName,
             user_id: context.getSender().id,
             user_name: context.getSender().name,
-            command: command.command,
+            command: descriptor.command,
             text: context.getArguments().join(' '),
             trigger_id: context.getTriggerId(),
             response_url: '',
         };
 
-        await http.post(command.requestURL, {
+        await http.post(descriptor.requestURL, {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
