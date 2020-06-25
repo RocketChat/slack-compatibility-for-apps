@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/RocketChat/slack-compatibility-for-apps#readme",
   "dependencies": {
-    "@rocket.chat/apps-engine": "^1.12.0",
+    "@rocket.chat/apps-engine": "^1.14.0",
     "fs-extra": "^9.0.1"
   },
   "devDependencies": {
