@@ -2,7 +2,10 @@ import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import * as faker from 'faker';
 
-import { OverflowMenuConverter } from '../../../src/converters/elements/overflowMenu';
+import {
+    convertToUIKit,
+    convertToBlockKit,
+} from '../../../src/converters/elements/overflowMenu';
 import { Overflow as BlockKitOverflowMenuElement } from '../../../vendor/slack-types';
 import {
     BlockElementType,
@@ -62,7 +65,7 @@ describe('Overflow Menu data structure converter', () => {
                 ],
             };
 
-            const converted: UIKitOverflowMenuElement = new OverflowMenuConverter(sourceElement).convertToUIKit();
+            const converted: UIKitOverflowMenuElement = convertToUIKit(sourceElement);
             expect(converted).to.deep.equal(targetElement);
         });
     });
@@ -115,7 +118,7 @@ describe('Overflow Menu data structure converter', () => {
                 ]
             };
 
-            const converted = new OverflowMenuConverter(sourceElement).convertToBlockKit();
+            const converted = convertToBlockKit(sourceElement);
             expect(converted).to.deep.equal(targetElement);
         });
     });

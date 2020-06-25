@@ -2,7 +2,10 @@ import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import * as faker from 'faker';
 
-import { ImageConverter } from '../../../src/converters/elements/image';
+import {
+    convertToUIKit,
+    convertToBlockKit,
+} from '../../../src/converters/elements/image';
 import { ImageElement as BlockKitImageElement } from '../../../vendor/slack-types';
 import {
     BlockElementType,
@@ -25,7 +28,7 @@ describe('Image data structure converter', () => {
                 altText: sourceElement.alt_text,
             };
 
-            const converted: UIKitImageElement = new ImageConverter(sourceElement).convertToUIKit();
+            const converted: UIKitImageElement = convertToUIKit(sourceElement);
             expect(converted).to.deep.equal(targetElement);
         });
 
@@ -45,7 +48,7 @@ describe('Image data structure converter', () => {
                 alt_text: sourceElement.altText,
             };
 
-            const converted: BlockKitImageElement = new ImageConverter(sourceElement).convertToBlockKit();
+            const converted: BlockKitImageElement = convertToBlockKit(sourceElement);
             expect(converted).to.deep.equal(targetElement);
         });
     })

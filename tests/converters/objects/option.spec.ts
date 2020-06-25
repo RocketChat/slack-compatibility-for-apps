@@ -2,7 +2,10 @@ import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import * as faker from 'faker';
 
-import { OptionObjectConverter } from '../../../src/converters/objects/option';
+import {
+    convertToUIKit,
+    convertToBlockKit,
+} from '../../../src/converters/objects/option';
 import {
     Option as BlockKitOptionObject,
     PlainTextElement as BlockKitPlainText,
@@ -30,7 +33,7 @@ describe('Option Object data structure converter', () => {
                 url: faker.internet.url(),
             };
 
-            const converted = new OptionObjectConverter(opt).convertToUIKit();
+            const converted = convertToUIKit(opt);
             expect(converted).to.deep.equal({
                 text: {
                     type: TextObjectType.PLAINTEXT,
@@ -54,7 +57,7 @@ describe('Option Object data structure converter', () => {
                 value: faker.random.word(),
             };
 
-            const converted = new OptionObjectConverter(opt).convertToUIKit();
+            const converted = convertToUIKit(opt);
             expect(converted).to.deep.equal({
                 text: {
                     type: TextObjectType.MARKDOWN,
@@ -75,7 +78,7 @@ describe('Option Object data structure converter', () => {
                 value: faker.random.word(),
             };
 
-            const converted = new OptionObjectConverter(opt).convertToBlockKit();
+            const converted = convertToBlockKit(opt);
             expect(converted).to.deep.equal({
                 text: {
                     type: 'plain_text',
@@ -94,7 +97,7 @@ describe('Option Object data structure converter', () => {
                 value: faker.random.word(),
             };
 
-            const converted = new OptionObjectConverter(opt).convertToBlockKit();
+            const converted = convertToBlockKit(opt);
             expect(converted).to.deep.equal({
                 text: {
                     type: 'mrkdwn',

@@ -1,7 +1,10 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
 
-import { TextObjectConverter } from '../../../src/converters/objects/text';
+import {
+    convertToUIKit,
+    convertToBlockKit,
+} from '../../../src/converters/objects/text';
 import {
     ITextObject as UIKitTextObject,
     TextObjectType,
@@ -20,7 +23,7 @@ describe('Text Object data structure converter', () => {
                 "emoji": true
             };
 
-            const converted = new TextObjectConverter(txt).convertToUIKit();
+            const converted = convertToUIKit(txt);
             expect(converted).to.have.property('text').to.equal(txt.text);
             expect(converted).to.have.property('type').to.equal(TextObjectType.PLAINTEXT);
             expect(converted).to.have.property('emoji').to.be.true;
@@ -33,7 +36,7 @@ describe('Text Object data structure converter', () => {
                 "verbatim": true
             };
 
-            const converted = new TextObjectConverter(txt).convertToUIKit();
+            const converted = convertToUIKit(txt);
             expect(converted).to.have.property('text').to.equal(txt.text);
             expect(converted).to.have.property('type').to.equal(TextObjectType.MARKDOWN);
             expect(converted).not.to.have.property('verbatim');
@@ -48,7 +51,7 @@ describe('Text Object data structure converter', () => {
                 "emoji": true
             };
 
-            const converted = new TextObjectConverter(txt).convertToBlockKit();
+            const converted = convertToBlockKit(txt);
             expect(converted).to.have.property('text').to.equal(txt.text);
             expect(converted).to.have.property('type').to.equal('plain_text');
             expect(converted).to.have.property('emoji').to.be.true;
@@ -61,7 +64,7 @@ describe('Text Object data structure converter', () => {
                 "emoji": true
             };
 
-            const converted = new TextObjectConverter(txt).convertToBlockKit();
+            const converted = convertToBlockKit(txt);
             expect(converted).to.have.property('text').to.equal(txt.text);
             expect(converted).to.have.property('type').to.equal('mrkdwn');
             expect(converted).not.to.have.property('emoji');

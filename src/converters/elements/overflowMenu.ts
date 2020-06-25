@@ -6,24 +6,30 @@ import {
     Option as BlockKitOptionObject,
     Overflow as BlockKitOverflowMenu,
 } from '../../../vendor/slack-types';
-import { convertToUIKit as convertOptionToUIKit } from '../objects/option';
+import {
+    convertToUIKit as convertOptionToUIKit,
+    convertToBlockKit as convertOptionToBlockKit,
+} from '../objects/option';
+import {renameObjectProperties, snakeCaseToCamelCase, camelCaseToSnakeCase} from '../../helpers';
 
 export function convertToUIKit(originalElement: BlockKitOverflowMenu): UIKitOverflowMenu {
-        let menu: any = {
+        let menu = {
             ...originalElement,
+            options: originalElement.options.map(option => convertOptionToUIKit(option as BlockKitOptionObject)),
         };
-
-        const options: UIKitOptionObject[] = [];
-
-        for (const option of originalElement.options) {
-            options.push(convertOptionToUIKit(option as BlockKitOptionObject));
-        }
-
-        menu.options = options;
 
         if (menu.confirm) {
             delete menu.confirm;
         }
 
-        return menu as UIKitOverflowMenu;
+        return renameObjectProperties(snakeCaseToCamelCase, menu) as UIKitOverflowMenu;
+}
+
+export function convertToBlockKit(originalElement: UIKitOverflowMenu): BlockKitOverflowMenu {
+        let menu = {
+            ...originalElement,
+            options: originalElement.options.map(option => convertOptionToBlockKit(option as UIKitOptionObject)),
+        };
+
+        return renameObjectProperties(camelCaseToSnakeCase, menu) as BlockKitOverflowMenu;
 }

@@ -2,7 +2,10 @@ import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import * as faker from 'faker';
 
-import { StaticSelectConverter } from '../../../src/converters/elements/staticSelect';
+import {
+    convertToUIKit,
+    convertToBlockKit,
+} from '../../../src/converters/elements/staticSelect';
 import {
     BlockElementType,
     IOptionObject as UIKitOptionObject,
@@ -101,7 +104,7 @@ describe('Static Select data structure converter', () => {
                 initialValue: 'value-2',
             };
 
-            const converted = new StaticSelectConverter(sourceElement).convertToUIKit();
+            const converted = convertToUIKit(sourceElement);
             expect(converted).to.deep.equal(targetElement);
         });
     });
@@ -149,7 +152,7 @@ describe('Static Select data structure converter', () => {
                 type: 'static_select',
                 placeholder: {
                     type: 'plain_text',
-                    text: faker.lorem.sentence(),
+                    text: sourceElement.placeholder.text,
                     emoji: true,
                 } as BlockKitPlainTextElement,
                 options: [
@@ -188,8 +191,7 @@ describe('Static Select data structure converter', () => {
                 } as BlockKitOptionObject,
             };
 
-
-            const converted = new StaticSelectConverter(sourceElement).convertToBlockKit();
+            const converted = convertToBlockKit(sourceElement);
             expect(converted).to.deep.equal(targetElement);
         });
     });
