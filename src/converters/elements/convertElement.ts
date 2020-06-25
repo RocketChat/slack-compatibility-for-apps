@@ -11,7 +11,10 @@ import {
 import {
     convertToUIKit as convertStaticSelectToUIKit,
 } from './staticSelect';
-import { Button, Action, Overflow, ImageElement, StaticSelect } from '../../../vendor/slack-types';
+import {
+    convertToUIKit as convertMultiStaticSelectToUIKit,
+} from './multiStaticSelect';
+import { Button, Action, Overflow, ImageElement, StaticSelect, MultiStaticSelect } from '../../../vendor/slack-types';
 import { IBlockElement, BlockElementType, IButtonElement } from '@rocket.chat/apps-engine/definition/uikit';
 
 export function convertToUIKit(element: Button | Overflow | StaticSelect | ImageElement | Action): object {
@@ -24,6 +27,8 @@ export function convertToUIKit(element: Button | Overflow | StaticSelect | Image
             return convertOverflowMenuToUIKit(element as Overflow);
         case 'static_select':
             return convertStaticSelectToUIKit(element as StaticSelect);
+        case 'multi_static_select':
+            return convertMultiStaticSelectToUIKit(element as MultiStaticSelect);
         default:
             return element;
     }
