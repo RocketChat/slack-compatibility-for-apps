@@ -5,9 +5,11 @@ import {
 import {
     convertToUIKit as convertImageToUIKit,
 } from './image';
+import {
+    convertToUIKit as convertOverflowMenuToUIKit,
+} from './overflowMenu';
 import { Button, Action, Overflow, Select, ImageElement } from '../../../vendor/slack-types';
 import { IBlockElement, BlockElementType, IButtonElement } from '@rocket.chat/apps-engine/definition/uikit';
-import {} from '../../../vendor/slack-types';
 
 export function convertToUIKit(element: Button | Overflow | Select | ImageElement | Action): object {
     switch (element.type) {
@@ -15,6 +17,8 @@ export function convertToUIKit(element: Button | Overflow | Select | ImageElemen
             return convertButtonToUIKit(element as Button);
         case 'image':
             return convertImageToUIKit(element as ImageElement);
+        case 'overflow':
+            return convertOverflowMenuToUIKit(element as Overflow);
         default:
             return element;
     }

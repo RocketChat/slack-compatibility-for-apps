@@ -6,27 +6,17 @@ import {
     Option as BlockKitOptionObject,
     Overflow as BlockKitOverflowMenu,
 } from '../../../vendor/slack-types';
-import { ElementConverter } from '../ElementConverter';
-import { OptionObjectConverter } from '../objects/option';
+import { convertToUIKit as convertOptionToUIKit } from '../objects/option';
 
-type ConversionOverflowMenu = UIKitOverflowMenu | BlockKitOverflowMenu;
-
-export class OverflowMenuConverter extends ElementConverter<ConversionOverflowMenu> {
-    constructor(overflowMenu: ConversionOverflowMenu) {
-        super(overflowMenu);
-    }
-
-    public convertToUIKit(): UIKitOverflowMenu {
+export function convertToUIKit(originalElement: BlockKitOverflowMenu): UIKitOverflowMenu {
         let menu: any = {
-            ...this.element,
+            ...originalElement,
         };
 
         const options: UIKitOptionObject[] = [];
 
-        for (let i = 0; i < this.element.options.length; i++) {
-            const current: BlockKitOptionObject = this.element.options[i] as BlockKitOptionObject;
-            // @NOTE  I don't like this `as any` business, but it works for now
-            options.push(new OptionObjectConverter(current).convertToUIKit() as any);
+        for (const option of originalElement.options) {
+            options.push(convertOptionToUIKit(option as BlockKitOptionObject));
         }
 
         menu.options = options;
@@ -35,6 +25,5 @@ export class OverflowMenuConverter extends ElementConverter<ConversionOverflowMe
             delete menu.confirm;
         }
 
-        return super.convertToUIKit() as UIKitOverflowMenu;
-    }
+        return menu as UIKitOverflowMenu;
 }

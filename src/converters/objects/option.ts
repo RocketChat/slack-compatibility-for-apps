@@ -4,31 +4,23 @@ import {
 import {
     IOptionObject as UIKitOptionObject,
 } from '@rocket.chat/apps-engine/definition/uikit';
-import { ElementConverter } from '../ElementConverter';
-import { TextObjectConverter } from './text';
+import {
+    convertToUIKit as convertTextToUIKit,
+} from './text';
 
+export function convertToUIKit(originalElement: BlockKitOptionObject): UIKitOptionObject {
+    const option: any = {
+        ...originalElement,
+        text: convertTextToUIKit(originalElement.text),
+    };
 
-type ConversionOptionObject = UIKitOptionObject | BlockKitOptionObject;
-
-export class OptionObjectConverter extends ElementConverter<ConversionOptionObject> {
-    constructor(option: ConversionOptionObject) {
-        super(option);
+    if (option.description) {
+        delete option.description;
     }
 
-    public convertToUIKit(): ConversionOptionObject {
-        const option: any = {
-            ...this.element,
-            text: new TextObjectConverter(this.element.text).convertToUIKit(),
-        };
-
-        if (option.description) {
-            delete option.description;
-        }
-
-        if (option.url) {
-            delete option.url;
-        }
-
-        return option as UIKitOptionObject;
+    if (option.url) {
+        delete option.url;
     }
+
+    return option as UIKitOptionObject;
 }

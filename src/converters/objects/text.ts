@@ -6,47 +6,38 @@ import {
     PlainTextElement as BlockKitPlainText,
     MrkdwnElement as BlockKitMrkdwnText,
 } from '../../../vendor/slack-types';
-import { ElementConverter } from '../ElementConverter';
 
-type ConversionTextObject = UIKitTextObject | BlockKitPlainText | BlockKitMrkdwnText;
+export function convertToUIKit(originalObject: BlockKitPlainText | BlockKitMrkdwnText): UIKitTextObject {
+    let text: any = {};
 
-export class TextObjectConverter extends ElementConverter<ConversionTextObject> {
-    constructor(text: ConversionTextObject) {
-        super(text);
-    }
+    if (originalObject.type === 'plain_text') {
+        text = {
+            ...originalObject,
+            type: TextObjectType.PLAINTEXT,
+        };
+    } else if(originalObject.type === 'mrkdwn') {
+        text = {
+            ...originalObject,
+            type: TextObjectType.MARKDOWN,
+        };
 
-    public convertToUIKit(): UIKitTextObject {
-        let text: any = {};
-
-        if (this.element.type === 'plain_text') {
-            text = {
-                ...this.element,
-                type: TextObjectType.PLAINTEXT,
-            };
-        } else if(this.element.type === 'mrkdwn') {
-            text = {
-                ...this.element,
-                type: TextObjectType.MARKDOWN,
-            };
-
-            if (text.verbatim) {
-                delete text.verbatim;
-            }
+        if (text.verbatim) {
+            delete text.verbatim;
         }
-
-        return text as UIKitTextObject;
     }
 
-    public convertToBlockKit(): ConversionTextObject {
-        let text: any = {};
+    return text as UIKitTextObject;
+}
 
-        text = { ...this.element };
+export function convertToBlockKit(originalObject: UIKitTextObject): BlockKitPlainText | BlockKitMrkdwnText {
+    const text = { ...originalObject };
 
-        if (text.type === 'mrkdwn' && text.emoji) {
+    if (text.type === TextObjectType.PLAINTEXT) {
+        return text as BlockKitPlainText;
+    } else {
+        if (text.emoji) {
             delete text.emoji;
         }
-
-        return text as ConversionTextObject;
+        return text as BlockKitMrkdwnText;
     }
-
 }
