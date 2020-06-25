@@ -9,7 +9,7 @@ import { ResponseUrlEndpoint } from './src/endpoints/ResponseUrlEndpoint';
 
 
 export abstract class SlackCompatibleApp extends App implements IUIKitInteractionHandler {
-    public siteUrl: string;
+    public interactiveEndpoint: string;
     public slashcommands?: Array<ISlashCommandDescriptor>;
 
     constructor(info: IAppInfo, logger: ILogger, accessors?: IAppAccessors) {
