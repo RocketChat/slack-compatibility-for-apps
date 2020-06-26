@@ -7,8 +7,10 @@ import { DataReceiver } from './src/endpoints/dataReceiver';
 
 export abstract class SlackCompatibleApp extends App implements IUIKitInteractionHandler {
     /**
-     * Any interactions with shortcuts, modals, or interactive components (such as buttons, overflow menus)
+     * Any interactions with modals, or interactive components (such as buttons, overflow menus)
      * will be sent to a URL you specify. [Learn more.](https://api.slack.com/messaging/interactivity#components)
+     *
+     * Rocket.Chat will send an HTTP POST request with information to this URL when users interact with a interactive component.
      */
     public interactiveEndponit: string;
 
