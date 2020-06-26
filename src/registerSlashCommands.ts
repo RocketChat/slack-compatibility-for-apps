@@ -2,6 +2,9 @@ import { SlackCompatibleApp } from "../SlackCompatibleApp";
 import { IConfigurationExtend, IRead, IModify, IHttp, IPersistence } from "@rocket.chat/apps-engine/definition/accessors";
 import { ISlashCommand, SlashCommandContext } from "@rocket.chat/apps-engine/definition/slashcommands";
 import { URLSearchParams } from "url";
+import { getTeamFields, generateResponseUrl, getChannelFields, getUserFields } from "./lib/slackCommonFields";
+import { OriginalActionType, persistResponseToken } from "./lib/ResponseTokens";
+import { IResponsePayload, parseResponsePayload } from "./lib/responsePayloadParser";
 
 const noop = ()=>{};
 
@@ -12,7 +15,7 @@ export interface ISlashCommandDescriptor {
     command: string;
     requestURL: string;
     shortDescription: string;
-    usageHint: string;
+    usageHint?: string;
     // escapeChannels: boolean; will not support now
 }
 
@@ -49,27 +52,46 @@ export function registerSlashCommands(app: SlackCompatibleApp, configuration: IC
  */
 function createSlashcommandExecutor(app: SlackCompatibleApp, descriptor: ISlashCommandDescriptor): ISlashCommand['executor'] {
     return async (context: SlashCommandContext, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<void> => {
+        const {responseUrl: response_url, tokenContext} = await generateResponseUrl({
+            action: OriginalActionType.COMMAND,
+            room: context.getRoom(),
+            user: context.getSender(),
+        }, read, app);
+
+        await persistResponseToken(tokenContext, persis);
+
         const payload: ISlashCommandPayload = {
             token: '', // Slack deprecated
-            team_id: await read.getEnvironmentReader().getServerSettings().getValueById('uniqueID'),
-            team_domain: await read.getEnvironmentReader().getServerSettings().getValueById('Site_Url'),
             enterprise_id: undefined, // we have no equivalent
             enterprise_name: undefined, // we have no equivalent
-            channel_id: context.getRoom().id,
-            channel_name: context.getRoom().slugifiedName,
-            user_id: context.getSender().id,
-            user_name: context.getSender().name,
+            response_url,
             command: descriptor.command,
             text: context.getArguments().join(' '),
             trigger_id: context.getTriggerId(),
-            response_url: '',
+            ...await getTeamFields(read),
+            ...getChannelFields(context.getRoom()),
+            ...getUserFields(context.getSender()),
         };
 
-        await http.post(descriptor.requestURL, {
+        const response = await http.post(descriptor.requestURL, {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
             content: encodePayload(payload as unknown as { [K: string]: string }),
         });
+
+        const responsePayload = ((): IResponsePayload | string => {
+            try {
+                return JSON.parse(response.content);
+            } catch {
+                return response.content;
+            }
+        })();
+
+        const {instructions, message} = parseResponsePayload(responsePayload);
+
+        if (!message) return;
+
+
     }
 }

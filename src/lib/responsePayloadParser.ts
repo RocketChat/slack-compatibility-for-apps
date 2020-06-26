@@ -32,7 +32,18 @@ export interface IParseResponseResult {
     message?: ResponseMessage;
 }
 
-export function parseResponsePayload(payload: IResponsePayload): IParseResponseResult {
+export function parseResponsePayload(payload: IResponsePayload | string): IParseResponseResult {
+    if (typeof payload === 'string') {
+        return {
+            instructions: {
+                responseType: ResponseType.EPHEMERAL,
+                replaceOriginal: false,
+                deleteOriginal: false,
+            },
+            message: convertSlackMessageToRocketChatMessage({ text: payload }),
+        };
+    }
+
     return {
         instructions: {
             responseType: payload.response_type || ResponseType.EPHEMERAL,

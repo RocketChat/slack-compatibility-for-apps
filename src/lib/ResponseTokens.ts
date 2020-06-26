@@ -10,9 +10,10 @@ export enum OriginalActionType {
 
 export interface IResponseTokenContext {
     token: string;
-    originalAction: OriginalActionType;
     recipient: IUser['id'];
     room: IRoom['id'];
+    originalAction: OriginalActionType;
+    originalText?: string;
     expiresAt: Date;
     usageCount: number;
 }
