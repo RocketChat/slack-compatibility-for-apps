@@ -13,7 +13,7 @@ import {
     convertToBlockKit,
 } from '../../../src/converters/blocks/image';
 
-describe.only('Image Block data structure converter', () => {
+describe('Image Block data structure converter', () => {
     describe('From Block Kit to UIKit', () => {
         it('should convert an image block from slack to rocket.chat format', () => {
             const sourceBlock: BlockKitImageBlock = {
