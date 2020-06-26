@@ -6,6 +6,12 @@ import { IUIKitInteractionHandler, IUIKitResponse, UIKitBlockInteractionContext,
 import { DataReceiver } from './src/endpoints/dataReceiver';
 
 export abstract class SlackCompatibleApp extends App implements IUIKitInteractionHandler {
+    /**
+     * Any interactions with shortcuts, modals, or interactive components (such as buttons, overflow menus)
+     * will be sent to a URL you specify. [Learn more.](https://api.slack.com/messaging/interactivity#components)
+     */
+    public interactiveEndponit: string;
+
     constructor(info: IAppInfo, logger: ILogger, accessors?: IAppAccessors) {
         super(info, logger, accessors);
     }
