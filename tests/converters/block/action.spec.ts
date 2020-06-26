@@ -20,7 +20,7 @@ import {
 
 describe('Actions Block data structure converter', () => {
     describe('From Block Kit to UIKit', () => {
-        it('should convert am actions block from slack to rocket.chat format', () => {
+        it('should convert an actions block from slack to rocket.chat format', () => {
             const sourceButton: BlockKitButtonElement = {
                 type: 'button',
                 action_id: 'button-1',

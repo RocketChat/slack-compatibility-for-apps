@@ -6,35 +6,38 @@ import {
     Option as BlockKitOptionObject,
     Overflow as BlockKitOverflowMenu,
 } from '../../../vendor/slack-types';
-import { ElementConverter } from '../ElementConverter';
-import { OptionObjectConverter } from '../objects/option';
+import {
+    convertToUIKit as convertOptionToUIKit,
+    convertToBlockKit as convertOptionToBlockKit,
+} from '../objects/option';
+import {renameObjectProperties, snakeCaseToCamelCase, camelCaseToSnakeCase, removeObjectProperties} from '../../helpers';
 
-type ConversionOverflowMenu = UIKitOverflowMenu | BlockKitOverflowMenu;
-
-export class OverflowMenuConverter extends ElementConverter<ConversionOverflowMenu> {
-    constructor(overflowMenu: ConversionOverflowMenu) {
-        super(overflowMenu);
-    }
-
-    public convertToUIKit(): UIKitOverflowMenu {
-        let menu: any = {
-            ...this.element,
+/**
+ * Converts a Block Kit overflow menu element to UIKit
+ *
+ * @param originalElement Overflow
+ * @returns IOverflowMenuElement
+ */
+export function convertToUIKit(originalElement: BlockKitOverflowMenu): UIKitOverflowMenu {
+        let menu = {
+            ...removeObjectProperties(originalElement, ['confirm']),
+            options: originalElement.options.map(option => convertOptionToUIKit(option as BlockKitOptionObject)),
         };
 
-        const options: UIKitOptionObject[] = [];
+        return renameObjectProperties(snakeCaseToCamelCase, menu) as UIKitOverflowMenu;
+}
 
-        for (let i = 0; i < this.element.options.length; i++) {
-            const current: BlockKitOptionObject = this.element.options[i] as BlockKitOptionObject;
-            // @NOTE  I don't like this `as any` business, but it works for now
-            options.push(new OptionObjectConverter(current).convertToUIKit() as any);
-        }
+/**
+ * Converts an UIKit overflow menu element to Block Kit
+ *
+ * @param originalElement IOverflowMenuElement
+ * @returns Overflow
+ */
+export function convertToBlockKit(originalElement: UIKitOverflowMenu): BlockKitOverflowMenu {
+        let menu = {
+            ...originalElement,
+            options: originalElement.options.map(option => convertOptionToBlockKit(option as UIKitOptionObject)),
+        };
 
-        menu.options = options;
-
-        if (menu.confirm) {
-            delete menu.confirm;
-        }
-
-        return super.convertToUIKit() as UIKitOverflowMenu;
-    }
+        return renameObjectProperties(camelCaseToSnakeCase, menu) as BlockKitOverflowMenu;
 }

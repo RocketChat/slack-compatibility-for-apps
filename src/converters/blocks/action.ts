@@ -6,6 +6,12 @@ import {
     convertToBlockKit as convertElementListToBlockKit,
 } from '../elements/convertList';
 
+/**
+ * Converts a Block Kit actions block to UIKit
+ *
+ * @param originalBlock ActionsBlock
+ * @returns IActionsBlock
+ */
 export function convertToUIKit(originalBlock: BlockKitActionsBlock): UIKitActionsBlock {
     let target: Partial<UIKitActionsBlock> = {
         ...renameObjectProperties(snakeCaseToCamelCase, originalBlock),
@@ -16,6 +22,12 @@ export function convertToUIKit(originalBlock: BlockKitActionsBlock): UIKitAction
     return target as UIKitActionsBlock;
 }
 
+/**
+ * Converts a UIKit actions block to Block Kit
+ *
+ * @param originalBlock IActionsBlock
+ * @returns ActionsBlock
+ */
 export function convertToBlockKit(originalBlock: UIKitActionsBlock): BlockKitActionsBlock {
     let target: Partial<BlockKitActionsBlock> = {
         ...renameObjectProperties(camelCaseToSnakeCase, originalBlock),
@@ -26,6 +38,12 @@ export function convertToBlockKit(originalBlock: UIKitActionsBlock): BlockKitAct
     return target as BlockKitActionsBlock;
 }
 
+/**
+ * Type guard to test whether the provided block is IActionsBlock
+ *
+ * @param block IActionsBlock | ActionsBlock
+ * @returns Boolean
+ */
 export function isUIKitActionsBlock(block: UIKitActionsBlock | BlockKitActionsBlock): block is UIKitActionsBlock {
     return (block as UIKitActionsBlock).blockId !== undefined;
 }
