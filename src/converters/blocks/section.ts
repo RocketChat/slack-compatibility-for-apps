@@ -11,13 +11,13 @@ import {
 import {
     renameObjectProperties,
     snakeCaseToCamelCase,
-    //camelCaseToSnakeCase,
+    removeObjectProperties,
+    camelCaseToSnakeCase,
 } from '../../helpers';
 import {
     convertToUIKit as convertElementToUIKit,
-    //convertToBlockKit as convertElementToBlockKit,
+    convertToBlockKit as convertElementToBlockKit,
 } from '../elements/convertElement';
-
 
 /**
  * Converts a Block Kit section block to UIKit
@@ -27,34 +27,30 @@ import {
  */
 export function convertToUIKit(originalBlock: BlockKitSectionBlock): UIKitSectionBlock {
     let target: Partial<UIKitSectionBlock> = {
-        ...renameObjectProperties(snakeCaseToCamelCase, originalBlock),
+        ...removeObjectProperties(originalBlock, ['fields']),
     };
 
     if (target.accessory) {
         target.accessory = convertElementToUIKit(originalBlock.accessory as BlockKitAccessoryElements) as UIKitAccessoryElements;
     }
 
-    return target as UIKitSectionBlock;
+    return renameObjectProperties(snakeCaseToCamelCase, target) as UIKitSectionBlock;
 }
 
-/*
- *export function convertToBlockKit(originalBlock: UIKitSectionBlock): BlockKitSectionBlock {
- *    let target: Partial<BlockKitSectionBlock> = {
- *        ...renameObjectProperties(camelCaseToSnakeCase, originalBlock),
- *    };
- *
- *    target.accessory = convertElementToBlockKit(originalBlock.accessory) as Block;
- *
- *    return target as BlockKitSectionBlock;
- *}
- */
-
 /**
- * Type guard to test whether the provided block is ISectionBlock
+ * Converts a UIKit section block to Block Kit
  *
- * @param block ISectionBlock | SectionBlock
- * @returns Boolean
+ * @param originalBlock ISectionBlock
+ * @returns SectionBlock
  */
-export function isUIKitSectionBlock(block: UIKitSectionBlock | BlockKitSectionBlock): block is UIKitSectionBlock {
-    return (block as UIKitSectionBlock).blockId !== undefined;
+export function convertToBlockKit(originalBlock: UIKitSectionBlock): BlockKitSectionBlock {
+    let target: Partial<BlockKitSectionBlock> = {
+        ...renameObjectProperties(camelCaseToSnakeCase, originalBlock),
+    };
+
+    if (originalBlock.accessory) {
+        target.accessory = convertElementToBlockKit(originalBlock.accessory as UIKitAccessoryElements) as BlockKitAccessoryElements;
+    }
+
+    return target as BlockKitSectionBlock;
 }
