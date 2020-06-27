@@ -1,10 +1,11 @@
 import { SlackCompatibleApp } from "../SlackCompatibleApp";
-import { IConfigurationExtend, IRead, IModify, IHttp, IPersistence } from "@rocket.chat/apps-engine/definition/accessors";
+import { IConfigurationExtend, IRead, IModify, IHttp, IPersistence, IMessageBuilder } from "@rocket.chat/apps-engine/definition/accessors";
 import { ISlashCommand, SlashCommandContext } from "@rocket.chat/apps-engine/definition/slashcommands";
 import { URLSearchParams } from "url";
 import { getTeamFields, generateResponseUrl, getChannelFields, getUserFields } from "./lib/slackCommonFields";
-import { OriginalActionType, persistResponseToken } from "./lib/ResponseTokens";
-import { IResponsePayload, parseResponsePayload } from "./lib/responsePayloadParser";
+import { OriginalActionType, persistResponseToken, IResponseTokenContext } from "./lib/ResponseTokens";
+import { IResponsePayload, parseResponsePayload, IParseResponseResult, ResponseType } from "./lib/responsePayloadParser";
+import { IMessage } from "@rocket.chat/apps-engine/definition/messages";
 
 const noop = ()=>{};
 
@@ -52,10 +53,13 @@ export function registerSlashCommands(app: SlackCompatibleApp, configuration: IC
  */
 function createSlashcommandExecutor(app: SlackCompatibleApp, descriptor: ISlashCommandDescriptor): ISlashCommand['executor'] {
     return async (context: SlashCommandContext, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<void> => {
+        const originalMessage = `${descriptor.command} ${context.getArguments().join(' ')}`;
+
         const {responseUrl: response_url, tokenContext} = await generateResponseUrl({
             action: OriginalActionType.COMMAND,
             room: context.getRoom(),
             user: context.getSender(),
+            text: originalMessage,
         }, read, app);
 
         await persistResponseToken(tokenContext, persis);
@@ -88,10 +92,28 @@ function createSlashcommandExecutor(app: SlackCompatibleApp, descriptor: ISlashC
             }
         })();
 
-        const {instructions, message} = parseResponsePayload(responsePayload);
-
-        if (!message) return;
-
-
+        await handleSlashCommandResponsePayload(
+            parseResponsePayload(responsePayload),
+            tokenContext,
+            read,
+            modify,
+        );
     }
+}
+
+export async function handleSlashCommandResponsePayload({instructions, message}: IParseResponseResult, tokenContext: IResponseTokenContext, read: IRead, modify: IModify): Promise<void> {
+    if (!message) return;
+
+    const recipient = await read.getUserReader().getById(tokenContext.recipient);
+    const room = await read.getRoomReader().getById(tokenContext.room);
+
+    let method = (message: IMessageBuilder) => modify.getNotifier().notifyUser(recipient, message.getMessage());
+
+    if (instructions.responseType === ResponseType.IN_CHANNEL) {
+        method = (message: IMessageBuilder) => modify.getCreator().finish(message).then();
+
+        await method(modify.getCreator().startMessage({ text: tokenContext.originalText, room, sender: recipient }));
+    }
+
+    return method(modify.getCreator().startMessage({ ...message, room, sender: undefined }));
 }
