@@ -1,7 +1,8 @@
 import { IHttp, IModify, IPersistence, IRead } from '@rocket.chat/apps-engine/definition/accessors';
 import { ApiEndpoint, IApiEndpointInfo, IApiRequest, IApiResponse } from '@rocket.chat/apps-engine/definition/api';
 import { IRoom } from '@rocket.chat/apps-engine/definition/rooms';
-import { convertToUIKit } from '../converters/BlockKitToUIKit';
+
+import { convertBlocksToUIKit } from '../converters/BlockKitToUIKit';
 
 export class DataReceiver extends ApiEndpoint {
     public path = 'data-receiver';
@@ -18,7 +19,7 @@ export class DataReceiver extends ApiEndpoint {
         const room = await read.getRoomReader().getByName(roomName) as IRoom;
         const sender = await read.getUserReader().getByUsername(appUsername);
 
-        const blocks = convertToUIKit(blockKitData);
+        const blocks = convertBlocksToUIKit(blockKitData);
         const message = 'test message';
 
         const messageStructure = await modify.getCreator().startMessage();
