@@ -1,5 +1,14 @@
 import { InputBlock as BlockKitInputBlock } from '../../../vendor/slack-types';
 import { IInputBlock as UIKitInputBlock } from '@rocket.chat/apps-engine/definition/uikit';
+import {renameObjectProperties, snakeCaseToCamelCase, camelCaseToSnakeCase, removeObjectProperties} from '../../helpers';
+import {
+    convertToUIKit as convertElementToUIKit,
+    convertToBlockKit as convertElementToBlockKit,
+} from '../elements/convertElement';
+import {
+    convertToUIKit as convertTextToUIKit,
+    convertToBlockKit as convertTextToBlockKit,
+} from '../objects/text';
 
 /**
  * Converts a Block Kit input block to UIKit
@@ -8,8 +17,13 @@ import { IInputBlock as UIKitInputBlock } from '@rocket.chat/apps-engine/definit
  * @returns IInputBlock
  */
 export function convertToUIKit(originalBlock: BlockKitInputBlock): UIKitInputBlock {
-    // @TODO
-    return originalBlock as UIKitInputBlock;
+    const input: any = {
+        ...removeObjectProperties(originalBlock, ['hint']),
+        label: convertTextToUIKit(originalBlock.label),
+        element: convertElementToUIKit(originalBlock.element),
+    }
+
+    return renameObjectProperties(snakeCaseToCamelCase, input) as UIKitInputBlock;
 }
 
 /**
@@ -19,6 +33,11 @@ export function convertToUIKit(originalBlock: BlockKitInputBlock): UIKitInputBlo
  * @returns InputBlock
  */
 export function convertToBlockKit(originalBlock: UIKitInputBlock): BlockKitInputBlock {
-    // @TODO
-    return originalBlock as BlockKitInputBlock;
+    const input: any = {
+        ...originalBlock,
+        label: convertTextToBlockKit(originalBlock.label),
+        element: convertElementToBlockKit(originalBlock.element),
+    }
+
+    return renameObjectProperties(camelCaseToSnakeCase, input) as BlockKitInputBlock;
 }
