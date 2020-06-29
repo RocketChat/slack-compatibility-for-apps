@@ -24,7 +24,7 @@ function renameProperties<F, T>(subject: F): T {
     return Object.entries(subject).map(([key, value]) => (
         { [snakeCaseToCamelCase(key)]: value }
     ))
-        .reduce((acc, curr) => (Object.assign(acc, curr)), {}) as T;
+    .reduce((acc, curr) => (Object.assign(acc, curr)), {}) as T;
 }
 
 function convertSectionBlock(block: ISectionBlock): SectionBlock {
