@@ -1,9 +1,9 @@
-import { IBlock, BlockType, ISectionBlock } from '@rocket.chat/apps-engine/definition/uikit';
-import { snakeCaseToCamelCase } from '../helpers';
-import { SectionBlock } from '../../vendor/slack-types';
-import { convertToUIKit as convertActionBlockToUIKit } from './blocks/action';
+import { BlockType, IBlock, ISectionBlock, IUIKitView } from '@rocket.chat/apps-engine/definition/uikit';
 
-export function convertToBlockKit(blocks: Array<IBlock>): Array<object> {
+import { SectionBlock, View } from '../../vendor/slack-types';
+import { snakeCaseToCamelCase } from '../helpers';
+
+export function convertBlocksToBlockKit(blocks: Array<IBlock>): Array<object> {
     return blocks.map((block) => {
         // identify block type
         switch (block.type) {
@@ -15,11 +15,16 @@ export function convertToBlockKit(blocks: Array<IBlock>): Array<object> {
     });
 }
 
+export function convertViewToBlockKit(view: IUIKitView): View {
+    // todo(shiqi.mei) implement it
+    return {} as View;
+}
+
 function renameProperties<F, T>(subject: F): T {
     return Object.entries(subject).map(([key, value]) => (
         { [snakeCaseToCamelCase(key)]: value }
     ))
-    .reduce((acc, curr) => (Object.assign(acc, curr)), {}) as T;
+        .reduce((acc, curr) => (Object.assign(acc, curr)), {}) as T;
 }
 
 function convertSectionBlock(block: ISectionBlock): SectionBlock {
