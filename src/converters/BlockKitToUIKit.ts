@@ -3,7 +3,9 @@ import { IBlock } from '@rocket.chat/apps-engine/definition/uikit';
 import { convertToUIKit as convertActionBlockToUIKit } from './blocks/action';
 import { convertToUIKit as convertSectionBlockToUIKit } from './blocks/section';
 
-export function convertToUIKit(blocks: Array<Block>): Array<IBlock> {
+export function convertToUIKit(blocks?: Array<Block>): Array<IBlock> {
+    if (!Array.isArray(blocks)) return [];
+
     return blocks.map((block) => {
         switch (block.type) {
             case 'action':

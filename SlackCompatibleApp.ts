@@ -15,7 +15,7 @@ export abstract class SlackCompatibleApp extends App implements IUIKitInteractio
     constructor(info: IAppInfo, logger: ILogger, accessors?: IAppAccessors) {
         super(info, logger, accessors);
 
-        this.slashcommands = [].concat(this.slashcommands).filter(descriptor => descriptor.command && descriptor.description);
+        this.slashcommands = [].concat(this.slashcommands as any).filter((descriptor?: ISlashCommandDescriptor) => descriptor && descriptor.command && descriptor.shortDescription);
     }
 
     public async initialize(configurationExtend: IConfigurationExtend, environmentRead: IEnvironmentRead): Promise<void> {

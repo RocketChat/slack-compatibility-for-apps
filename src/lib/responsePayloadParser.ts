@@ -9,7 +9,7 @@ export enum ResponseType {
 
 export interface IMessagePayload {
     text: string;
-    blocks?: Array<Block>;
+    blocks?: string;
     attachments?: Array<MessageAttachment>;
     thread_ts?: string;
     mrkdwn?: boolean;
@@ -32,7 +32,7 @@ export interface IParseResponseResult {
     message?: ResponseMessage;
 }
 
-export function parseResponsePayload(payload: IResponsePayload | string): IParseResponseResult {
+export function parseResponsePayload(payload: IResponsePayload | string | undefined): IParseResponseResult {
     if (typeof payload === 'string') {
         return {
             instructions: {
@@ -59,7 +59,7 @@ function convertSlackMessageToRocketChatMessage(message?: IMessagePayload): Resp
 
     return {
         text: message.text,
-        blocks: convertToUIKit(message.blocks),
+        blocks: convertToUIKit(JSON.parse(message.blocks || '')),
         attachments: [], // deprecated by Slack, should we support?
         threadId: message.thread_ts,
     };

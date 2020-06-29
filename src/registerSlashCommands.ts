@@ -5,7 +5,7 @@ import { URLSearchParams } from "url";
 import { getTeamFields, generateResponseUrl, getChannelFields, getUserFields } from "./lib/slackCommonFields";
 import { OriginalActionType, persistResponseToken, IResponseTokenContext } from "./lib/ResponseTokens";
 import { IResponsePayload, parseResponsePayload, IParseResponseResult, ResponseType } from "./lib/responsePayloadParser";
-import { IMessage } from "@rocket.chat/apps-engine/definition/messages";
+import { IUser } from "@rocket.chat/apps-engine/definition/users";
 
 const noop = ()=>{};
 
@@ -37,10 +37,12 @@ export interface ISlashCommandPayload {
 }
 
 export function registerSlashCommands(app: SlackCompatibleApp, configuration: IConfigurationExtend): Promise<void> {
+    if (!app.slashcommands) return Promise.resolve();
+
     return Promise.all(app.slashcommands.map(descriptor => configuration.slashCommands.provideSlashCommand({
         command: descriptor.command,
         i18nDescription: descriptor.shortDescription,
-        i18nParamsExample: descriptor.usageHint,
+        i18nParamsExample: descriptor.usageHint || '',
         providesPreview: false,
         executor: createSlashcommandExecutor(app, descriptor),
     }))).then(noop);
@@ -71,7 +73,7 @@ function createSlashcommandExecutor(app: SlackCompatibleApp, descriptor: ISlashC
             response_url,
             command: descriptor.command,
             text: context.getArguments().join(' '),
-            trigger_id: context.getTriggerId(),
+            trigger_id: context.getTriggerId() || '',
             ...await getTeamFields(read),
             ...getChannelFields(context.getRoom()),
             ...getUserFields(context.getSender()),
@@ -81,16 +83,18 @@ function createSlashcommandExecutor(app: SlackCompatibleApp, descriptor: ISlashC
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
-            content: encodePayload(payload as unknown as { [K: string]: string }),
+            content: encodePayload(payload as any as { [K: string]: string }),
         });
 
         const responsePayload = ((): IResponsePayload | string => {
             try {
-                return JSON.parse(response.content);
+                return JSON.parse(response.content || '');
             } catch {
-                return response.content;
+                return response.content || '';
             }
         })();
+
+        if (!responsePayload) return;
 
         await handleSlashCommandResponsePayload(
             parseResponsePayload(responsePayload),
@@ -107,13 +111,17 @@ export async function handleSlashCommandResponsePayload({instructions, message}:
     const recipient = await read.getUserReader().getById(tokenContext.recipient);
     const room = await read.getRoomReader().getById(tokenContext.room);
 
+    if (!recipient || !room) {
+        throw new Error('Invalid token');
+    }
+
     let method = (message: IMessageBuilder) => modify.getNotifier().notifyUser(recipient, message.getMessage());
 
     if (instructions.responseType === ResponseType.IN_CHANNEL) {
-        method = (message: IMessageBuilder) => modify.getCreator().finish(message).then();
+        method = (message: IMessageBuilder) => modify.getCreator().finish(message).then(noop);
 
         await method(modify.getCreator().startMessage({ text: tokenContext.originalText, room, sender: recipient }));
     }
 
-    return method(modify.getCreator().startMessage({ ...message, room, sender: undefined }));
+    return method(modify.getCreator().startMessage({ ...message, room, sender: {} as IUser }));
 }

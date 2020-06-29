@@ -50,7 +50,11 @@ export async function generateResponseUrl(
     };
 
     const siteUrl = await read.getEnvironmentReader().getServerSettings().getValueById('Site_Url');
-    const apiRoute = app.getAccessors().providedApiEndpoints.find(metadata => metadata.path.indexOf(RESPONSE_URL_ENDPOINT_BASE_PATH));
+    const apiRoute = app.getAccessors().providedApiEndpoints.find(metadata => metadata.path.indexOf(RESPONSE_URL_ENDPOINT_BASE_PATH) !== -1);
+
+    if (!siteUrl || !apiRoute) {
+        throw new Error('Configuration error');
+    }
 
     return {
         tokenContext,
