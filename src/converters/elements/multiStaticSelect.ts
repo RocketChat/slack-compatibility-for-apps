@@ -21,14 +21,13 @@ import { convertToUIKit as convertOptionToUIKit } from '../objects/option';
  * @returns IMultiStaticSelectElement
  */
 export function convertToUIKit(originalElement: BlockKitMultiStaticSelect): UIKitMultiStaticSelect {
-    let select: any = {
+    const select: any = {
         actionId: originalElement.action_id,
         type: BlockElementType.MULTI_STATIC_SELECT,
         placeholder: convertTextElementToUIKit(originalElement.placeholder as PlainTextElement),
     };
 
     if (originalElement.initial_options) {
-        // @TODO the data is set correctly, but I didn't get to make it render
         select.initialValue = originalElement.initial_options.map(opt => opt.value);
     }
 
@@ -47,7 +46,7 @@ export function convertToUIKit(originalElement: BlockKitMultiStaticSelect): UIKi
  * @returns MultiStaticSelect
  */
 export function convertToBlockKit(originalElement: UIKitMultiStaticSelect ): BlockKitMultiStaticSelect {
-    let select: any = {
+    const select: any = {
         action_id: originalElement.actionId,
         type: 'multi_static_select',
         placeholder: convertTextElementToBlockKit(originalElement.placeholder as ITextObject),

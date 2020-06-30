@@ -7,7 +7,7 @@ import {
     ContextBlock,
     View,
 } from '../../vendor/slack-types';
-import { IBlock, IUIKitView } from '@rocket.chat/apps-engine/definition/uikit';
+import { IBlock, IUIKitView, BlockType } from '@rocket.chat/apps-engine/definition/uikit';
 import { convertToUIKit as convertActionBlockToUIKit } from './blocks/action';
 import { convertToUIKit as convertSectionBlockToUIKit } from './blocks/section';
 import { convertToUIKit as convertDiviverBlockToUIKit } from './blocks/divider';
@@ -19,15 +19,15 @@ export function convertBlocksToUIKit(blocks?: Array<Block>): Array<IBlock> {
 
     return blocks.map((block) => {
         switch (block.type) {
-            case 'action':
+            case BlockType.ACTIONS:
                 return convertActionBlockToUIKit(block as ActionsBlock);
-            case 'section':
+            case BlockType.SECTION:
                 return convertSectionBlockToUIKit(block as SectionBlock);
-            case 'divider':
+            case BlockType.DIVIDER:
                 return convertDiviverBlockToUIKit(block as DividerBlock);
-            case 'image':
+            case BlockType.IMAGE:
                 return convertImageBlockToUIKit(block as ImageBlock);
-            case 'context':
+            case BlockType.CONTEXT:
                 return convertContextBlockToUIKit(block as ContextBlock);
             default:
                 // @NOTE this will be dropped when filtering for truthy values

@@ -1,7 +1,9 @@
-import { ContextBlock as BlockKitContextBlock } from '../../../vendor/slack-types';
 import {
-    IContextBlock as UIKitContextBlock,
+    ContextBlock as BlockKitContextBlock,
+} from '../../../vendor/slack-types';
+import {
     BlockElementType,
+    IContextBlock as UIKitContextBlock,
 } from '@rocket.chat/apps-engine/definition/uikit';
 import {
     renameObjectProperties,
@@ -16,6 +18,7 @@ import {
     convertToUIKit as convertTextObjectToUIKit,
     convertToBlockKit as convertTextObjectToBlockKit,
 } from '../objects/text';
+import { BlockKitTextObject } from '../../customTypes/slack';
 
 /**
  * Converts a Block Kit context block to UIKit
@@ -29,9 +32,9 @@ export function convertToUIKit(originalBlock: BlockKitContextBlock): UIKitContex
     };
 
     context.elements = originalBlock.elements
-    .map(element => element.type === 'image' ?
+    .map(element => element.type === BlockElementType.IMAGE ?
          convertImageElementToUIKit(element) :
-         convertTextObjectToUIKit(element));
+         convertTextObjectToUIKit(element as BlockKitTextObject));
 
     return context as UIKitContextBlock;
 }
