@@ -7,6 +7,10 @@ import {
     convertToBlockKit as convertImageToBlockKit,
 } from './image';
 import {
+    convertToUIKit as convertPlainTextInputToUIKit,
+    convertToBlockKit as convertPlainTextInputToBlockKit,
+} from './plainTextInput';
+import {
     convertToUIKit as convertOverflowMenuToUIKit,
     convertToBlockKit as convertOverflowMenuToBlockKit,
 } from './overflowMenu';
@@ -24,6 +28,7 @@ import {
     MultiStaticSelect,
     Overflow,
     StaticSelect,
+    PlainTextInput,
 } from '../../../vendor/slack-types';
 import {
     BlockElementType,
@@ -33,16 +38,18 @@ import {
     IMultiStaticSelectElement,
     IOverflowMenuElement,
     IStaticSelectElement,
+    IPlainTextInputElement,
 } from '@rocket.chat/apps-engine/definition/uikit';
 import { BlockKitAccessoryElements } from '../../customTypes/slack';
 
 export function convertToUIKit(element: BlockKitAccessoryElements): object {
-    console.log('this is the element type: ' + element.type);
     switch (element.type) {
         case 'button':
             return convertButtonToUIKit(element as Button);
         case 'image':
             return convertImageToUIKit(element as ImageElement);
+        case 'plain_text_input':
+            return convertPlainTextInputToUIKit(element as PlainTextInput) ;
         case 'overflow':
             return convertOverflowMenuToUIKit(element as Overflow);
         case 'static_select':
@@ -60,6 +67,8 @@ export function convertToBlockKit(element: IBlockElement): object {
             return convertImageToBlockKit(element as IImageElement);
         case BlockElementType.BUTTON:
             return convertButtonToBlockKit(element as IButtonElement);
+        case BlockElementType.PLAIN_TEXT_INPUT:
+            return convertPlainTextInputToBlockKit(element as IPlainTextInputElement);
         case BlockElementType.OVERFLOW_MENU:
             return convertOverflowMenuToBlockKit(element as IOverflowMenuElement);
         case BlockElementType.STATIC_SELECT:
