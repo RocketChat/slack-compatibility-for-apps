@@ -42,6 +42,12 @@ import {
 } from '@rocket.chat/apps-engine/definition/uikit';
 import { BlockKitAccessoryElements as BlockKitBlockElement } from '../../customTypes/slack';
 
+/**
+ * Converts a single Block Kit element to UIKit
+ *
+ * @param elements BlockKitAccessoryElements
+ * @returns IBlockElement
+ */
 export function convertToUIKit(element: BlockKitBlockElement): UIKitBlockElement {
     switch (element.type) {
         case BlockElementType.IMAGE:
@@ -62,6 +68,12 @@ export function convertToUIKit(element: BlockKitBlockElement): UIKitBlockElement
     }
 }
 
+/**
+ * Converts a single UIKit element to Block Kit
+ *
+ * @param elements IBlockElement
+ * @returns BlockKitAccessoryElements
+ */
 export function convertToBlockKit(element: UIKitBlockElement): BlockKitBlockElement {
     switch (element.type) {
         case BlockElementType.IMAGE:
