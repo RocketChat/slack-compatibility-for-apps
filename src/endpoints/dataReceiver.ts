@@ -9,8 +9,6 @@ export class DataReceiver extends ApiEndpoint {
 
     // tslint:disable-next-line:max-line-length
     public async post(request: IApiRequest, endpoint: IApiEndpointInfo, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<IApiResponse> {
-        console.log(request.content);
-
         const blockKitData = JSON.parse(request.content.blocks);
 
         const appUsername = this.app.getAppUserUsername();
