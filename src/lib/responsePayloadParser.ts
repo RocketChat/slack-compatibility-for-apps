@@ -1,6 +1,6 @@
-import { Block, MessageAttachment } from "../../vendor/slack-types";
-import { IMessage } from "@rocket.chat/apps-engine/definition/messages";
-import { convertToUIKit } from "../converters/BlockKitToUIKit";
+import { MessageAttachment } from '../../vendor/slack-types';
+import { IMessage } from '@rocket.chat/apps-engine/definition/messages';
+import { convertBlocksToUIKit } from '../converters/BlockKitToUIKit';
 
 export enum ResponseType {
     IN_CHANNEL = 'in_channel',
@@ -59,7 +59,7 @@ function convertSlackMessageToRocketChatMessage(message?: IMessagePayload): Resp
 
     return {
         text: message.text,
-        blocks: convertToUIKit(JSON.parse(message.blocks || '')),
+        blocks: convertBlocksToUIKit(JSON.parse(message.blocks || '')),
         attachments: [], // deprecated by Slack, should we support?
         threadId: message.thread_ts,
     };

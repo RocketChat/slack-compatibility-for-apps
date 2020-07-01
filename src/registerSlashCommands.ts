@@ -1,11 +1,11 @@
-import { SlackCompatibleApp } from "../SlackCompatibleApp";
-import { IConfigurationExtend, IRead, IModify, IHttp, IPersistence, IMessageBuilder } from "@rocket.chat/apps-engine/definition/accessors";
-import { ISlashCommand, SlashCommandContext } from "@rocket.chat/apps-engine/definition/slashcommands";
-import { URLSearchParams } from "url";
-import { getTeamFields, generateResponseUrl, getChannelFields, getUserFields } from "./lib/slackCommonFields";
-import { OriginalActionType, persistResponseToken, IResponseTokenContext } from "./lib/ResponseTokens";
-import { IResponsePayload, parseResponsePayload, IParseResponseResult, ResponseType } from "./lib/responsePayloadParser";
-import { IUser } from "@rocket.chat/apps-engine/definition/users";
+import { SlackCompatibleApp } from '../SlackCompatibleApp';
+import { IConfigurationExtend, IRead, IModify, IHttp, IPersistence, IMessageBuilder } from '@rocket.chat/apps-engine/definition/accessors';
+import { ISlashCommand, SlashCommandContext } from '@rocket.chat/apps-engine/definition/slashcommands';
+import { URLSearchParams } from 'url';
+import { getTeamFields, generateResponseUrl, getChannelFields, getUserFields } from './lib/slackCommonFields';
+import { OriginalActionType, persistResponseToken, IResponseTokenContext } from './lib/ResponseTokens';
+import { IResponsePayload, parseResponsePayload, IParseResponseResult, ResponseType } from './lib/responsePayloadParser';
+import { IUser } from '@rocket.chat/apps-engine/definition/users';
 
 const noop = ()=>{};
 
