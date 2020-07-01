@@ -17,12 +17,10 @@ import { removeObjectProperties } from '../../helpers';
  * @return IOptionObject
  */
 export function convertToUIKit(originalElement: BlockKitOptionObject): UIKitOptionObject {
-    const option: any = {
+    return {
         ...removeObjectProperties(originalElement, ['description','url']),
         text: convertTextToUIKit(originalElement.text),
-    };
-
-    return option as UIKitOptionObject;
+    } as UIKitOptionObject;
 }
 
 /**
@@ -32,10 +30,8 @@ export function convertToUIKit(originalElement: BlockKitOptionObject): UIKitOpti
  * @returns Option
  */
 export function convertToBlockKit(originalElement: UIKitOptionObject): BlockKitOptionObject {
-    const option: any = {
+    return {
         ...originalElement,
         text: convertTextToBlockKit(originalElement.text),
-    };
-
-    return option as BlockKitOptionObject;
+    } as BlockKitOptionObject;
 }

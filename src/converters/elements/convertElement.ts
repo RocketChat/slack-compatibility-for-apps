@@ -7,6 +7,10 @@ import {
     convertToBlockKit as convertImageToBlockKit,
 } from './image';
 import {
+    convertToUIKit as convertPlainTextInputToUIKit,
+    convertToBlockKit as convertPlainTextInputToBlockKit,
+} from './plainTextInput';
+import {
     convertToUIKit as convertOverflowMenuToUIKit,
     convertToBlockKit as convertOverflowMenuToBlockKit,
 } from './overflowMenu';
@@ -24,42 +28,60 @@ import {
     MultiStaticSelect,
     Overflow,
     StaticSelect,
+    PlainTextInput,
 } from '../../../vendor/slack-types';
 import {
     BlockElementType,
-    IBlockElement,
+    IBlockElement as UIKitBlockElement,
     IButtonElement,
     IImageElement,
     IMultiStaticSelectElement,
     IOverflowMenuElement,
+    IPlainTextInputElement,
     IStaticSelectElement,
 } from '@rocket.chat/apps-engine/definition/uikit';
-import { BlockKitAccessoryElements } from '../../customTypes/slack';
+import { BlockKitAccessoryElements as BlockKitBlockElement } from '../../customTypes/slack';
 
-export function convertToUIKit(element: BlockKitAccessoryElements): object {
-    console.log('this is the element type: ' + element.type);
+/**
+ * Converts a single Block Kit element to UIKit
+ *
+ * @param elements BlockKitAccessoryElements
+ * @returns IBlockElement
+ */
+export function convertToUIKit(element: BlockKitBlockElement): UIKitBlockElement {
     switch (element.type) {
-        case 'button':
-            return convertButtonToUIKit(element as Button);
-        case 'image':
+        case BlockElementType.IMAGE:
             return convertImageToUIKit(element as ImageElement);
-        case 'overflow':
+        case BlockElementType.BUTTON:
+            return convertButtonToUIKit(element as Button);
+        case BlockElementType.PLAIN_TEXT_INPUT:
+            return convertPlainTextInputToUIKit(element as PlainTextInput) ;
+        case BlockElementType.OVERFLOW_MENU:
             return convertOverflowMenuToUIKit(element as Overflow);
-        case 'static_select':
+        case BlockElementType.STATIC_SELECT:
             return convertStaticSelectToUIKit(element as StaticSelect);
-        case 'multi_static_select':
+        case BlockElementType.MULTI_STATIC_SELECT:
             return convertMultiStaticSelectToUIKit(element as MultiStaticSelect);
         default:
-            return element;
+            console.warn(`The Block Element of type ${element.type} could not be converted to UIKit`);
+            return {} as UIKitBlockElement;
     }
 }
 
-export function convertToBlockKit(element: IBlockElement): object {
+/**
+ * Converts a single UIKit element to Block Kit
+ *
+ * @param elements IBlockElement
+ * @returns BlockKitAccessoryElements
+ */
+export function convertToBlockKit(element: UIKitBlockElement): BlockKitBlockElement {
     switch (element.type) {
         case BlockElementType.IMAGE:
             return convertImageToBlockKit(element as IImageElement);
         case BlockElementType.BUTTON:
             return convertButtonToBlockKit(element as IButtonElement);
+        case BlockElementType.PLAIN_TEXT_INPUT:
+            return convertPlainTextInputToBlockKit(element as IPlainTextInputElement);
         case BlockElementType.OVERFLOW_MENU:
             return convertOverflowMenuToBlockKit(element as IOverflowMenuElement);
         case BlockElementType.STATIC_SELECT:
@@ -67,6 +89,7 @@ export function convertToBlockKit(element: IBlockElement): object {
         case BlockElementType.MULTI_STATIC_SELECT:
             return convertMultiStaticSelectToBlockKit(element as IMultiStaticSelectElement);
         default:
-            return element;
+            console.warn(`The Block Element of type ${element.type} could not be converted to Block Kit`);
+            return {} as BlockKitBlockElement;
     }
 }

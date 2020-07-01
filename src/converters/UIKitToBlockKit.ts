@@ -1,32 +1,45 @@
-import { BlockType, IBlock, ISectionBlock, IUIKitView } from '@rocket.chat/apps-engine/definition/uikit';
+import {
+    BlockType,
+    IActionsBlock,
+    IBlock,
+    IContextBlock,
+    IDividerBlock,
+    IImageBlock,
+    ISectionBlock,
+    IUIKitView,
+} from '@rocket.chat/apps-engine/definition/uikit';
+import {
+    Block,
+    View,
+} from '../../vendor/slack-types';
+import { convertToBlockKit as convertActionBlockToBlockKit } from './blocks/action';
+import { convertToBlockKit as convertSectionBlockToBlockKit } from './blocks/section';
+import { convertToBlockKit as convertDiviverBlockToBlockKit } from './blocks/divider';
+import { convertToBlockKit as convertImageBlockToBlockKit } from './blocks/image';
+import { convertToBlockKit as convertContextBlockToBlockKit } from './blocks/context';
 
-import { SectionBlock, View } from '../../vendor/slack-types';
-import { snakeCaseToCamelCase } from '../helpers';
-
-export function convertBlocksToBlockKit(blocks: Array<IBlock>): Array<object> {
+export function convertBlocksToBlockKit(blocks: Array<IBlock>): Array<Block> {
     return blocks.map((block) => {
-        // identify block type
         switch (block.type) {
+            case BlockType.ACTIONS:
+                return convertActionBlockToBlockKit(block as IActionsBlock);
             case BlockType.SECTION:
-                return convertSectionBlock(block as ISectionBlock);
+                return convertSectionBlockToBlockKit(block as ISectionBlock);
+            case BlockType.DIVIDER:
+                return convertDiviverBlockToBlockKit(block as IDividerBlock);
+            case BlockType.IMAGE:
+                return convertImageBlockToBlockKit(block as IImageBlock);
+            case BlockType.CONTEXT:
+                return convertContextBlockToBlockKit(block as IContextBlock);
             default:
-                return block;
+                // @NOTE this will be dropped when filtering for truthy values
+                return null;
         }
-    });
+    })
+    .filter(block => block) as Array<Block>;
 }
 
 export function convertViewToBlockKit(view: IUIKitView): View {
     // todo(shiqi.mei) implement it
     return {} as View;
-}
-
-function renameProperties<F, T>(subject: F): T {
-    return Object.entries(subject).map(([key, value]) => (
-        { [snakeCaseToCamelCase(key)]: value }
-    ))
-    .reduce((acc, curr) => (Object.assign(acc, curr)), {}) as T;
-}
-
-function convertSectionBlock(block: ISectionBlock): SectionBlock {
-    return renameProperties<ISectionBlock, SectionBlock>(block);
 }

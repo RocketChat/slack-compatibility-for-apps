@@ -14,7 +14,7 @@ import {
  * @returns ITextObject
  */
 export function convertToUIKit(originalObject: BlockKitPlainText | BlockKitMrkdwnText): UIKitTextObject {
-    let text: any = {
+    const text: any = {
         ...originalObject,
     };
 

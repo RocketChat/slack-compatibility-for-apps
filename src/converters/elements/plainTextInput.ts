@@ -18,7 +18,7 @@ import {
  * @returns IPlainTextInputElement
  */
 export function convertToUIKit(originalElement: BlockKitPlainTextInput) : UIKitPlainTextInput {
-    let input: any = {
+    const input: any = {
         ...removeObjectProperties(originalElement, ['multiline', 'min_length', 'max_length'])
     };
 
@@ -41,13 +41,10 @@ export function convertToUIKit(originalElement: BlockKitPlainTextInput) : UIKitP
  * @returns PlainTextElement
  */
 export function convertToBlockKit(originalElement: UIKitPlainTextInput): BlockKitPlainTextInput {
-    let input: any = {
-        ...originalElement
-    };
-
-    input.placeholder = convertTextToBlockKit(originalElement.placeholder as ITextObject);
-
-    return renameObjectProperties(camelCaseToSnakeCase, input) as BlockKitPlainTextInput;
+    return {
+        ...renameObjectProperties(camelCaseToSnakeCase, originalElement),
+        placeholder: convertTextToBlockKit(originalElement.placeholder as ITextObject),
+    } as BlockKitPlainTextInput;
 }
 
 /**

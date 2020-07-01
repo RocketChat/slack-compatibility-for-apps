@@ -6,7 +6,7 @@ const mainClass = `/SlackCompatibleApp.ts`;
 const sourceDir = __dirname;
 const targetDir = `${process.env.INIT_CWD}/vendor/slack-compatible-layer`;
 
-async function copyProjectContent () {
+(async function copyProjectContent () {
     try {
         await fs.ensureDir(targetDir);
         await Promise.all([
@@ -18,6 +18,4 @@ async function copyProjectContent () {
     } catch (err) {
         console.error(err)
     }
-}
-
-copyProjectContent()
+})();

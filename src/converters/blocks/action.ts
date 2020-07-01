@@ -13,13 +13,10 @@ import {
  * @returns IActionsBlock
  */
 export function convertToUIKit(originalBlock: BlockKitActionsBlock): UIKitActionsBlock {
-    let target: Partial<UIKitActionsBlock> = {
+    return {
         ...renameObjectProperties(snakeCaseToCamelCase, originalBlock),
-    };
-
-    target.elements = convertElementListToUIKit(originalBlock.elements) as IBlockElement[];
-
-    return target as UIKitActionsBlock;
+        elements: convertElementListToUIKit(originalBlock.elements) as IBlockElement[],
+    } as UIKitActionsBlock;
 }
 
 /**
@@ -29,13 +26,10 @@ export function convertToUIKit(originalBlock: BlockKitActionsBlock): UIKitAction
  * @returns ActionsBlock
  */
 export function convertToBlockKit(originalBlock: UIKitActionsBlock): BlockKitActionsBlock {
-    let target: Partial<BlockKitActionsBlock> = {
+    return {
         ...renameObjectProperties(camelCaseToSnakeCase, originalBlock),
-    };
-
-    target.elements = convertElementListToBlockKit(originalBlock.elements) as Block[];
-
-    return target as BlockKitActionsBlock;
+        elements: convertElementListToBlockKit(originalBlock.elements) as Block[],
+    } as BlockKitActionsBlock;
 }
 
 /**
