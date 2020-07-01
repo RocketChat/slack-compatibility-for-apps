@@ -4,6 +4,9 @@ import { App } from '@rocket.chat/apps-engine/definition/App';
 import { IAppInfo } from '@rocket.chat/apps-engine/definition/metadata';
 import { IUIKitInteractionHandler, IUIKitResponse, UIKitBlockInteractionContext, UIKitViewCloseInteractionContext, UIKitViewSubmitInteractionContext } from '@rocket.chat/apps-engine/definition/uikit';
 import { DataReceiver } from './src/endpoints/dataReceiver';
+import { ISlashCommandDescriptor, registerSlashCommands } from './src/registerSlashCommands';
+import { ResponseUrlEndpoint } from './src/endpoints/ResponseUrlEndpoint';
+
 
 export abstract class SlackCompatibleApp extends App implements IUIKitInteractionHandler {
     /**
@@ -13,19 +16,27 @@ export abstract class SlackCompatibleApp extends App implements IUIKitInteractio
      * Rocket.Chat will send an HTTP POST request with information to this URL when users interact with a interactive component.
      */
     public interactiveEndponit: string;
+    public slashcommands?: Array<ISlashCommandDescriptor>;
 
     constructor(info: IAppInfo, logger: ILogger, accessors?: IAppAccessors) {
         super(info, logger, accessors);
+
+        this.slashcommands = [].concat(this.slashcommands as any).filter((descriptor?: ISlashCommandDescriptor) => descriptor && descriptor.command && descriptor.shortDescription);
     }
 
     public async initialize(configurationExtend: IConfigurationExtend, environmentRead: IEnvironmentRead): Promise<void> {
         configurationExtend.api.provideApi({
             security: ApiSecurity.UNSECURE,
             visibility: ApiVisibility.PUBLIC,
-            endpoints: [new DataReceiver(this)],
+            endpoints: [
+                new DataReceiver(this),
+                new ResponseUrlEndpoint(this),
+            ],
         });
 
-        await this.extendConfiguration(configurationExtend, environmentRead);
+        await registerSlashCommands(this, configurationExtend);
+
+        return this.extendConfiguration(configurationExtend, environmentRead);
     }
 
     // tslint:disable-next-line:max-line-length
