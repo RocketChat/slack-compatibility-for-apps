@@ -35,7 +35,6 @@ export async function generateResponseUrl(
         user,
         text,
     }: IGenerateResponseUrlParams,
-    read: IRead,
     app: SlackCompatibleApp):
     Promise<{ responseUrl: string, tokenContext: IResponseTokenContext, }>
 {
@@ -49,7 +48,7 @@ export async function generateResponseUrl(
         usageCount: 0,
     };
 
-    const siteUrl = await read.getEnvironmentReader().getServerSettings().getValueById('Site_Url');
+    const siteUrl = await app.getAccessors().environmentReader.getServerSettings().getValueById('Site_Url');
     const apiRoute = app.getAccessors().providedApiEndpoints.find(metadata => metadata.path.indexOf(RESPONSE_URL_ENDPOINT_BASE_PATH) !== -1);
 
     if (!siteUrl || !apiRoute) {
