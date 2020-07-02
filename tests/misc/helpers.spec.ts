@@ -5,7 +5,7 @@ import { BlockElementType, IInputBlock } from '@rocket.chat/apps-engine/definiti
 
 import { calculateExpiryDate, camelCaseToSnakeCase, findInputBlockElementType, snakeCaseToCamelCase } from '../../src/helpers';
 import { RESPONSE_URL_EXPIRATION_TIME } from '../../src/lib/constants';
-import { mockUIKitView } from '../mocks/view/mockView';
+import { mockUIKitView } from '../__mocks__/view/mockView';
 
 describe('Helper functions', () => {
     describe('Case style translator', () => {

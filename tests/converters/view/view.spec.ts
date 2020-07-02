@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 
 import { convertBlockKitViewStateToUIKit, convertUIKitViewStateToBlockKit } from '../../../src/converters/view/viewStateConverter';
-import { mockBlockKitView, mockUIKitView } from '../../mocks/view/mockView';
+import { mockBlockKitView, mockUIKitView } from '../../__mocks__/view/mockView';
 
 describe('View state converters', () => {
     describe('UIKit -> BlockKit', () => {

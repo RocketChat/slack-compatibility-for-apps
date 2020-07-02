@@ -5,7 +5,7 @@ import { BlockType, IInputBlock, IUIKitView, TextObjectType } from '@rocket.chat
 import { convertViewToUIKit } from '../../src/converters/BlockKitToUIKit';
 import { convertViewToBlockKit } from '../../src/converters/UIKitToBlockKit';
 import { BlockKitInputBlockElementType, IBlockKitView } from '../../src/customTypes/slack';
-import { mockBlockKitView, mockUIKitView } from '../mocks/view/mockView';
+import { mockBlockKitView, mockUIKitView } from '../__mocks__/view/mockView';
 
 describe('View converters', () => {
     describe('UIKit -> BlockKit', () => {
