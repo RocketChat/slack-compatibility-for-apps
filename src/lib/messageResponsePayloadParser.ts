@@ -1,6 +1,6 @@
-import { Block, MessageAttachment } from "../../vendor/slack-types";
-import { IMessage } from "@rocket.chat/apps-engine/definition/messages";
-import { convertToUIKit } from "../converters/BlockKitToUIKit";
+import { MessageAttachment } from '../../vendor/slack-types';
+import { IMessage } from '@rocket.chat/apps-engine/definition/messages';
+import { convertBlocksToUIKit } from '../converters/BlockKitToUIKit';
 
 export enum ResponseType {
     IN_CHANNEL = 'in_channel',
@@ -8,14 +8,14 @@ export enum ResponseType {
 }
 
 export interface IMessagePayload {
-    text: string;
+    text?: string;
     blocks?: string;
     attachments?: Array<MessageAttachment>;
     thread_ts?: string;
     mrkdwn?: boolean;
 }
 
-export interface IResponsePayload extends IMessagePayload {
+export interface IMessageResponsePayload extends IMessagePayload {
     response_type?: ResponseType;
     replace_original?: boolean;
     delete_original?: boolean;
@@ -23,7 +23,7 @@ export interface IResponsePayload extends IMessagePayload {
 
 export type ResponseMessage = Pick<IMessage, 'text' | 'blocks' | 'attachments' | 'threadId'>;
 
-export interface IParseResponseResult {
+export interface IParseMessageResponseResult {
     instructions: {
         responseType: ResponseType;
         replaceOriginal: boolean;
@@ -32,14 +32,20 @@ export interface IParseResponseResult {
     message?: ResponseMessage;
 }
 
-export function parseResponsePayload(payload: IResponsePayload | string | undefined): IParseResponseResult {
+const DEFAULT_INSTRUCTIONS = {
+    responseType: ResponseType.EPHEMERAL,
+    replaceOriginal: false,
+    deleteOriginal: false,
+}
+
+export function parseMessageResponsePayload(payload: IMessageResponsePayload | string | undefined): IParseMessageResponseResult {
+    if (!payload) {
+        return { instructions: DEFAULT_INSTRUCTIONS };
+    }
+
     if (typeof payload === 'string') {
         return {
-            instructions: {
-                responseType: ResponseType.EPHEMERAL,
-                replaceOriginal: false,
-                deleteOriginal: false,
-            },
+            instructions: DEFAULT_INSTRUCTIONS,
             message: convertSlackMessageToRocketChatMessage({ text: payload }),
         };
     }
@@ -55,11 +61,11 @@ export function parseResponsePayload(payload: IResponsePayload | string | undefi
 }
 
 function convertSlackMessageToRocketChatMessage(message?: IMessagePayload): ResponseMessage | undefined {
-    if (!message) return undefined;
+    if (!message || !message.text && !message.blocks) return undefined;
 
     return {
         text: message.text,
-        blocks: convertToUIKit(JSON.parse(message.blocks || '')),
+        blocks: convertBlocksToUIKit(JSON.parse(message.blocks || '""')),
         attachments: [], // deprecated by Slack, should we support?
         threadId: message.thread_ts,
     };

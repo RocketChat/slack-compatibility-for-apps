@@ -1,11 +1,11 @@
-import { SlackCompatibleApp } from "../SlackCompatibleApp";
-import { IConfigurationExtend, IRead, IModify, IHttp, IPersistence, IMessageBuilder } from "@rocket.chat/apps-engine/definition/accessors";
-import { ISlashCommand, SlashCommandContext } from "@rocket.chat/apps-engine/definition/slashcommands";
-import { URLSearchParams } from "url";
-import { getTeamFields, generateResponseUrl, getChannelFields, getUserFields } from "./lib/slackCommonFields";
-import { OriginalActionType, persistResponseToken, IResponseTokenContext } from "./lib/ResponseTokens";
-import { IResponsePayload, parseResponsePayload, IParseResponseResult, ResponseType } from "./lib/responsePayloadParser";
-import { IUser } from "@rocket.chat/apps-engine/definition/users";
+import { SlackCompatibleApp } from '../SlackCompatibleApp';
+import { IConfigurationExtend, IRead, IModify, IHttp, IPersistence, IMessageBuilder } from '@rocket.chat/apps-engine/definition/accessors';
+import { ISlashCommand, SlashCommandContext } from '@rocket.chat/apps-engine/definition/slashcommands';
+import { URLSearchParams } from 'url';
+import { getTeamFields, generateResponseUrl, getChannelFields, getUserFields } from './lib/slackCommonFields';
+import { OriginalActionType, persistResponseToken, IResponseTokenContext } from './lib/ResponseTokens';
+import { IMessageResponsePayload, parseMessageResponsePayload, IParseMessageResponseResult, ResponseType } from './lib/messageResponsePayloadParser';
+import { IUser } from '@rocket.chat/apps-engine/definition/users';
 
 const noop = ()=>{};
 
@@ -62,7 +62,7 @@ function createSlashcommandExecutor(app: SlackCompatibleApp, descriptor: ISlashC
             room: context.getRoom(),
             user: context.getSender(),
             text: originalMessage,
-        }, read, app);
+        }, app);
 
         await persistResponseToken(tokenContext, persis);
 
@@ -86,7 +86,7 @@ function createSlashcommandExecutor(app: SlackCompatibleApp, descriptor: ISlashC
             content: encodePayload(payload as any as { [K: string]: string }),
         });
 
-        const responsePayload = ((): IResponsePayload | string => {
+        const responsePayload = ((): IMessageResponsePayload | string => {
             try {
                 return JSON.parse(response.content || '');
             } catch {
@@ -97,7 +97,7 @@ function createSlashcommandExecutor(app: SlackCompatibleApp, descriptor: ISlashC
         if (!responsePayload) return;
 
         await handleSlashCommandResponsePayload(
-            parseResponsePayload(responsePayload),
+            parseMessageResponsePayload(responsePayload),
             tokenContext,
             read,
             modify,
@@ -105,7 +105,7 @@ function createSlashcommandExecutor(app: SlackCompatibleApp, descriptor: ISlashC
     }
 }
 
-export async function handleSlashCommandResponsePayload({instructions, message}: IParseResponseResult, tokenContext: IResponseTokenContext, read: IRead, modify: IModify): Promise<void> {
+export async function handleSlashCommandResponsePayload({instructions, message}: IParseMessageResponseResult, tokenContext: IResponseTokenContext, read: IRead, modify: IModify): Promise<void> {
     if (!message) return;
 
     const recipient = await read.getUserReader().getById(tokenContext.recipient);

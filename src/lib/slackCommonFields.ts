@@ -1,10 +1,10 @@
-import { IRead, IPersistence } from "@rocket.chat/apps-engine/definition/accessors";
-import { IUser } from "@rocket.chat/apps-engine/definition/users";
-import { IRoom } from "@rocket.chat/apps-engine/definition/rooms";
-import { OriginalActionType, IResponseTokenContext, persistResponseToken } from "./ResponseTokens";
-import { RESPONSE_URL_EXPIRATION_TIME, RESPONSE_URL_ENDPOINT_BASE_PATH } from "./constants";
-import { generateToken, calculateExpiryDate } from "../helpers";
-import { SlackCompatibleApp } from "../../SlackCompatibleApp";
+import { IRead } from '@rocket.chat/apps-engine/definition/accessors';
+import { IUser } from '@rocket.chat/apps-engine/definition/users';
+import { IRoom } from '@rocket.chat/apps-engine/definition/rooms';
+import { OriginalActionType, IResponseTokenContext } from './ResponseTokens';
+import { RESPONSE_URL_EXPIRATION_TIME, RESPONSE_URL_ENDPOINT_BASE_PATH } from './constants';
+import { generateToken, calculateExpiryDate } from '../helpers';
+import { SlackCompatibleApp } from '../../SlackCompatibleApp';
 
 export const getTeamFields = async (read: IRead) => ({
     team_id: await read.getEnvironmentReader().getServerSettings().getValueById('uniqueID'),
@@ -35,7 +35,6 @@ export async function generateResponseUrl(
         user,
         text,
     }: IGenerateResponseUrlParams,
-    read: IRead,
     app: SlackCompatibleApp):
     Promise<{ responseUrl: string, tokenContext: IResponseTokenContext, }>
 {
@@ -49,7 +48,7 @@ export async function generateResponseUrl(
         usageCount: 0,
     };
 
-    const siteUrl = await read.getEnvironmentReader().getServerSettings().getValueById('Site_Url');
+    const siteUrl = await app.getAccessors().environmentReader.getServerSettings().getValueById('Site_Url');
     const apiRoute = app.getAccessors().providedApiEndpoints.find(metadata => metadata.path.indexOf(RESPONSE_URL_ENDPOINT_BASE_PATH) !== -1);
 
     if (!siteUrl || !apiRoute) {

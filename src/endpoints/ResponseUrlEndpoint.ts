@@ -1,9 +1,9 @@
-import { ApiEndpoint, IApiEndpoint, IApiRequest, IApiEndpointInfo, IApiResponse } from "@rocket.chat/apps-engine/definition/api";
-import { IRead, IModify, IHttp, IPersistence, HttpStatusCode } from "@rocket.chat/apps-engine/definition/accessors";
-import { retrieveResponseToken, persistResponseToken } from "../lib/ResponseTokens";
-import { RESPONSE_URL_CALL_LIMIT_FOR_TOKEN, RESPONSE_URL_ENDPOINT_BASE_PATH } from "../lib/constants";
-import { parseResponsePayload } from "../lib/responsePayloadParser";
-import { handleSlashCommandResponsePayload } from "../registerSlashCommands";
+import { ApiEndpoint, IApiEndpoint, IApiRequest, IApiEndpointInfo, IApiResponse } from '@rocket.chat/apps-engine/definition/api';
+import { IRead, IModify, IHttp, IPersistence, HttpStatusCode } from '@rocket.chat/apps-engine/definition/accessors';
+import { retrieveResponseToken, persistResponseToken } from '../lib/ResponseTokens';
+import { RESPONSE_URL_CALL_LIMIT_FOR_TOKEN, RESPONSE_URL_ENDPOINT_BASE_PATH } from '../lib/constants';
+import { parseMessageResponsePayload } from '../lib/messageResponsePayloadParser';
+import { handleSlashCommandResponsePayload } from '../registerSlashCommands';
 
 export class ResponseUrlEndpoint extends ApiEndpoint implements IApiEndpoint {
     public path = `${RESPONSE_URL_ENDPOINT_BASE_PATH}/:token`;
@@ -33,7 +33,7 @@ export class ResponseUrlEndpoint extends ApiEndpoint implements IApiEndpoint {
 
         await persistResponseToken(tokenContext, persis);
 
-        await handleSlashCommandResponsePayload(parseResponsePayload(request.content), tokenContext, read, modify);
+        await handleSlashCommandResponsePayload(parseMessageResponsePayload(request.content), tokenContext, read, modify);
 
         return this.success();
     }
