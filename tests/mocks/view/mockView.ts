@@ -263,8 +263,8 @@ export const mockBlockKitView: IBlockKitView = {
         text: 'Submit'
     },
     private_metadata: 'This is private metadata',
-    callback_id: 'this_is_callback_id',
-    clear_on_close: false,
+    callback_id: 'mock_view_id',
+    clear_on_close: true,
     notify_on_close: false,
     state: mockBlockKitViewState,
 }
@@ -272,7 +272,7 @@ export const mockBlockKitView: IBlockKitView = {
 export const mockUIKitView: IUIKitView = {
     // mandatory
     appId: '1399cc03-b350-4fab-b5f2-61089b41b81a',
-    id: 'uikitViewId',
+    id: 'mock_view_id',
     type: UIKitViewType.MODAL,
     title: {
         type: TextObjectType.PLAINTEXT,
@@ -289,16 +289,15 @@ export const mockUIKitView: IUIKitView = {
                 actionId: 'action_plain-text-input',
                 placeholder: {
                     type: 'plain_text',
-                    text: 'PlaceHolder text for plain text input',
+                    text: 'Placeholder for plain text input',
                     emoji: false
                 }
             },
             label: {
                 'type': 'plain_text',
                 'text': 'Plain Text Input',
-                'emoji': false
+                'emoji': true
             },
-            appId: '1399cc03-b350-4fab-b5f2-61089b41b81a'
         },
         // Static Select
         {
@@ -309,15 +308,15 @@ export const mockUIKitView: IUIKitView = {
                 actionId: 'action_static-select',
                 placeholder: {
                     type: 'plain_text',
-                    text: 'Placeholder text for static select',
-                    emoji: false
+                    text: 'Placeholder for static select',
+                    emoji: true
                 },
                 options: [
                     {
                         'text': {
                             'type': 'plain_text',
                             'text': 'option 0',
-                            'emoji': false
+                            'emoji': true
                         },
                         'value': 'value-0'
                     },
@@ -325,7 +324,7 @@ export const mockUIKitView: IUIKitView = {
                         'text': {
                             'type': 'plain_text',
                             'text': 'option 1',
-                            'emoji': false
+                            'emoji': true
                         },
                         'value': 'value-1'
                     }
@@ -334,9 +333,8 @@ export const mockUIKitView: IUIKitView = {
             label: {
                 'type': 'plain_text',
                 'text': 'Static Select',
-                'emoji': false
+                'emoji': true
             },
-            appId: '1399cc03-b350-4fab-b5f2-61089b41b81a'
         },
         // Multiple Static Select
         {
@@ -347,15 +345,15 @@ export const mockUIKitView: IUIKitView = {
                 actionId: 'action_multi-static-select',
                 placeholder: {
                     type: 'plain_text',
-                    text: 'Placeholder text for multiple static select',
-                    emoji: false
+                    text: 'Placeholder for multiple static select',
+                    emoji: true
                 },
                 options: [
                     {
                         text: {
                             type: 'plain_text',
                             text: 'option 0',
-                            emoji: false
+                            emoji: true
                         },
                         value: 'value-0'
                     },
@@ -363,7 +361,7 @@ export const mockUIKitView: IUIKitView = {
                         text: {
                             type: 'plain_text',
                             text: 'option 1',
-                            emoji: false
+                            emoji: true
                         },
                         value: 'value-1'
                     }
@@ -371,10 +369,9 @@ export const mockUIKitView: IUIKitView = {
             },
             label: {
                 type: 'plain_text',
-                text: 'Label',
-                emoji: false
+                text: 'Multiple Static Select',
+                emoji: true
             },
-            appId: '1399cc03-b350-4fab-b5f2-61089b41b81a'
         }
     ] as Array<IInputBlock>,
     // optional
@@ -383,7 +380,6 @@ export const mockUIKitView: IUIKitView = {
         text: {
             type: TextObjectType.PLAINTEXT,
             text: 'Close',
-            emoji: false
         },
         actionId: '9a340793-bb6a-11ea-b7cf-0319c4330df2'
     },
@@ -392,7 +388,6 @@ export const mockUIKitView: IUIKitView = {
         text: {
             type: TextObjectType.PLAINTEXT,
             text: 'Submit',
-            emoji: false
         },
         actionId: '9a340792-bb6a-11ea-b7cf-0319c4330df2'
     },
