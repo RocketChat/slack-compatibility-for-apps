@@ -4,7 +4,7 @@ import { App } from '@rocket.chat/apps-engine/definition/App';
 import { IAppInfo } from '@rocket.chat/apps-engine/definition/metadata';
 import { IUIKitInteractionHandler, IUIKitResponse, UIKitBlockInteractionContext, UIKitViewCloseInteractionContext, UIKitViewSubmitInteractionContext } from '@rocket.chat/apps-engine/definition/uikit';
 import { DataReceiver } from './src/endpoints/dataReceiver';
-import { ISlashCommandDescriptor, registerSlashCommands } from './src/registerSlashCommands';
+import { ISlashCommandDescriptor, registerSlashCommands } from './src/lib/registerSlashCommands';
 import { ResponseUrlEndpoint } from './src/endpoints/ResponseUrlEndpoint';
 
 
