@@ -5,18 +5,19 @@ import { OriginalActionType, IResponseTokenContext } from './ResponseTokens';
 import { RESPONSE_URL_EXPIRATION_TIME, RESPONSE_URL_ENDPOINT_BASE_PATH } from './constants';
 import { generateToken, calculateExpiryDate } from '../helpers';
 import { SlackCompatibleApp } from '../../SlackCompatibleApp';
+import { ISlackTeam, ISlackChannel, ISlackUser } from '../customTypes/slack';
 
-export const getTeamFields = async (read: IRead) => ({
+export const getTeamFields = async (read: IRead): Promise<ISlackTeam> => ({
     team_id: await read.getEnvironmentReader().getServerSettings().getValueById('uniqueID'),
     team_domain: await read.getEnvironmentReader().getServerSettings().getValueById('Site_Url'),
 });
 
-export const getChannelFields = (room: IRoom) => ({
+export const getChannelFields = (room: IRoom): ISlackChannel => ({
     channel_id: room.id,
     channel_name: room.slugifiedName,
 });
 
-export const getUserFields = (user: IUser) => ({
+export const getUserFields = (user: IUser): ISlackUser => ({
     user_id: user.id,
     user_name: user.name,
 });
