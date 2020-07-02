@@ -34,7 +34,7 @@ export function convertToUIKit(originalBlock: BlockKitInputBlock): UIKitInputBlo
  */
 export function convertToBlockKit(originalBlock: UIKitInputBlock): BlockKitInputBlock {
     return {
-        ...renameObjectProperties(camelCaseToSnakeCase, originalBlock),
+        ...renameObjectProperties(camelCaseToSnakeCase, removeObjectProperties(originalBlock, ['appId'])),
         label: convertTextToBlockKit(originalBlock.label),
         element: convertElementToBlockKit(originalBlock.element),
     } as BlockKitInputBlock;
