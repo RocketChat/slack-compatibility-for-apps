@@ -1,12 +1,21 @@
-import { IAppAccessors, IConfigurationExtend, IEnvironmentRead, IHttp, ILogger, IModify, IPersistence, IRead } from '@rocket.chat/apps-engine/definition/accessors';
+import {
+    IAppAccessors, IConfigurationExtend, IEnvironmentRead, IHttp, ILogger, IModify, IPersistence, IRead
+} from '@rocket.chat/apps-engine/definition/accessors';
 import { ApiSecurity, ApiVisibility } from '@rocket.chat/apps-engine/definition/api';
 import { App } from '@rocket.chat/apps-engine/definition/App';
 import { IAppInfo } from '@rocket.chat/apps-engine/definition/metadata';
-import { IUIKitInteractionHandler, IUIKitResponse, UIKitBlockInteractionContext, UIKitViewCloseInteractionContext, UIKitViewSubmitInteractionContext } from '@rocket.chat/apps-engine/definition/uikit';
-import { DataReceiver } from './src/endpoints/dataReceiver';
-import { ISlashCommandDescriptor, registerSlashCommands } from './src/registerSlashCommands';
-import { ResponseUrlEndpoint } from './src/endpoints/ResponseUrlEndpoint';
+import {
+    IUIKitInteractionHandler, IUIKitResponse, UIKitBlockInteractionContext, UIKitViewCloseInteractionContext, UIKitViewSubmitInteractionContext
+} from '@rocket.chat/apps-engine/definition/uikit';
 
+import { convertViewToBlockKit } from './src/converters/UIKitToBlockKit';
+import { handleViewEventResponse } from './src/converters/view/handleViewEventResponse';
+import { BlockKitEventType, IBlockKitViewClosedPayload, IBlockKitViewSubmissionPayload } from './src/customTypes/slack';
+import { DataReceiver } from './src/endpoints/dataReceiver';
+import { ResponseUrlEndpoint } from './src/endpoints/ResponseUrlEndpoint';
+import { generateHash } from './src/helpers';
+import { getTeamFields, getUserFields } from './src/lib/slackCommonFields';
+import { ISlashCommandDescriptor, registerSlashCommands } from './src/registerSlashCommands';
 
 export abstract class SlackCompatibleApp extends App implements IUIKitInteractionHandler {
     /**
@@ -41,18 +50,52 @@ export abstract class SlackCompatibleApp extends App implements IUIKitInteractio
 
     // tslint:disable-next-line:max-line-length
     public async executeViewSubmitHandler(context: UIKitViewSubmitInteractionContext, read: IRead, http: IHttp, persistence: IPersistence, modify: IModify): Promise<IUIKitResponse> {
+        const { user, view } = context.getInteractionData();
+        const payload: IBlockKitViewSubmissionPayload = {
+            type: BlockKitEventType.VIEW_SUBMISSION,
+            team: await getTeamFields(read),
+            user: getUserFields(user),
+            view: convertViewToBlockKit(view),
+            hash: generateHash(),
+        };
+
+        const response = await http.post(this.interactiveEndponit, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            content: JSON.stringify(payload),
+        });
+
+        await handleViewEventResponse(response);
+
         return context.getInteractionResponder().successResponse();
     }
 
     // tslint:disable-next-line:max-line-length
     public async executeBlockActionHandler(context: UIKitBlockInteractionContext, read: IRead, http: IHttp, persistence: IPersistence, modify: IModify): Promise<IUIKitResponse> {
-
-
         return context.getInteractionResponder().successResponse();
     }
 
     // tslint:disable-next-line:max-line-length
     public async executeViewClosedHandler(context: UIKitViewCloseInteractionContext, read: IRead, http: IHttp, persistence: IPersistence, modify: IModify): Promise<IUIKitResponse> {
+        const { user, view } = context.getInteractionData();
+        const payload: IBlockKitViewClosedPayload = {
+            type: BlockKitEventType.VIEW_SUBMISSION,
+            team: await getTeamFields(read),
+            user: getUserFields(user),
+            view: convertViewToBlockKit(view),
+            is_cleared: false, // Todo (shiqi.mei): should set value according the actual situation
+        };
+
+        const response = await http.post(this.interactiveEndponit, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            content: JSON.stringify(payload),
+        });
+
+        await handleViewEventResponse(response);
+
         return context.getInteractionResponder().successResponse();
     }
 }
