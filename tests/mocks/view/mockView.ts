@@ -1,8 +1,8 @@
-import { BlockElementType, BlockType, IInputBlock, IUIKitView, TextObjectType, UIKitViewType } from '@rocket.chat/apps-engine/definition/uikit';
+import { BlockElementType, IInputBlock, IUIKitView, TextObjectType, UIKitViewType } from '@rocket.chat/apps-engine/definition/uikit';
 
 import { BlockKitInputBlockElementType, IBlockKitView } from '../../../src/customTypes/slack';
 
-const mockUIKitViewState: object = {
+const mockUIKitViewState: IUIKitView['state'] = {
     'block_plain-text-input': {
         'action_plain-text-input': 'Content for plain text input'
     },
@@ -280,42 +280,100 @@ export const mockUIKitView: IUIKitView = {
         emoji: false
     },
     blocks: [
+        // Plain Text Input
         {
-            type: BlockType.INPUT,
+            type: 'input',
+            blockId: 'block_plain-text-input',
             element: {
                 type: BlockElementType.PLAIN_TEXT_INPUT,
-                actionId: 'sl_input',
+                actionId: 'action_plain-text-input',
                 placeholder: {
-                    type: TextObjectType.PLAINTEXT,
-                    text: 'Placeholder text for single-line input',
+                    type: 'plain_text',
+                    text: 'PlaceHolder text for plain text input',
                     emoji: false
                 }
             },
             label: {
-                type: BlockElementType.PLAIN_TEXT_INPUT,
-                text: 'Label',
-                emoji: false
+                'type': 'plain_text',
+                'text': 'Plain Text Input',
+                'emoji': false
             },
-            blockId: '9a340790-bb6a-11ea-b7cf-0319c4330df2',
             appId: '1399cc03-b350-4fab-b5f2-61089b41b81a'
         },
+        // Static Select
         {
-            type: BlockType.INPUT,
+            type: 'input',
+            blockId: 'block_static-select',
             element: {
-                type: BlockElementType.PLAIN_TEXT_INPUT,
-                actionId: 'ml_input',
+                type: BlockElementType.STATIC_SELECT,
+                actionId: 'action_static-select',
                 placeholder: {
-                    type: TextObjectType.PLAINTEXT,
-                    text: 'Placeholder text for multi-line input',
+                    type: 'plain_text',
+                    text: 'Placeholder text for static select',
                     emoji: false
-                }
+                },
+                options: [
+                    {
+                        'text': {
+                            'type': 'plain_text',
+                            'text': 'option 0',
+                            'emoji': false
+                        },
+                        'value': 'value-0'
+                    },
+                    {
+                        'text': {
+                            'type': 'plain_text',
+                            'text': 'option 1',
+                            'emoji': false
+                        },
+                        'value': 'value-1'
+                    }
+                ]
             },
             label: {
-                type: TextObjectType.PLAINTEXT,
+                'type': 'plain_text',
+                'text': 'Static Select',
+                'emoji': false
+            },
+            appId: '1399cc03-b350-4fab-b5f2-61089b41b81a'
+        },
+        // Multiple Static Select
+        {
+            type: 'input',
+            blockId: 'block_multi-static-select',
+            element: {
+                type: BlockElementType.MULTI_STATIC_SELECT,
+                actionId: 'action_multi-static-select',
+                placeholder: {
+                    type: 'plain_text',
+                    text: 'Placeholder text for multiple static select',
+                    emoji: false
+                },
+                options: [
+                    {
+                        text: {
+                            type: 'plain_text',
+                            text: 'option 0',
+                            emoji: false
+                        },
+                        value: 'value-0'
+                    },
+                    {
+                        text: {
+                            type: 'plain_text',
+                            text: 'option 1',
+                            emoji: false
+                        },
+                        value: 'value-1'
+                    }
+                ]
+            },
+            label: {
+                type: 'plain_text',
                 text: 'Label',
                 emoji: false
             },
-            blockId: '9a340791-bb6a-11ea-b7cf-0319c4330df2',
             appId: '1399cc03-b350-4fab-b5f2-61089b41b81a'
         }
     ] as Array<IInputBlock>,
