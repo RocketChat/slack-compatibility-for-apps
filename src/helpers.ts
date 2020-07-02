@@ -1,3 +1,5 @@
+import { BlockElementType, IInputBlock } from "@rocket.chat/apps-engine/definition/uikit";
+
 export function snakeCaseToCamelCase(input: string): string {
     return input.toLowerCase()
     .replace(/_([a-z])/g, i => i.toUpperCase())
@@ -33,4 +35,10 @@ export function generateToken(): string {
 
 export function calculateExpiryDate(date: Date, millisecondsToExpire: number): Date {
     return new Date(date.valueOf() + millisecondsToExpire);
+}
+
+export function findUIKitInputBlockElementTypeByBlockIdAndActionId(blocks: Array<IInputBlock>, blockId: string, actionId: string): BlockElementType | undefined {
+    const block = blocks.find(((block) => block.blockId === blockId && block.element.actionId === actionId));
+
+    return block && block.element && block.element.type;
 }
