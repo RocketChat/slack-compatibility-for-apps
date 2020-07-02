@@ -33,6 +33,10 @@ export function generateToken(): string {
     return  Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 }
 
+export function generateHash(): string {
+    return `${Math.random().toString(10).substring(2, 11)}.${Math.random().toString(16).substring(2, 10)}`;
+}
+
 export function calculateExpiryDate(date: Date, millisecondsToExpire: number): Date {
     return new Date(date.valueOf() + millisecondsToExpire);
 }
