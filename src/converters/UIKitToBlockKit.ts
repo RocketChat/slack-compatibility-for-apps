@@ -46,7 +46,7 @@ export function convertBlocksToBlockKit(blocks: Array<IBlock>): Array<Block> {
 }
 
 export function convertViewToBlockKit(view: IUIKitView): IBlockKitView {
-    if (!view) return;
+    if (!view) return {} as IBlockKitView;
 
     const { id, type, title, blocks, close, submit, state, clearOnClose, notifyOnClose } = view;
     console.log(blocks, convertBlocksToBlockKit(blocks));

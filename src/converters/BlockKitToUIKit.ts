@@ -9,7 +9,7 @@ import {
     ContextBlock,
     InputBlock,
 } from '../../vendor/slack-types';
-import { IBlock, IUIKitView, BlockType, UIKitViewType, BlockElementType } from '@rocket.chat/apps-engine/definition/uikit';
+import { IBlock, IUIKitView, BlockType, UIKitViewType, BlockElementType, TextObjectType } from '@rocket.chat/apps-engine/definition/uikit';
 import { convertToUIKit as convertActionBlockToUIKit } from './blocks/action';
 import { convertToUIKit as convertSectionBlockToUIKit } from './blocks/section';
 import { convertToUIKit as convertDiviverBlockToUIKit } from './blocks/divider';
@@ -46,15 +46,15 @@ export function convertBlocksToUIKit(blocks?: Array<Block>): Array<IBlock> {
 }
 
 export function convertViewToUIKit(view: IBlockKitView, appId: string): IUIKitView {
-    if (!view) return;
+    if (!view) return {} as IUIKitView;
 
     const { type, title, blocks, close, submit, callback_id, clear_on_close, notify_on_close, state } = view;
 
     return {
         appId,
-        id: callback_id,
+        id: callback_id || uuid.v1(),
         type: type === 'modal' ? UIKitViewType.MODAL : UIKitViewType.HOME,
-        title: convertTextToUIKit(title),
+        title: convertTextToUIKit(title || { type: TextObjectType.PLAINTEXT, text: '' }),
         blocks: convertBlocksToUIKit(blocks),
         close: close && {
             type: BlockElementType.BUTTON,

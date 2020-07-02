@@ -38,18 +38,16 @@ export function convertUIKitViewStateToBlockKit(state: IUIKitView['state'], bloc
     };
 }
 
-function getBlockKitInputBlockElementType(blocks: Array<IBlock>, blockId: string, actionId: string): BlockKitInputBlockElementType | undefined {
+function getBlockKitInputBlockElementType(blocks: Array<IBlock>, blockId: string, actionId: string): BlockKitInputBlockElementType {
     const inputBlocks = blocks.filter(({ type }) => type === BlockType.INPUT) as Array<IInputBlock>;
     const type = findInputBlockElementType(inputBlocks, blockId, actionId);
 
     switch (type) {
-        case BlockElementType.PLAIN_TEXT_INPUT:
-            return BlockKitInputBlockElementType.PLAIN_TEXT_INPUT;
         case BlockElementType.STATIC_SELECT:
             return BlockKitInputBlockElementType.STATIC_SELECT;
         case BlockElementType.MULTI_STATIC_SELECT:
             return BlockKitInputBlockElementType.MULTI_STATIC_SELECT;
         default:
-            return undefined;
+            return BlockKitInputBlockElementType.PLAIN_TEXT_INPUT;
     }
 }
