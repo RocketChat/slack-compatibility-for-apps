@@ -3,7 +3,7 @@ import { describe, it } from 'mocha';
 
 import { BlockElementType, IInputBlock } from '@rocket.chat/apps-engine/definition/uikit';
 
-import { calculateExpiryDate, camelCaseToSnakeCase, findUIKitInputBlockElementTypeByBlockIdAndActionId, snakeCaseToCamelCase } from '../../src/helpers';
+import { calculateExpiryDate, camelCaseToSnakeCase, findInputBlockElementType, snakeCaseToCamelCase } from '../../src/helpers';
 import { RESPONSE_URL_EXPIRATION_TIME } from '../../src/lib/constants';
 import { mockUIKitView } from '../mocks/view/mockView';
 
@@ -40,7 +40,7 @@ describe('Helper functions', () => {
             const blockId = 'block_static-select';
             const actionId = 'action_static-select';
 
-            expect(findUIKitInputBlockElementTypeByBlockIdAndActionId(mockBlocks, blockId, actionId)).to.deep.equal(BlockElementType.STATIC_SELECT);
+            expect(findInputBlockElementType(mockBlocks, blockId, actionId)).to.deep.equal(BlockElementType.STATIC_SELECT);
         });
     });
 });
