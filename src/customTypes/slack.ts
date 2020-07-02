@@ -1,6 +1,7 @@
 import {
     Action, Button, Checkboxes, Datepicker, ImageElement, MrkdwnElement, MultiSelect, Overflow, PlainTextElement, RadioButtons, Select, View
 } from '../../vendor/slack-types';
+import { Omit } from './util';
 
 export type BlockKitAccessoryElements = Button | Overflow | Datepicker | Select | MultiSelect | Action | ImageElement | RadioButtons | Checkboxes;
 
