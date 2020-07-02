@@ -61,7 +61,7 @@ export function parseMessageResponsePayload(payload: IMessageResponsePayload | s
 }
 
 function convertSlackMessageToRocketChatMessage(message?: IMessagePayload): ResponseMessage | undefined {
-    if (!message || !message.text && !message.blocks) return undefined;
+    if (!message || (!message.text && !message.blocks)) return undefined;
 
     return {
         text: message.text,

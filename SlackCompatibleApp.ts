@@ -12,10 +12,10 @@ import { convertViewToBlockKit } from './src/converters/UIKitToBlockKit';
 import { handleViewEventResponse } from './src/converters/view/handleViewEventResponse';
 import { BlockKitEventType, IBlockKitViewClosedPayload, IBlockKitViewSubmissionPayload } from './src/customTypes/slack';
 import { DataReceiver } from './src/endpoints/dataReceiver';
+import { ISlashCommandDescriptor, registerSlashCommands } from './src/lib/registerSlashCommands';
 import { ResponseUrlEndpoint } from './src/endpoints/ResponseUrlEndpoint';
 import { generateHash } from './src/helpers';
 import { getTeamFields, getUserFields } from './src/lib/slackCommonFields';
-import { ISlashCommandDescriptor, registerSlashCommands } from './src/registerSlashCommands';
 
 export abstract class SlackCompatibleApp extends App implements IUIKitInteractionHandler {
     /**

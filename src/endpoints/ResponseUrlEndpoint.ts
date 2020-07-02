@@ -3,7 +3,7 @@ import { IRead, IModify, IHttp, IPersistence, HttpStatusCode } from '@rocket.cha
 import { retrieveResponseToken, persistResponseToken } from '../lib/ResponseTokens';
 import { RESPONSE_URL_CALL_LIMIT_FOR_TOKEN, RESPONSE_URL_ENDPOINT_BASE_PATH } from '../lib/constants';
 import { parseMessageResponsePayload } from '../lib/messageResponsePayloadParser';
-import { handleSlashCommandResponsePayload } from '../registerSlashCommands';
+import { handleSlashCommandResponsePayload } from '../lib/registerSlashCommands';
 
 export class ResponseUrlEndpoint extends ApiEndpoint implements IApiEndpoint {
     public path = `${RESPONSE_URL_ENDPOINT_BASE_PATH}/:token`;

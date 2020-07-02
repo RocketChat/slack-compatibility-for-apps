@@ -1,11 +1,12 @@
-import { SlackCompatibleApp } from '../SlackCompatibleApp';
+import { SlackCompatibleApp } from '../../SlackCompatibleApp';
 import { IConfigurationExtend, IRead, IModify, IHttp, IPersistence, IMessageBuilder } from '@rocket.chat/apps-engine/definition/accessors';
 import { ISlashCommand, SlashCommandContext } from '@rocket.chat/apps-engine/definition/slashcommands';
 import { URLSearchParams } from 'url';
-import { getTeamFields, generateResponseUrl, getChannelFields, getUserFields } from './lib/slackCommonFields';
-import { OriginalActionType, persistResponseToken, IResponseTokenContext } from './lib/ResponseTokens';
-import { IMessageResponsePayload, parseMessageResponsePayload, IParseMessageResponseResult, ResponseType } from './lib/messageResponsePayloadParser';
+import { getTeamFields, generateResponseUrl, getChannelFields, getUserFields } from './slackCommonFields';
+import { OriginalActionType, persistResponseToken, IResponseTokenContext } from './ResponseTokens';
+import { IMessageResponsePayload, parseMessageResponsePayload, IParseMessageResponseResult, ResponseType } from './messageResponsePayloadParser';
 import { IUser } from '@rocket.chat/apps-engine/definition/users';
+import { IMessage } from '@rocket.chat/apps-engine/definition/messages';
 
 const noop = ()=>{};
 
@@ -115,13 +116,29 @@ export async function handleSlashCommandResponsePayload({instructions, message}:
         throw new Error('Invalid token');
     }
 
-    let method = (message: IMessageBuilder) => modify.getNotifier().notifyUser(recipient, message.getMessage());
+    const builder = modify.getCreator().startMessage(message as IMessage);
+    builder.setRoom(room);
 
     if (instructions.responseType === ResponseType.IN_CHANNEL) {
-        method = (message: IMessageBuilder) => modify.getCreator().finish(message).then(noop);
-
-        await method(modify.getCreator().startMessage({ text: tokenContext.originalText, room, sender: recipient }));
+        await handleInChannelResponse(builder, recipient, tokenContext, modify);
+    } else {
+        await handleEphemeralResponse(builder, recipient, modify);
     }
+}
 
-    return method(modify.getCreator().startMessage({ ...message, room, sender: {} as IUser }));
+const handleEphemeralResponse = async (messageBuilder: IMessageBuilder, recipient: IUser, modify: IModify) => {
+    modify.getNotifier().notifyUser(recipient, messageBuilder.getMessage());
+};
+
+const handleInChannelResponse = async (messageBuilder: IMessageBuilder, recipient: IUser, tokenContext: IResponseTokenContext, modify: IModify) => {
+    const originalMessageBuilder = modify.getCreator().startMessage();
+
+    originalMessageBuilder
+        .setText(tokenContext.originalText || '')
+        .setRoom(messageBuilder.getRoom())
+        .setSender(recipient);
+
+    await modify.getCreator().finish(originalMessageBuilder);
+
+    await modify.getCreator().finish(messageBuilder);
 }
