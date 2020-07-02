@@ -9,7 +9,7 @@ import {
 } from '@rocket.chat/apps-engine/definition/uikit';
 
 import { convertViewToBlockKit } from './src/converters/UIKitToBlockKit';
-import { handleViewEventResponse } from './src/converters/view/handleViewEventResponse';
+import { handleViewEventResponse } from './src/lib/handleViewEventResponse';
 import { BlockKitEventType, IBlockKitViewClosedPayload, IBlockKitViewSubmissionPayload } from './src/customTypes/slack';
 import { DataReceiver } from './src/endpoints/dataReceiver';
 import { ISlashCommandDescriptor, registerSlashCommands } from './src/lib/registerSlashCommands';
