@@ -52,7 +52,10 @@ export enum BlockKitInputBlockElementType {
     PLAIN_TEXT_INPUT = 'plain_text_input',
     STATIC_SELECT = 'static_select',
     MULTI_STATIC_SELECT = 'multi_static_select',
-    DATE_PICKER = 'datepicker'
+    MULTI_USERS_SELECT = 'multi_users_select',
+    DATE_PICKER = 'datepicker',
+    CHECKBOXES = 'checkboxes',
+    RADIO_BUTTONS = 'radio_buttons',
 }
 
 export type BlockKitViewEventType = Exclude<BlockKitEventType, BlockKitEventType.BLOCK_ACTIONS>;
