@@ -23,9 +23,6 @@ import { convertBlockKitViewStateToUIKit } from './view/viewStateConverter';
 export function convertBlocksToUIKit(blocks?: Array<Block>): Array<IBlock> {
     if (!Array.isArray(blocks)) return [];
 
-export function convertBlocksToUIKit(blocks?: Array<Block>): Array<IBlock> {
-    if (!Array.isArray(blocks)) return [];
-
     return blocks.map((block) => {
         switch (block.type) {
             case BlockType.ACTIONS:
