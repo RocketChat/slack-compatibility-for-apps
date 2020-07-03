@@ -14,7 +14,9 @@ import { convertToUIKit as convertDiviverBlockToUIKit } from './blocks/divider';
 import { convertToUIKit as convertImageBlockToUIKit } from './blocks/image';
 import { convertToUIKit as convertContextBlockToUIKit } from './blocks/context';
 
-export function convertBlocksToUIKit(blocks: Array<Block>): Array<IBlock> {
+export function convertBlocksToUIKit(blocks?: Array<Block>): Array<IBlock> {
+    if (!Array.isArray(blocks)) return [];
+
     return blocks.map((block) => {
         switch (block.type) {
             case BlockType.ACTIONS:

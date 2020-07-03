@@ -21,7 +21,7 @@ export function convertToUIKit(originalBlock: BlockKitImageBlock): UIKitImageBlo
         ...renameObjectProperties(snakeCaseToCamelCase, originalBlock),
     };
 
-    if (image.title) {
+    if (originalBlock.title) {
         image.title = convertTextToUIKit(originalBlock.title);
     }
 
@@ -39,7 +39,7 @@ export function convertToBlockKit(originalBlock: UIKitImageBlock): BlockKitImage
         ...renameObjectProperties(camelCaseToSnakeCase, originalBlock),
     };
 
-    if (image.title) {
+    if (originalBlock.title) {
         image.title = convertTextToBlockKit(originalBlock.title);
     }
 
