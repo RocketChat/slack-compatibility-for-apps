@@ -1,4 +1,4 @@
-import { IAppAccessors, IConfigurationExtend, IEnvironmentRead, IHttp, ILogger, IModify, IPersistence, IRead } from '@rocket.chat/apps-engine/definition/accessors';
+import { IAppAccessors, IConfigurationExtend, IEnvironmentRead, IHttp, ILogger, IModify, IPersistence, IRead, IHttpResponse } from '@rocket.chat/apps-engine/definition/accessors';
 import { ApiSecurity, ApiVisibility } from '@rocket.chat/apps-engine/definition/api';
 import { App } from '@rocket.chat/apps-engine/definition/App';
 import { IAppInfo } from '@rocket.chat/apps-engine/definition/metadata';
@@ -6,6 +6,7 @@ import { IUIKitInteractionHandler, IUIKitResponse, UIKitBlockInteractionContext,
 import { DataReceiver } from './src/endpoints/dataReceiver';
 import { ISlashCommandDescriptor, registerSlashCommands } from './src/lib/registerSlashCommands';
 import { ResponseUrlEndpoint } from './src/endpoints/ResponseUrlEndpoint';
+import { handleBlockActionEvent } from './src/lib/uikit-events/handleBlockActionEvent';
 
 
 export abstract class SlackCompatibleApp extends App implements IUIKitInteractionHandler {
@@ -40,13 +41,17 @@ export abstract class SlackCompatibleApp extends App implements IUIKitInteractio
 
     // tslint:disable-next-line:max-line-length
     public async executeBlockActionHandler(context: UIKitBlockInteractionContext, read: IRead, http: IHttp, persistence: IPersistence, modify: IModify): Promise<IUIKitResponse> {
-
-
-        return context.getInteractionResponder().successResponse();
+        return handleBlockActionEvent(context, this, persistence, modify);
     }
 
     // tslint:disable-next-line:max-line-length
     public async executeViewClosedHandler(context: UIKitViewCloseInteractionContext, read: IRead, http: IHttp, persistence: IPersistence, modify: IModify): Promise<IUIKitResponse> {
         return context.getInteractionResponder().successResponse();
+    }
+
+    public sendInteraction(payload: object): Promise<IHttpResponse> {
+        return this.getAccessors().http.post(this.interactiveEndpoint, {
+            data: payload,
+        });
     }
 }
