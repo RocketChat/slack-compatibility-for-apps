@@ -94,3 +94,22 @@ export interface IBlockKitViewEventPayload {
 export type IBlockKitViewSubmissionPayload = Omit<IBlockKitViewEventPayload, 'is_cleared'>;
 
 export type IBlockKitViewClosedPayload = Omit<IBlockKitViewEventPayload, 'hash'>;
+
+export enum BlockKitViewResponseAction {
+    /**
+     * Updating a view
+     */
+    UPDATE = 'update',
+    /**
+     * Pushing a new view via API
+     */
+    PUSH = 'push',
+    /**
+     * Closing all views
+     */
+    CLEAR = 'clear',
+    /**
+     * Displaying errors
+     */
+    ERRORS = 'errors',
+}
