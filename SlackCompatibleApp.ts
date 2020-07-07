@@ -24,7 +24,7 @@ export abstract class SlackCompatibleApp extends App implements IUIKitInteractio
      *
      * Rocket.Chat will send an HTTP POST request with information to this URL when users interact with a interactive component.
      */
-    public interactiveEndponit: string;
+    public interactiveEndpoint: string;
     public slashcommands?: Array<ISlashCommandDescriptor>;
 
     constructor(info: IAppInfo, logger: ILogger, accessors?: IAppAccessors) {
