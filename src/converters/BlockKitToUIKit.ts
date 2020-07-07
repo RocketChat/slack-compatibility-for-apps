@@ -1,4 +1,4 @@
-import * as uuid from 'uuid';
+import { uuid } from '../helpers';
 
 import {
     Block,
@@ -52,19 +52,19 @@ export function convertViewToUIKit(view: IBlockKitView, appId: string): IUIKitVi
 
     return {
         appId,
-        id: callback_id || uuid.v1(),
+        id: callback_id || uuid(),
         type: type === 'modal' ? UIKitViewType.MODAL : UIKitViewType.HOME,
         title: convertTextToUIKit(title || { type: TextObjectType.PLAINTEXT, text: '' }),
         blocks: convertBlocksToUIKit(blocks),
         close: close && {
             type: BlockElementType.BUTTON,
             text: convertTextToUIKit(close),
-            actionId: uuid.v1(),
+            actionId: uuid(),
         },
         submit: submit && {
             type: BlockElementType.BUTTON,
             text: convertTextToUIKit(submit),
-            actionId: uuid.v1(),
+            actionId: uuid(),
         },
         state: state && convertBlockKitViewStateToUIKit(state),
         clearOnClose: clear_on_close,
