@@ -1,3 +1,5 @@
+import { IUser } from '@rocket.chat/apps-engine/definition/users';
+
 export function snakeCaseToCamelCase(input: string): string {
     return input.toLowerCase()
     .replace(/_([a-z])/g, i => i.toUpperCase())
@@ -25,6 +27,10 @@ export function removeObjectProperties(source: object, properties: string[] = []
         return {[key]: source[key as keyof object]};
     })
     .reduce((acc, curr) => Object.assign(acc, curr), {});
+}
+
+export function generateCompatibleTriggerId(originalTriggerId: string, user: IUser): string {
+    return `${originalTriggerId}.${user.id}`;
 }
 
 export function generateToken(): string {
