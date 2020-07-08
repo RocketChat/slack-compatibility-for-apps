@@ -1,8 +1,7 @@
-import { SlackCompatibleApp } from '../../../SlackCompatibleApp';
 import { IUIKitResponse, UIKitBlockInteractionContext } from '@rocket.chat/apps-engine/definition/uikit';
 import { IPersistence, IModify } from '@rocket.chat/apps-engine/definition/accessors';
+import { SlackCompatibleApp } from '../../../SlackCompatibleApp';
 import { BlockKitTextObject } from '../../customTypes/slack';
-import { UIKitIncomingInteractionContainerType } from '@rocket.chat/apps-engine/definition/uikit/UIKitIncomingInteractionContainer';
 import { getTeamFields, getUserFields, generateResponseUrl } from '../slackCommonFields';
 import { OriginalActionType, persistResponseToken } from '../ResponseTokens';
 
@@ -11,10 +10,22 @@ export enum InteractionType {
     INTERACTIVE_MESSAGE = 'interactive_message',
 }
 
+export enum BlockActionContainerType {
+    VIEW = 'view',
+    MESSAGE = 'message',
+}
+
 export interface ISlackBlockActionPayload {
     type: InteractionType;
     trigger_id: string;
     response_url: string;
+    container: {
+        type: BlockActionContainerType;
+        view_id?: string;
+        message_ts?: string;
+        channel_id?: string;
+        is_ephemeral?: boolean;
+    }
     user: {
         id: string;
         username: string;
@@ -49,7 +60,7 @@ export async function handleBlockActionEvent(context: UIKitBlockInteractionConte
     await persistResponseToken(tokenContext, persistence);
 
     const eventPayload: ISlackBlockActionPayload = {
-        type: incomingInteraction.container.type === UIKitIncomingInteractionContainerType.MESSAGE ? InteractionType.INTERACTIVE_MESSAGE : InteractionType.BLOCK_ACTION,
+        type: InteractionType.BLOCK_ACTION,
         team: {
             id: team_id,
             domain: team_domain,
