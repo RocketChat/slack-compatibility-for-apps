@@ -7,6 +7,7 @@ import { OriginalActionType, persistResponseToken, IResponseTokenContext } from 
 import { IMessageResponsePayload, parseMessageResponsePayload, IParseMessageResponseResult, ResponseType } from './messageResponsePayloadParser';
 import { IUser } from '@rocket.chat/apps-engine/definition/users';
 import { IMessage } from '@rocket.chat/apps-engine/definition/messages';
+import { generateCompatibleTriggerId } from '../helpers';
 
 const noop = ()=>{};
 
@@ -74,7 +75,7 @@ function createSlashcommandExecutor(app: SlackCompatibleApp, descriptor: ISlashC
             response_url,
             command: descriptor.command,
             text: context.getArguments().join(' '),
-            trigger_id: context.getTriggerId() || '',
+            trigger_id: generateCompatibleTriggerId(context.getTriggerId() || '', context.getSender()),
             ...await getTeamFields(read),
             ...getChannelFields(context.getRoom()),
             ...getUserFields(context.getSender()),
