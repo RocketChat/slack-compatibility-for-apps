@@ -4,6 +4,7 @@ import { SlackCompatibleApp } from '../../../SlackCompatibleApp';
 import { BlockKitTextObject } from '../../customTypes/slack';
 import { getTeamFields, getUserFields, generateResponseUrl } from '../slackCommonFields';
 import { OriginalActionType, persistResponseToken } from '../ResponseTokens';
+import { generateCompatibleTriggerId } from '../../helpers';
 
 export enum InteractionType {
     BLOCK_ACTION = 'block_action',
@@ -72,7 +73,7 @@ export async function handleBlockActionEvent(context: UIKitBlockInteractionConte
         },
         response_url: responseUrl,
         api_app_id: incomingInteraction.appId,
-        trigger_id: incomingInteraction.triggerId,
+        trigger_id: generateCompatibleTriggerId(incomingInteraction.triggerId, incomingInteraction.user),
         actions: [
             {
                 type: '', // we don't have this information
