@@ -87,7 +87,7 @@ export abstract class SlackCompatibleApp extends App implements IUIKitInteractio
             is_cleared: false, // Todo (shiqi.mei): should set value according the actual situation
         };
 
-        const response = await http.post(this.interactiveEndponit, {
+        const response = await http.post(this.interactiveEndpoint, {
             headers: {
                 'Content-Type': 'application/json',
             },
