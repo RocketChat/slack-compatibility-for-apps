@@ -68,6 +68,9 @@ function createSlashcommandExecutor(app: SlackCompatibleApp, descriptor: ISlashC
 
         await persistResponseToken(tokenContext, persis);
 
+        const { id: team_id, domain: team_domain } = await getTeamFields(read);
+        const { id: user_id, name: user_name } = await getUserFields(context.getSender(), read);
+
         const payload: ISlashCommandPayload = {
             token: '', // Slack deprecated
             enterprise_id: undefined, // we have no equivalent
@@ -76,9 +79,11 @@ function createSlashcommandExecutor(app: SlackCompatibleApp, descriptor: ISlashC
             command: descriptor.command,
             text: context.getArguments().join(' '),
             trigger_id: generateCompatibleTriggerId(context.getTriggerId() || '', context.getSender()),
-            ...await getTeamFields(read),
-            ...getChannelFields(context.getRoom()),
-            ...getUserFields(context.getSender()),
+            team_id,
+            team_domain,
+            user_id,
+            user_name,
+            ...await getChannelFields(context.getRoom()),
         };
 
         const response = await http.post(descriptor.requestURL, {
