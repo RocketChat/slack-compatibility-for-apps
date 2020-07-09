@@ -1,4 +1,5 @@
 import { IUser } from '@rocket.chat/apps-engine/definition/users';
+import { BlockElementType, IInputBlock } from "@rocket.chat/apps-engine/definition/uikit";
 
 export function snakeCaseToCamelCase(input: string): string {
     return input.toLowerCase()
@@ -37,6 +38,24 @@ export function generateToken(): string {
     return  Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 }
 
+export function generateHash(): string {
+    return `${Math.random().toString(10).substring(2, 11)}.${Math.random().toString(16).substring(2, 10)}`;
+}
+
 export function calculateExpiryDate(date: Date, millisecondsToExpire: number): Date {
     return new Date(date.valueOf() + millisecondsToExpire);
+}
+
+export function findInputBlockElementType(blocks: Array<IInputBlock>, blockId: string, actionId: string): BlockElementType | undefined {
+    const block = blocks.find(((block) => block.blockId === blockId && block.element.actionId === actionId));
+
+    return block && block.element && block.element.type;
+}
+
+export function uuid(): string {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+        const r = Math.random() * 16 | 0;
+        const v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
 }
