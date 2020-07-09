@@ -1,79 +1,62 @@
 import { IUIKitResponse, UIKitBlockInteractionContext } from '@rocket.chat/apps-engine/definition/uikit';
 import { IPersistence, IModify } from '@rocket.chat/apps-engine/definition/accessors';
 import { SlackCompatibleApp } from '../../../SlackCompatibleApp';
-import { BlockKitTextObject } from '../../customTypes/slack';
-import { getTeamFields, getUserFields, generateResponseUrl } from '../slackCommonFields';
+import { BlockKitTextObject, BlockKitEventType, IBlockKitBlockActionsEventPayload, BlockKitBlockActionContainerType } from '../../customTypes/slack';
+import { getTeamFields, getUserFields, generateResponseUrl, getChannelFields } from '../slackCommonFields';
 import { OriginalActionType, persistResponseToken } from '../ResponseTokens';
 import { generateCompatibleTriggerId } from '../../helpers';
-
-export enum InteractionType {
-    BLOCK_ACTION = 'block_action',
-    INTERACTIVE_MESSAGE = 'interactive_message',
-}
-
-export enum BlockActionContainerType {
-    VIEW = 'view',
-    MESSAGE = 'message',
-}
-
-export interface ISlackBlockActionPayload {
-    type: InteractionType;
-    trigger_id: string;
-    response_url: string;
-    container: {
-        type: BlockActionContainerType;
-        view_id?: string;
-        message_ts?: string;
-        channel_id?: string;
-        is_ephemeral?: boolean;
-    }
-    user: {
-        id: string;
-        username: string;
-        name: string;
-    };
-    team: {
-        id: string;
-        domain: string;
-    };
-    api_app_id: string; // undocumented, not sure what it does
-    actions: Array<{
-        type: string;
-        block_id: string;
-        action_id: string;
-        text: BlockKitTextObject;
-        value: string;
-        action_ts: string;
-    }>
-}
-
+import { UIKitIncomingInteractionContainerType } from '@rocket.chat/apps-engine/definition/uikit/UIKitIncomingInteractionContainer';
+import { convertMessageToSlack } from '../../converters/message';
 
 export async function handleBlockActionEvent(context: UIKitBlockInteractionContext, app: SlackCompatibleApp, persistence: IPersistence, modify: IModify): Promise<IUIKitResponse> {
     const incomingInteraction = context.getInteractionData();
-    const { team_domain, team_id } = await getTeamFields(app.getAccessors().reader);
-    const { user_id, user_name } = await getUserFields(incomingInteraction.user);
-    const { responseUrl, tokenContext } = await generateResponseUrl({
-        action: OriginalActionType.BLOCK_ACTION,
-        room: incomingInteraction.room,
-        user: incomingInteraction.user,
-    }, app);
 
-    await persistResponseToken(tokenContext, persistence);
+    const extraFields = {};
+    const container = {
+        type: BlockKitBlockActionContainerType.MESSAGE,
+    };
 
-    const eventPayload: ISlackBlockActionPayload = {
-        type: InteractionType.BLOCK_ACTION,
-        team: {
-            id: team_id,
-            domain: team_domain,
-        },
-        user: {
-            id: user_id,
-            name: user_name,
-            username: '',
-        },
-        response_url: responseUrl,
+    if (incomingInteraction.container.type === UIKitIncomingInteractionContainerType.MESSAGE) {
+        Object.assign(container, {
+            type: BlockKitBlockActionContainerType.MESSAGE,
+            message_ts: incomingInteraction.container.id,
+            channel_id: incomingInteraction.message.room.id,
+            is_ephemeral: false,
+        });
+
+        const { responseUrl, tokenContext } = await generateResponseUrl({
+            action: OriginalActionType.BLOCK_ACTION,
+            room: incomingInteraction.room,
+            user: incomingInteraction.user,
+        }, app);
+
+        await persistResponseToken(tokenContext, persistence);
+
+        Object.assign(extraFields, {
+            message: convertMessageToSlack(incomingInteraction.message),
+            channel: await getChannelFields(incomingInteraction.room),
+            response_url: responseUrl,
+        });
+    } else if (incomingInteraction.container.type === UIKitIncomingInteractionContainerType.VIEW) {
+        Object.assign(container, {
+            type: BlockKitBlockActionContainerType.VIEW,
+            view_id: incomingInteraction.container.id,
+        });
+
+        // @TODO d-gubert fetch the view persisted by `views.open` endpoint
+        Object.assign(extraFields, {
+            view: {},
+        })
+    }
+
+    const eventPayload: IBlockKitBlockActionsEventPayload = {
+        container,
+        type: BlockKitEventType.BLOCK_ACTIONS,
+        team: await getTeamFields(app.getAccessors().reader),
+        user: await getUserFields(incomingInteraction.user, app.getAccessors().reader),
         api_app_id: incomingInteraction.appId,
         trigger_id: generateCompatibleTriggerId(incomingInteraction.triggerId, incomingInteraction.user),
+        ...extraFields,
         actions: [
             {
                 type: '', // we don't have this information

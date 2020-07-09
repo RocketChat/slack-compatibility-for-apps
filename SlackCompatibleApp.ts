@@ -53,7 +53,7 @@ export abstract class SlackCompatibleApp extends App implements IUIKitInteractio
         const payload: IBlockKitViewSubmissionPayload = {
             type: BlockKitEventType.VIEW_SUBMISSION,
             team: await getTeamFields(read),
-            user: getUserFields(user),
+            user: await getUserFields(user, read),
             view: convertViewToBlockKit(view),
             hash: generateHash(),
         };
@@ -81,7 +81,7 @@ export abstract class SlackCompatibleApp extends App implements IUIKitInteractio
         const payload: IBlockKitViewClosedPayload = {
             type: BlockKitEventType.VIEW_SUBMISSION,
             team: await getTeamFields(read),
-            user: getUserFields(user),
+            user: await getUserFields(user, read),
             view: convertViewToBlockKit(view),
             is_cleared: false, // Todo (shiqi.mei): should set value according the actual situation
         };
