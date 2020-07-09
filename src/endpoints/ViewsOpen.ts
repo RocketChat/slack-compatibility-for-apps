@@ -2,6 +2,8 @@ import { IHttp, IModify, IPersistence, IRead, HttpStatusCode } from '@rocket.cha
 import { ApiEndpoint, IApiEndpointInfo, IApiRequest, IApiResponse } from '@rocket.chat/apps-engine/definition/api';
 import { convertViewToUIKit } from '../converters/BlockKitToUIKit';
 import { parseCompatibleTriggerId } from '../helpers';
+import { PersistView } from '../storage/PersistView';
+
 
 export class ViewsOpen extends ApiEndpoint {
     public path = 'views.open';
@@ -21,6 +23,8 @@ export class ViewsOpen extends ApiEndpoint {
         }
 
         const uikitView = convertViewToUIKit(JSON.parse(view), this.app.getID());
+
+        await PersistView(uikitView, persis);
 
         const user = await read.getUserReader().getById(userId);
 
