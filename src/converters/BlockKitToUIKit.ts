@@ -6,6 +6,7 @@ import {
     DividerBlock,
     ImageBlock,
     ContextBlock,
+    InputBlock,
 } from '../../vendor/slack-types';
 import { IBlock, IUIKitView, BlockType, BlockElementType, UIKitViewType, TextObjectType } from '@rocket.chat/apps-engine/definition/uikit';
 import {
@@ -16,6 +17,7 @@ import { convertToUIKit as convertSectionBlockToUIKit } from './blocks/section';
 import { convertToUIKit as convertDiviverBlockToUIKit } from './blocks/divider';
 import { convertToUIKit as convertImageBlockToUIKit } from './blocks/image';
 import { convertToUIKit as convertContextBlockToUIKit } from './blocks/context';
+import { convertToUIKit as convertInputBlockToUIKit } from './blocks/input';
 
 export function convertBlocksToUIKit(blocks?: Array<Block>): Array<IBlock> {
     if (!Array.isArray(blocks)) return [];
@@ -32,6 +34,8 @@ export function convertBlocksToUIKit(blocks?: Array<Block>): Array<IBlock> {
                 return convertImageBlockToUIKit(block as ImageBlock);
             case BlockType.CONTEXT:
                 return convertContextBlockToUIKit(block as ContextBlock);
+            case BlockType.INPUT:
+                return convertInputBlockToUIKit(block as InputBlock);
             default:
                 // @NOTE this will be dropped when filtering for truthy values
                 return null;
