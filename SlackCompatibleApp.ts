@@ -59,7 +59,7 @@ export abstract class SlackCompatibleApp extends App implements IUIKitInteractio
             hash: generateHash(),
         };
 
-        const response = await http.post(this.interactiveEndponit, {
+        const response = await http.post(this.interactiveEndpoint, {
             headers: {
                 'Content-Type': 'application/json',
             },
