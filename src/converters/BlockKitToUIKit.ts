@@ -9,7 +9,7 @@ import {
     ContextBlock,
     InputBlock,
 } from '../../vendor/slack-types';
-import { IBlock, IUIKitView, BlockType, UIKitViewType, BlockElementType, TextObjectType } from '@rocket.chat/apps-engine/definition/uikit';
+import { IBlock, IUIKitView, BlockType, BlockElementType, UIKitViewType, TextObjectType } from '@rocket.chat/apps-engine/definition/uikit';
 import { convertToUIKit as convertActionBlockToUIKit } from './blocks/action';
 import { convertToUIKit as convertSectionBlockToUIKit } from './blocks/section';
 import { convertToUIKit as convertDiviverBlockToUIKit } from './blocks/divider';

@@ -7,6 +7,7 @@ import {
 } from '@rocket.chat/apps-engine/definition/uikit';
 
 import { DataReceiver } from './src/endpoints/dataReceiver';
+import { ViewsOpen } from './src/endpoints/ViewsOpen';
 import { ISlashCommandDescriptor, registerSlashCommands } from './src/lib/registerSlashCommands';
 import { ResponseUrlEndpoint } from './src/endpoints/ResponseUrlEndpoint';
 import { handleBlockActionEvent } from './src/lib/uikit-events/handleBlockActionEvent';
@@ -36,6 +37,7 @@ export abstract class SlackCompatibleApp extends App implements IUIKitInteractio
             endpoints: [
                 new DataReceiver(this),
                 new ResponseUrlEndpoint(this),
+                new ViewsOpen(this),
             ],
         });
 

@@ -34,6 +34,17 @@ export function generateCompatibleTriggerId(originalTriggerId: string, user: IUs
     return `${originalTriggerId}.${user.id}`;
 }
 
+/**
+ * It returns a tuple containing a `triggerId` and `userId` based on a provided
+ * `compatibleTriggerId` ("triggerId.userId")
+ *
+ * @param compatibleTriggerId string
+ * @returns [triggerId: string, userId: string]
+ */
+export function parseCompatibleTriggerId(compatibleTriggerId: string): [string, string] {
+    return compatibleTriggerId.split('.') as [string, string];
+}
+
 export function generateToken(): string {
     return  Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 }
