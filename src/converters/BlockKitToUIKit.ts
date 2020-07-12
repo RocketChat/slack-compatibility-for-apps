@@ -48,11 +48,11 @@ export function convertBlocksToUIKit(blocks?: Array<Block>): Array<IBlock> {
 export function convertViewToUIKit(view: IBlockKitView, appId: string): IUIKitView {
     if (!view) return {} as IUIKitView;
 
-    const { type, title, blocks, close, submit, callback_id, clear_on_close, notify_on_close, state } = view;
+    const { id, type, title, blocks, close, submit, clear_on_close, notify_on_close, state } = view;
 
     return {
         appId,
-        id: callback_id || uuid(),
+        id: id || uuid(),
         type: type === 'modal' ? UIKitViewType.MODAL : UIKitViewType.HOME,
         title: convertTextToUIKit(title || { type: TextObjectType.PLAINTEXT, text: '' }),
         blocks: convertBlocksToUIKit(blocks),

@@ -1,5 +1,5 @@
 import {
-    Action, Block, Button, Checkboxes, Datepicker, ImageElement, MrkdwnElement, MultiSelect, Overflow, PlainTextElement, RadioButtons, Select, View
+    Action, Block, Button, Checkboxes, Datepicker, ImageElement, MrkdwnElement, MultiSelect, Overflow, PlainTextElement, RadioButtons, Select, View, Option
 } from '../../vendor/slack-types';
 import { Omit } from './util';
 
@@ -66,6 +66,17 @@ export enum BlockKitBlockActionContainerType {
     MESSAGE = 'message',
 }
 
+// There are other optional fields to the action, but they are not supported yet
+export interface IBlockKitBlockAction {
+    type: string;
+    block_id: string;
+    action_id: string;
+    action_ts: string;
+    text?: BlockKitTextObject;
+    value?: string;
+    selectedOption?: Option;
+}
+
 export interface IBlockKitBlockActionsEventPayload {
     type: BlockKitEventType;
     trigger_id: string;
@@ -79,17 +90,10 @@ export interface IBlockKitBlockActionsEventPayload {
     user: ISlackUser;
     team: ISlackTeam;
     api_app_id: string; // undocumented, not sure what it does
+    actions: Array<IBlockKitBlockAction>
     message?: ISlackMessage;
     response_url?: string;
     view?: IBlockKitView;
-    actions: Array<{
-        type: string;
-        block_id: string;
-        action_id: string;
-        text: BlockKitTextObject;
-        value: string;
-        action_ts: string;
-    }>
 }
 
 export type BlockKitViewEventType = Exclude<BlockKitEventType, BlockKitEventType.BLOCK_ACTIONS>;
