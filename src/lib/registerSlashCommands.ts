@@ -104,7 +104,7 @@ function createSlashcommandExecutor(app: SlackCompatibleApp, descriptor: ISlashC
         if (!responsePayload) return;
 
         await handleSlashCommandResponsePayload(
-            parseMessageResponsePayload(responsePayload),
+            parseMessageResponsePayload(responsePayload, app),
             tokenContext,
             read,
             modify,

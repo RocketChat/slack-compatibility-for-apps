@@ -20,7 +20,7 @@ import { convertToUIKit as convertTextToUIKit } from './objects/text';
 import { IBlockKitView } from '../customTypes/slack';
 import { convertBlockKitViewStateToUIKit } from './view/viewStateConverter';
 
-export function convertBlocksToUIKit(blocks?: Array<Block>): Array<IBlock> {
+export function convertBlocksToUIKit(blocks: Array<Block> | undefined, appId: string): Array<IBlock> {
     if (!Array.isArray(blocks)) return [];
 
     return blocks.map((block) => {
@@ -42,6 +42,7 @@ export function convertBlocksToUIKit(blocks?: Array<Block>): Array<IBlock> {
                 return null;
         }
     })
+        .map(block => (block && {...block, appId}))
         .filter(block => block) as Array<IBlock>;
 }
 
@@ -55,7 +56,7 @@ export function convertViewToUIKit(view: IBlockKitView, appId: string): IUIKitVi
         id: id || uuid(),
         type: type === 'modal' ? UIKitViewType.MODAL : UIKitViewType.HOME,
         title: convertTextToUIKit(title || { type: TextObjectType.PLAINTEXT, text: '' }),
-        blocks: convertBlocksToUIKit(blocks),
+        blocks: convertBlocksToUIKit(blocks, appId),
         close: close && {
             type: BlockElementType.BUTTON,
             text: convertTextToUIKit(close),
