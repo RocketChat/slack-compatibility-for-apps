@@ -113,3 +113,11 @@ export enum BlockKitViewResponseAction {
      */
     ERRORS = 'errors',
 }
+
+export interface IBlockKitViewEventResponsePayload {
+    response_action: BlockKitViewResponseAction;
+    view?: IBlockKitView;
+    errors?: {
+        [blockId: string]: string;
+    }
+}
