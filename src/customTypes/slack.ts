@@ -1,5 +1,5 @@
 import {
-    Action, Button, Checkboxes, Datepicker, ImageElement, MrkdwnElement, MultiSelect, Overflow, PlainTextElement, RadioButtons, Select, View
+    Action, Block, Button, Checkboxes, Datepicker, ImageElement, MrkdwnElement, MultiSelect, Overflow, PlainTextElement, RadioButtons, Select, View
 } from '../../vendor/slack-types';
 import { Omit } from './util';
 
@@ -8,8 +8,8 @@ export type BlockKitAccessoryElements = Button | Overflow | Datepicker | Select 
 export type BlockKitTextObject = PlainTextElement | MrkdwnElement;
 
 export interface ISlackTeam {
-    team_id: string;
-    team_domain: string;
+    id: string;
+    domain: string;
 }
 
 export interface ISlackChannel {
@@ -18,8 +18,10 @@ export interface ISlackChannel {
 }
 
 export interface ISlackUser {
-    user_id: string;
-    user_name: string;
+    id: string;
+    name: string;
+    username: string;
+    team_id: string;
 }
 
 export interface IBlockKitView extends View {
@@ -57,6 +59,37 @@ export enum BlockKitInputBlockElementType {
     DATE_PICKER = 'datepicker',
     CHECKBOXES = 'checkboxes',
     RADIO_BUTTONS = 'radio_buttons',
+}
+
+export enum BlockKitBlockActionContainerType {
+    VIEW = 'view',
+    MESSAGE = 'message',
+}
+
+export interface IBlockKitBlockActionsEventPayload {
+    type: BlockKitEventType;
+    trigger_id: string;
+    container: {
+        type: BlockKitBlockActionContainerType;
+        view_id?: string;
+        message_ts?: string;
+        channel_id?: string;
+        is_ephemeral?: boolean;
+    }
+    user: ISlackUser;
+    team: ISlackTeam;
+    api_app_id: string; // undocumented, not sure what it does
+    message?: ISlackMessage;
+    response_url?: string;
+    view?: IBlockKitView;
+    actions: Array<{
+        type: string;
+        block_id: string;
+        action_id: string;
+        text: BlockKitTextObject;
+        value: string;
+        action_ts: string;
+    }>
 }
 
 export type BlockKitViewEventType = Exclude<BlockKitEventType, BlockKitEventType.BLOCK_ACTIONS>;
@@ -120,4 +153,14 @@ export interface IBlockKitViewEventResponsePayload {
     errors?: {
         [blockId: string]: string;
     }
+}
+
+export interface ISlackMessage {
+    bot_id: string;
+    type: string;
+    text: string;
+    user: string;
+    ts: string;
+    team: string;
+    blocks: Array<Block>;
 }
