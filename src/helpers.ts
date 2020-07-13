@@ -1,5 +1,5 @@
 import { IUser } from '@rocket.chat/apps-engine/definition/users';
-import { BlockElementType, IInputBlock } from "@rocket.chat/apps-engine/definition/uikit";
+import { BlockElementType, IInputBlock, IInteractiveElement, IBlockElement } from "@rocket.chat/apps-engine/definition/uikit";
 
 export function snakeCaseToCamelCase(input: string): string {
     return input.toLowerCase()
@@ -75,6 +75,10 @@ export function findInputBlockElementType(blocks: Array<IInputBlock>, blockId: s
     const block = blocks.find(((block) => block.blockId === blockId && block.element.actionId === actionId));
 
     return block && block.element && block.element.type;
+}
+
+export function isInteractiveElement(element?: IBlockElement): element is IInteractiveElement {
+    return typeof element === 'object' && element.hasOwnProperty('actionId');
 }
 
 export function uuid(): string {

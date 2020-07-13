@@ -1,12 +1,11 @@
-import { IUIKitResponse, UIKitBlockInteractionContext, IBlock, BlockType, IActionsBlock, IBlockElement, IInteractiveElement, BlockElementType, IButtonElement, IOverflowMenuElement, ISectionBlock } from '@rocket.chat/apps-engine/definition/uikit';
+import { IUIKitResponse, UIKitBlockInteractionContext, IBlock, BlockType, IActionsBlock, IInteractiveElement, BlockElementType, IButtonElement, IOverflowMenuElement, ISectionBlock } from '@rocket.chat/apps-engine/definition/uikit';
 import { IPersistence, IModify } from '@rocket.chat/apps-engine/definition/accessors';
 import { IUIKitBlockIncomingInteraction } from '@rocket.chat/apps-engine/definition/uikit/UIKitIncomingInteractionTypes';
-import { IMessage } from '@rocket.chat/apps-engine/definition/messages';
 import { SlackCompatibleApp } from '../../../SlackCompatibleApp';
 import { BlockKitEventType, IBlockKitBlockActionsEventPayload, BlockKitBlockActionContainerType, IBlockKitBlockAction } from '../../customTypes/slack';
 import { getTeamFields, getUserFields, generateResponseUrl, getChannelFields } from '../slackCommonFields';
 import { OriginalActionType, persistResponseToken } from '../../storage/ResponseTokens';
-import { generateCompatibleTriggerId } from '../../helpers';
+import { generateCompatibleTriggerId, isInteractiveElement } from '../../helpers';
 import { UIKitIncomingInteractionContainerType } from '@rocket.chat/apps-engine/definition/uikit/UIKitIncomingInteractionContainer';
 import { convertMessageToSlack } from '../../converters/message';
 import { retrieveView } from '../../storage/PersistView';
@@ -14,6 +13,7 @@ import { convertToBlockKit as convertTextObjectToBlockKit } from "../../converte
 import { convertToBlockKit as convertOptionObjectToBlockKit } from "../../converters/objects/option";
 import { convertBlocksToUIKit } from '../../converters/BlockKitToUIKit';
 import { Omit } from '../../customTypes/util';
+import { IRoom } from '@rocket.chat/apps-engine/definition/rooms';
 
 type BlockActionPayloadExtraFields = Omit<IBlockKitBlockActionsEventPayload, 'type' | 'trigger_id' | 'container' | 'user' | 'team' | 'api_app_id' | 'actions'>;
 
@@ -34,30 +34,38 @@ export async function handleBlockActionEvent(context: UIKitBlockInteractionConte
     };
 
     if (incomingInteraction.container.type === UIKitIncomingInteractionContainerType.MESSAGE) {
-        const message = incomingInteraction.message as IMessage;
+        const room = incomingInteraction.room as IRoom;
 
         Object.assign(container, {
             type: BlockKitBlockActionContainerType.MESSAGE,
-            message_ts: message.id,
-            channel_id: message.room.id,
-            is_ephemeral: false,
+            message_ts: incomingInteraction.container.id,
+            channel_id: room.id,
+            is_ephemeral: !incomingInteraction.message,
         });
 
         const { responseUrl, tokenContext } = await generateResponseUrl({
             action: OriginalActionType.BLOCK_ACTION,
-            room: message.room,
+            room: room,
             user: incomingInteraction.user,
         }, app);
 
         await persistResponseToken(tokenContext, persistence);
 
         Object.assign(extraFields, {
-            message: convertMessageToSlack(message),
-            channel: await getChannelFields(message.room),
+            channel: await getChannelFields(room),
             response_url: responseUrl,
         });
 
-        Object.assign(actionDescriptor, parseAction(message.blocks as Array<IBlock>, incomingInteraction));
+        if (incomingInteraction.message) {
+            Object.assign(extraFields, {
+                message: convertMessageToSlack(incomingInteraction.message),
+            });
+
+            Object.assign(actionDescriptor, parseAction(incomingInteraction.message.blocks as Array<IBlock>, incomingInteraction));
+        } else {
+            delete actionDescriptor.type;
+        }
+
     } else if (incomingInteraction.container.type === UIKitIncomingInteractionContainerType.VIEW) {
         Object.assign(container, {
             type: BlockKitBlockActionContainerType.VIEW,
@@ -119,10 +127,6 @@ export function parseAction(blocks: Array<IBlock>, incomingInteraction: IUIKitBl
     }
 
     return extractActionDataFromElement(element, incomingInteraction);
-}
-
-function isInteractiveElement(element?: IBlockElement): element is IInteractiveElement {
-    return !element || !!(element as IInteractiveElement).actionId;
 }
 
 export function extractActionDataFromElement(element: IInteractiveElement, incomingInteraction: IUIKitBlockIncomingInteraction): Partial<IBlockKitBlockAction> {
