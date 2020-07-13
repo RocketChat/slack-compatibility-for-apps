@@ -1,6 +1,7 @@
 import { IUIKitResponse, UIKitBlockInteractionContext, IBlock, BlockType, IActionsBlock, IBlockElement, IInteractiveElement, BlockElementType, IButtonElement, IOverflowMenuElement, ISectionBlock } from '@rocket.chat/apps-engine/definition/uikit';
 import { IPersistence, IModify } from '@rocket.chat/apps-engine/definition/accessors';
 import { IUIKitBlockIncomingInteraction } from '@rocket.chat/apps-engine/definition/uikit/UIKitIncomingInteractionTypes';
+import { IMessage } from '@rocket.chat/apps-engine/definition/messages';
 import { SlackCompatibleApp } from '../../../SlackCompatibleApp';
 import { BlockKitEventType, IBlockKitBlockActionsEventPayload, BlockKitBlockActionContainerType, IBlockKitBlockAction } from '../../customTypes/slack';
 import { getTeamFields, getUserFields, generateResponseUrl, getChannelFields } from '../slackCommonFields';
@@ -12,6 +13,7 @@ import { retrieveView } from '../../storage/PersistView';
 import { convertToBlockKit as convertTextObjectToBlockKit } from "../../converters/objects/text";
 import { convertToBlockKit as convertOptionObjectToBlockKit } from "../../converters/objects/option";
 import { convertBlocksToUIKit } from '../../converters/BlockKitToUIKit';
+import { Omit } from '../../customTypes/util';
 
 type BlockActionPayloadExtraFields = Omit<IBlockKitBlockActionsEventPayload, 'type' | 'trigger_id' | 'container' | 'user' | 'team' | 'api_app_id' | 'actions'>;
 
@@ -26,33 +28,36 @@ export async function handleBlockActionEvent(context: UIKitBlockInteractionConte
         action_id: incomingInteraction.actionId,
         action_ts: String((Date.now() / 1000)),
     };
+
     const container = {
         type: BlockKitBlockActionContainerType.MESSAGE,
     };
 
     if (incomingInteraction.container.type === UIKitIncomingInteractionContainerType.MESSAGE) {
+        const message = incomingInteraction.message as IMessage;
+
         Object.assign(container, {
             type: BlockKitBlockActionContainerType.MESSAGE,
-            message_ts: incomingInteraction.container.id,
-            channel_id: incomingInteraction.message.room.id,
+            message_ts: message.id,
+            channel_id: message.room.id,
             is_ephemeral: false,
         });
 
         const { responseUrl, tokenContext } = await generateResponseUrl({
             action: OriginalActionType.BLOCK_ACTION,
-            room: incomingInteraction.room,
+            room: message.room,
             user: incomingInteraction.user,
         }, app);
 
         await persistResponseToken(tokenContext, persistence);
 
         Object.assign(extraFields, {
-            message: convertMessageToSlack(incomingInteraction.message),
-            channel: await getChannelFields(incomingInteraction.room),
+            message: convertMessageToSlack(message),
+            channel: await getChannelFields(message.room),
             response_url: responseUrl,
         });
 
-        Object.assign(actionDescriptor, parseAction(incomingInteraction.message.blocks, incomingInteraction));
+        Object.assign(actionDescriptor, parseAction(message.blocks as Array<IBlock>, incomingInteraction));
     } else if (incomingInteraction.container.type === UIKitIncomingInteractionContainerType.VIEW) {
         Object.assign(container, {
             type: BlockKitBlockActionContainerType.VIEW,
@@ -60,6 +65,10 @@ export async function handleBlockActionEvent(context: UIKitBlockInteractionConte
         });
 
         const view = await retrieveView(incomingInteraction.container.id, app.getAccessors().reader);
+
+        if (!view) {
+            throw new Error('Invalid view provided');
+        }
 
         Object.assign(extraFields, { view });
         Object.assign(actionDescriptor, parseAction(convertBlocksToUIKit(view.blocks), incomingInteraction));
@@ -99,6 +108,9 @@ export function parseAction(blocks: Array<IBlock>, incomingInteraction: IUIKitBl
             case BlockType.SECTION: {
                 return (block as ISectionBlock).accessory;
             }
+
+            default:
+                return undefined;
         }
     })();
 
@@ -135,5 +147,8 @@ export function extractActionDataFromElement(element: IInteractiveElement, incom
                 type: menu.type,
                 selectedOption: convertOptionObjectToBlockKit(option),
             };
+
+        default:
+            return {};
     }
 }
