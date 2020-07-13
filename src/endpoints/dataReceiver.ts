@@ -18,7 +18,7 @@ export class DataReceiver extends ApiEndpoint {
         const room = await read.getRoomReader().getByName(roomName) as IRoom;
         const sender = await read.getUserReader().getByUsername(appUsername);
 
-        const blocks = convertBlocksToUIKit(blockKitData);
+        const blocks = convertBlocksToUIKit(blockKitData, this.app.getID());
         const message = 'test message';
 
         const messageStructure = await modify.getCreator().startMessage();
