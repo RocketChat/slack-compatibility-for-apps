@@ -4,13 +4,13 @@ import { IRoom, RoomType } from '@rocket.chat/apps-engine/definition/rooms';
 import { IUser, UserType } from '@rocket.chat/apps-engine/definition/users';
 import { getChannelFields, getUserFields, IGenerateResponseUrlParams, generateResponseUrl } from "../../src/lib/slackCommonFields";
 import { OriginalActionType } from '../../src/storage/ResponseTokens';
-import { IEnvironmentRead, IAppAccessors } from '@rocket.chat/apps-engine/definition/accessors';
-import { SlackCompatibleApp } from '../../SlackCompatibleApp';
 import { RESPONSE_URL_ENDPOINT_BASE_PATH } from '../../src/lib/constants';
 import { mockRead } from '../__mocks__/ReadMock';
+import { mockApp } from '../__mocks__/SlackCompatibleAppMock';
+import { userRepository } from '../__mocks__/userRepository';
 
 describe('Slack common fields getters', () => {
-    it('should return correct channel fields based on room info', () => {
+    it('should return correct channel fields based on room info', async () => {
         const mockRoom: IRoom = {
             creator: {} as IUser,
             id: 'room_id',
@@ -19,7 +19,7 @@ describe('Slack common fields getters', () => {
             usernames: [],
         };
 
-        const roomFields = getChannelFields(mockRoom);
+        const roomFields = await getChannelFields(mockRoom);
 
         expect(roomFields).to.deep.equal({
             channel_id: 'room_id',
@@ -27,18 +27,14 @@ describe('Slack common fields getters', () => {
         });
     });
 
-    it('should return correct user fields based on user info', () => {
-        const mockUser = {
-            id: 'user_id',
-            name: 'User Name',
-            type: UserType.USER,
-        } as IUser;
-
-        const userFields = getUserFields(mockUser, mockRead);
+    it('should return correct user fields based on user info', async () => {
+        const userFields = await getUserFields(userRepository['a-user-id'], mockRead);
 
         expect(userFields).to.deep.equal({
-            user_id: 'user_id',
-            user_name: 'User Name',
+            id: 'a-user-id',
+            name: 'A User',
+            username: 'user.name',
+            team_id: 'http://localhost:3000',
         });
     });
 
@@ -59,23 +55,6 @@ describe('Slack common fields getters', () => {
             } as IUser,
             text: 'The original command that the user typed',
         };
-
-        const mockApp = {
-            getAccessors: () => ({
-                environmentReader: {
-                    getServerSettings: () => ({
-                        getValueById: () => 'http://localhost:3000',
-                    }),
-                } as any as IEnvironmentRead,
-                providedApiEndpoints: [
-                    {
-                        path: `${RESPONSE_URL_ENDPOINT_BASE_PATH}/:token`,
-                        computedPath: `/api/apps/public/RANDOM_APP_ID/${RESPONSE_URL_ENDPOINT_BASE_PATH}/:token`,
-                        methods: [],
-                    },
-                ]
-            }) as IAppAccessors,
-        } as SlackCompatibleApp;
 
         const {responseUrl, tokenContext} = await generateResponseUrl(mockParams, mockApp);
 

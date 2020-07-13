@@ -273,7 +273,7 @@ export const mockBlockKitView: IBlockKitView = {
 export const mockUIKitView: IUIKitView = {
     // mandatory
     appId: '1399cc03-b350-4fab-b5f2-61089b41b81a',
-    id: 'mock_view_id',
+    id: 'viewId',
     type: UIKitViewType.MODAL,
     title: {
         type: TextObjectType.PLAINTEXT,
@@ -284,6 +284,7 @@ export const mockUIKitView: IUIKitView = {
         // Plain Text Input
         {
             type: 'input',
+            appId: "1399cc03-b350-4fab-b5f2-61089b41b81a",
             blockId: 'block_plain-text-input',
             element: {
                 type: BlockElementType.PLAIN_TEXT_INPUT,
@@ -303,6 +304,7 @@ export const mockUIKitView: IUIKitView = {
         // Static Select
         {
             type: 'input',
+            appId: "1399cc03-b350-4fab-b5f2-61089b41b81a",
             blockId: 'block_static-select',
             element: {
                 type: BlockElementType.STATIC_SELECT,
@@ -340,6 +342,7 @@ export const mockUIKitView: IUIKitView = {
         // Multiple Static Select
         {
             type: 'input',
+            appId: "1399cc03-b350-4fab-b5f2-61089b41b81a",
             blockId: 'block_multi-static-select',
             element: {
                 type: BlockElementType.MULTI_STATIC_SELECT,

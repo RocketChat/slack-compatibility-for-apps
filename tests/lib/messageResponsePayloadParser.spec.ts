@@ -1,13 +1,9 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import { parseMessageResponsePayload, ResponseType, IMessageResponsePayload } from '../../src/lib/messageResponsePayloadParser';
-import { SlackCompatibleApp } from '../../SlackCompatibleApp';
+import { mockApp } from '../__mocks__/SlackCompatibleAppMock';
 
 describe('Message Response Payload Parser', () => {
-    const mockApp = {
-        getID: () => 'mockAppId',
-    } as SlackCompatibleApp;
-
     it('should correctly parse a plain text response', () => {
         const parsedResponse = parseMessageResponsePayload('Plain text response', mockApp);
 
