@@ -64,9 +64,9 @@ export abstract class SlackCompatibleApp extends App implements IUIKitInteractio
     public sendInteraction(payload: object): Promise<IHttpResponse> {
         return this.getAccessors().http.post(this.interactiveEndpoint, {
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/x-www-form-urlencoded'
             },
-            data: payload,
+            content: `payload=${encodeURIComponent(JSON.stringify(payload))}`
         });
     }
 }
