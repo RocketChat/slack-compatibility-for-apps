@@ -71,7 +71,7 @@ export async function handleBlockActionEvent(context: UIKitBlockInteractionConte
         }
 
         Object.assign(extraFields, { view });
-        Object.assign(actionDescriptor, parseAction(convertBlocksToUIKit(view.blocks), incomingInteraction));
+        Object.assign(actionDescriptor, parseAction(convertBlocksToUIKit(view.blocks, app.getID()), incomingInteraction));
     }
 
     const eventPayload: IBlockKitBlockActionsEventPayload = {

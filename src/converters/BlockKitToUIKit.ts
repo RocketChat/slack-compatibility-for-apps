@@ -1,4 +1,4 @@
-import { uuid } from '../helpers';
+import { uuid, generateHashForObject } from '../helpers';
 
 import {
     Block,
@@ -42,7 +42,17 @@ export function convertBlocksToUIKit(blocks: Array<Block> | undefined, appId: st
                 return null;
         }
     })
-        .map(block => (block && {...block, appId}))
+        .map((block, index) => {
+            if (!block || block.type === BlockType.DIVIDER) return block;
+
+            block.appId = appId;
+
+            if (!block.blockId) {
+                block.blockId = generateHashForObject(block, `blockId${index}`);
+            }
+
+            return block;
+        })
         .filter(block => block) as Array<IBlock>;
 }
 
