@@ -48,6 +48,7 @@ const mockBlockKitViewState: IBlockKitView['state'] = {
  */
 export const mockBlockKitView: IBlockKitView = {
     // mandatory
+    id: 'viewId',
     type: 'modal',
     title: {
         type: 'plain_text',

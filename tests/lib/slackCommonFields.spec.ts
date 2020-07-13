@@ -3,10 +3,11 @@ import { describe, it } from 'mocha';
 import { IRoom, RoomType } from '@rocket.chat/apps-engine/definition/rooms';
 import { IUser, UserType } from '@rocket.chat/apps-engine/definition/users';
 import { getChannelFields, getUserFields, IGenerateResponseUrlParams, generateResponseUrl } from "../../src/lib/slackCommonFields";
-import { OriginalActionType } from '../../src/lib/ResponseTokens';
+import { OriginalActionType } from '../../src/storage/ResponseTokens';
 import { IEnvironmentRead, IAppAccessors } from '@rocket.chat/apps-engine/definition/accessors';
 import { SlackCompatibleApp } from '../../SlackCompatibleApp';
 import { RESPONSE_URL_ENDPOINT_BASE_PATH } from '../../src/lib/constants';
+import { mockRead } from '../__mocks__/ReadMock';
 
 describe('Slack common fields getters', () => {
     it('should return correct channel fields based on room info', () => {
@@ -33,7 +34,7 @@ describe('Slack common fields getters', () => {
             type: UserType.USER,
         } as IUser;
 
-        const userFields = getUserFields(mockUser);
+        const userFields = getUserFields(mockUser, mockRead);
 
         expect(userFields).to.deep.equal({
             user_id: 'user_id',
