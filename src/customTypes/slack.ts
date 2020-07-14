@@ -152,12 +152,20 @@ export enum BlockKitViewResponseAction {
     ERRORS = 'errors',
 }
 
+export interface IBlockKitViewEventResponsePayload {
+    response_action: BlockKitViewResponseAction;
+    view?: IBlockKitView;
+    errors?: {
+        [blockId: string]: string;
+    }
+}
+
 export interface ISlackMessage {
-  bot_id: string;
-  type: string;
-  text: string;
-  user: string;
-  ts: string;
-  team: string;
-  blocks: Array<Block>;
+    bot_id: string;
+    type: string;
+    text: string;
+    user: string;
+    ts: string;
+    team: string;
+    blocks: Array<Block>;
 }
