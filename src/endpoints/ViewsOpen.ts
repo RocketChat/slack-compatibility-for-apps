@@ -1,7 +1,7 @@
 import { IHttp, IModify, IPersistence, IRead, HttpStatusCode } from '@rocket.chat/apps-engine/definition/accessors';
 import { ApiEndpoint, IApiEndpointInfo, IApiRequest, IApiResponse } from '@rocket.chat/apps-engine/definition/api';
 import { convertViewToUIKit } from '../converters/BlockKitToUIKit';
-import { parseCompatibleTriggerId } from '../helpers';
+import { parseCompatibleTriggerId, uuid } from '../helpers';
 import { persistView } from '../storage/PersistView';
 import { IBlockKitView } from '../customTypes/slack';
 
@@ -37,9 +37,14 @@ export class ViewsOpen extends ApiEndpoint {
             return this.json({ status: HttpStatusCode.BAD_REQUEST, content: { success: false, message: 'Invalid view definition' } });
         }
 
-        const uikitView = convertViewToUIKit(slackView, this.app.getID());
+        // We need this to store the view
+        if (!slackView.id) {
+            slackView.id = uuid();
+        }
 
         await persistView(slackView, persis);
+
+        const uikitView = convertViewToUIKit(slackView, this.app.getID());
 
         const user = await read.getUserReader().getById(userId);
 
