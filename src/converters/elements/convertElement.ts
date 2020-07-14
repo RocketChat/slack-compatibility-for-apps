@@ -32,15 +32,19 @@ import {
 } from '../../../vendor/slack-types';
 import {
     BlockElementType,
-    IBlockElement as UIKitBlockElement,
+    IBlockElement,
     IButtonElement,
     IImageElement,
     IMultiStaticSelectElement,
     IOverflowMenuElement,
     IPlainTextInputElement,
     IStaticSelectElement,
+    IInteractiveElement,
 } from '@rocket.chat/apps-engine/definition/uikit';
 import { BlockKitAccessoryElements as BlockKitBlockElement } from '../../customTypes/slack';
+import { isInteractiveElement, generateHashForObject } from '../../helpers';
+
+export type UIKitBlockElement = IBlockElement | IInteractiveElement;
 
 /**
  * Converts a single Block Kit element to UIKit
@@ -49,23 +53,31 @@ import { BlockKitAccessoryElements as BlockKitBlockElement } from '../../customT
  * @returns IBlockElement
  */
 export function convertToUIKit(element: BlockKitBlockElement): UIKitBlockElement {
-    switch (element.type) {
-        case BlockElementType.IMAGE:
-            return convertImageToUIKit(element as ImageElement);
-        case BlockElementType.BUTTON:
-            return convertButtonToUIKit(element as Button);
-        case BlockElementType.PLAIN_TEXT_INPUT:
-            return convertPlainTextInputToUIKit(element as PlainTextInput) ;
-        case BlockElementType.OVERFLOW_MENU:
-            return convertOverflowMenuToUIKit(element as Overflow);
-        case BlockElementType.STATIC_SELECT:
-            return convertStaticSelectToUIKit(element as StaticSelect);
-        case BlockElementType.MULTI_STATIC_SELECT:
-            return convertMultiStaticSelectToUIKit(element as MultiStaticSelect);
-        default:
-            console.warn(`The Block Element of type ${element.type} could not be converted to UIKit`);
-            return {} as UIKitBlockElement;
+    const uiKitElement = (() => {
+        switch (element.type) {
+            case BlockElementType.IMAGE:
+                return convertImageToUIKit(element as ImageElement);
+            case BlockElementType.BUTTON:
+                return convertButtonToUIKit(element as Button);
+            case BlockElementType.PLAIN_TEXT_INPUT:
+                return convertPlainTextInputToUIKit(element as PlainTextInput) ;
+            case BlockElementType.OVERFLOW_MENU:
+                return convertOverflowMenuToUIKit(element as Overflow);
+            case BlockElementType.STATIC_SELECT:
+                return convertStaticSelectToUIKit(element as StaticSelect);
+            case BlockElementType.MULTI_STATIC_SELECT:
+                return convertMultiStaticSelectToUIKit(element as MultiStaticSelect);
+            default:
+                console.warn(`The Block Element of type ${element.type} could not be converted to UIKit`);
+                return {} as UIKitBlockElement;
+        }
+    })();
+
+    if (isInteractiveElement(uiKitElement) && !uiKitElement.actionId) {
+        uiKitElement.actionId = generateHashForObject(uiKitElement, 'actionId');
     }
+
+    return uiKitElement;
 }
 
 /**

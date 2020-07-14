@@ -1,7 +1,7 @@
 import { IRead } from '@rocket.chat/apps-engine/definition/accessors';
 import { IUser } from '@rocket.chat/apps-engine/definition/users';
 import { IRoom } from '@rocket.chat/apps-engine/definition/rooms';
-import { OriginalActionType, IResponseTokenContext } from './ResponseTokens';
+import { OriginalActionType, IResponseTokenContext } from '../storage/ResponseTokens';
 import { RESPONSE_URL_EXPIRATION_TIME, RESPONSE_URL_ENDPOINT_BASE_PATH } from './constants';
 import { generateToken, calculateExpiryDate } from '../helpers';
 import { SlackCompatibleApp } from '../../SlackCompatibleApp';

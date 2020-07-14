@@ -13,6 +13,7 @@ describe('View converters', () => {
             const mockCompatibleBlockKitView: Partial<IBlockKitView> = JSON.parse(JSON.stringify(mockBlockKitView));
 
             delete mockCompatibleBlockKitView.private_metadata;
+            delete mockCompatibleBlockKitView.callback_id;
             mockCompatibleBlockKitView.blocks = mockCompatibleBlockKitView.blocks.slice(0, 3);
             mockCompatibleBlockKitView.blocks.forEach((block: any) =>
                 block.element.type === BlockKitInputBlockElementType.PLAIN_TEXT_INPUT && delete block.element.multiline
@@ -28,6 +29,7 @@ describe('View converters', () => {
 
             mockCompatibleUIKitView.blocks = (mockCompatibleUIKitView.blocks as Array<IInputBlock>).concat([
                 {
+                    appId: "1399cc03-b350-4fab-b5f2-61089b41b81a",
                     blockId: 'block-multi-users-select',
                     element: {} as any,
                     label: {
@@ -38,6 +40,7 @@ describe('View converters', () => {
                     type: BlockType.INPUT,
                 },
                 {
+                    appId: "1399cc03-b350-4fab-b5f2-61089b41b81a",
                     blockId: 'block_datepciker',
                     element: {} as any,
                     label: {
@@ -48,6 +51,7 @@ describe('View converters', () => {
                     type: BlockType.INPUT,
                 },
                 {
+                    appId: "1399cc03-b350-4fab-b5f2-61089b41b81a",
                     blockId: 'block_checkboxes',
                     element: {} as any,
                     label: {
@@ -58,6 +62,7 @@ describe('View converters', () => {
                     type: BlockType.INPUT,
                 },
                 {
+                    appId: "1399cc03-b350-4fab-b5f2-61089b41b81a",
                     blockId: 'block_radio-buttons',
                     element: {} as any,
                     label: {

@@ -6,7 +6,6 @@ import {
     IUIKitInteractionHandler, IUIKitResponse, UIKitBlockInteractionContext, UIKitViewCloseInteractionContext, UIKitViewSubmitInteractionContext
 } from '@rocket.chat/apps-engine/definition/uikit';
 
-import { DataReceiver } from './src/endpoints/dataReceiver';
 import { ViewsOpen } from './src/endpoints/ViewsOpen';
 import { ISlashCommandDescriptor, registerSlashCommands } from './src/lib/registerSlashCommands';
 import { ResponseUrlEndpoint } from './src/endpoints/ResponseUrlEndpoint';
@@ -35,7 +34,6 @@ export abstract class SlackCompatibleApp extends App implements IUIKitInteractio
             security: ApiSecurity.UNSECURE,
             visibility: ApiVisibility.PUBLIC,
             endpoints: [
-                new DataReceiver(this),
                 new ResponseUrlEndpoint(this),
                 new ViewsOpen(this),
             ],
@@ -64,9 +62,9 @@ export abstract class SlackCompatibleApp extends App implements IUIKitInteractio
     public sendInteraction(payload: object): Promise<IHttpResponse> {
         return this.getAccessors().http.post(this.interactiveEndpoint, {
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/x-www-form-urlencoded'
             },
-            data: payload,
+            content: `payload=${encodeURIComponent(JSON.stringify(payload))}`
         });
     }
 }

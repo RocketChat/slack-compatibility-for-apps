@@ -1,10 +1,11 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import { parseMessageResponsePayload, ResponseType, IMessageResponsePayload } from '../../src/lib/messageResponsePayloadParser';
+import { mockApp } from '../__mocks__/SlackCompatibleAppMock';
 
 describe('Message Response Payload Parser', () => {
     it('should correctly parse a plain text response', () => {
-        const parsedResponse = parseMessageResponsePayload('Plain text response');
+        const parsedResponse = parseMessageResponsePayload('Plain text response', mockApp);
 
         expect(parsedResponse).to.deep.equal({
             instructions: {
@@ -30,7 +31,7 @@ describe('Message Response Payload Parser', () => {
             thread_ts: 'random_thread_ts',
         };
 
-        const parsedResponse = parseMessageResponsePayload(mockPayload);
+        const parsedResponse = parseMessageResponsePayload(mockPayload, mockApp);
 
         expect(parsedResponse).to.deep.equal({
             instructions: {
@@ -52,7 +53,7 @@ describe('Message Response Payload Parser', () => {
             delete_original: true,
         };
 
-        const parsedResponse = parseMessageResponsePayload(mockPayload);
+        const parsedResponse = parseMessageResponsePayload(mockPayload, mockApp);
 
         expect(parsedResponse).to.deep.equal({
             instructions: {

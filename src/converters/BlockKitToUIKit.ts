@@ -1,4 +1,4 @@
-import { uuid } from '../helpers';
+import { uuid, generateHashForObject } from '../helpers';
 
 import {
     Block,
@@ -20,7 +20,7 @@ import { convertToUIKit as convertTextToUIKit } from './objects/text';
 import { IBlockKitView } from '../customTypes/slack';
 import { convertBlockKitViewStateToUIKit } from './view/viewStateConverter';
 
-export function convertBlocksToUIKit(blocks?: Array<Block>): Array<IBlock> {
+export function convertBlocksToUIKit(blocks: Array<Block> | undefined, appId: string): Array<IBlock> {
     if (!Array.isArray(blocks)) return [];
 
     return blocks.map((block) => {
@@ -42,20 +42,31 @@ export function convertBlocksToUIKit(blocks?: Array<Block>): Array<IBlock> {
                 return null;
         }
     })
+        .map((block, index) => {
+            if (!block || block.type === BlockType.DIVIDER) return block;
+
+            block.appId = appId;
+
+            if (!block.blockId) {
+                block.blockId = generateHashForObject(block, `blockId${index}`);
+            }
+
+            return block;
+        })
         .filter(block => block) as Array<IBlock>;
 }
 
 export function convertViewToUIKit(view: IBlockKitView, appId: string): IUIKitView {
     if (!view) return {} as IUIKitView;
 
-    const { type, title, blocks, close, submit, callback_id, clear_on_close, notify_on_close, state } = view;
+    const { id, type, title, blocks, close, submit, clear_on_close, notify_on_close, state } = view;
 
     return {
         appId,
-        id: callback_id || uuid(),
+        id: id || uuid(),
         type: type === 'modal' ? UIKitViewType.MODAL : UIKitViewType.HOME,
         title: convertTextToUIKit(title || { type: TextObjectType.PLAINTEXT, text: '' }),
-        blocks: convertBlocksToUIKit(blocks),
+        blocks: convertBlocksToUIKit(blocks, appId),
         close: close && {
             type: BlockElementType.BUTTON,
             text: convertTextToUIKit(close),

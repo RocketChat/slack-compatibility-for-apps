@@ -2,7 +2,8 @@ import { IHttp, IModify, IPersistence, IRead, HttpStatusCode } from '@rocket.cha
 import { ApiEndpoint, IApiEndpointInfo, IApiRequest, IApiResponse } from '@rocket.chat/apps-engine/definition/api';
 import { convertViewToUIKit } from '../converters/BlockKitToUIKit';
 import { parseCompatibleTriggerId } from '../helpers';
-import { PersistView } from '../storage/PersistView';
+import { persistView } from '../storage/PersistView';
+import { IBlockKitView } from '../customTypes/slack';
 
 
 export class ViewsOpen extends ApiEndpoint {
@@ -22,9 +23,11 @@ export class ViewsOpen extends ApiEndpoint {
             return this.json({ status: HttpStatusCode.BAD_REQUEST });
         }
 
-        const uikitView = convertViewToUIKit(JSON.parse(view), this.app.getID());
+        const slackView = JSON.parse(view) as IBlockKitView;
 
-        await PersistView(uikitView, persis);
+        const uikitView = convertViewToUIKit(slackView, this.app.getID());
+
+        await persistView(slackView, persis);
 
         const user = await read.getUserReader().getById(userId);
 

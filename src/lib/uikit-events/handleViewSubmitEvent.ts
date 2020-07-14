@@ -3,7 +3,7 @@ import { IModify, IPersistence } from '@rocket.chat/apps-engine/definition/acces
 import { IBlockKitViewSubmissionPayload, BlockKitEventType } from '../../customTypes/slack';
 import { getTeamFields, getUserFields } from '../slackCommonFields';
 import { convertViewToBlockKit } from '../../converters/UIKitToBlockKit';
-import { generateHash } from '../../helpers';
+import { generateRandomHash } from '../../helpers';
 import { handleViewEventResponse } from '../handleViewEventResponse';
 import { SlackCompatibleApp } from '../../../SlackCompatibleApp';
 
@@ -14,7 +14,7 @@ export async function handleViewSubmitEvent(context: UIKitViewSubmitInteractionC
         team: await getTeamFields(app.getAccessors().reader),
         user: await getUserFields(user, app.getAccessors().reader),
         view: convertViewToBlockKit(view),
-        hash: generateHash(),
+        hash: generateRandomHash(),
     };
 
     const response = await app.sendInteraction(payload);
