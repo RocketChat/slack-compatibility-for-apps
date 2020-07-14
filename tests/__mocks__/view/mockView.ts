@@ -1,4 +1,4 @@
-import { BlockElementType, IInputBlock, IUIKitView, TextObjectType, UIKitViewType } from '@rocket.chat/apps-engine/definition/uikit';
+import { BlockElementType, IInputBlock, IUIKitView, TextObjectType, UIKitViewType, IPlainTextInputElement } from '@rocket.chat/apps-engine/definition/uikit';
 
 import { BlockKitInputBlockElementType, IBlockKitView } from '../../../src/customTypes/slack';
 
@@ -289,12 +289,13 @@ export const mockUIKitView: IUIKitView = {
             element: {
                 type: BlockElementType.PLAIN_TEXT_INPUT,
                 actionId: 'action_plain-text-input',
+                multiline: true,
                 placeholder: {
                     type: 'plain_text',
                     text: 'Placeholder for plain text input',
                     emoji: false
                 }
-            },
+            } as IPlainTextInputElement,
             label: {
                 'type': 'plain_text',
                 'text': 'Plain Text Input',
