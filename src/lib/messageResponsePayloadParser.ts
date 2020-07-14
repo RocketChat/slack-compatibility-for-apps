@@ -1,7 +1,6 @@
 import { MessageAttachment } from '../../vendor/slack-types';
 import { IMessage } from '@rocket.chat/apps-engine/definition/messages';
 import { convertBlocksToUIKit } from '../converters/BlockKitToUIKit';
-import { SlackCompatibleApp } from '../../SlackCompatibleApp';
 
 export enum ResponseType {
     IN_CHANNEL = 'in_channel',
@@ -39,7 +38,7 @@ const DEFAULT_INSTRUCTIONS = {
     deleteOriginal: false,
 }
 
-export function parseMessageResponsePayload(payload: IMessageResponsePayload | string | undefined, app: SlackCompatibleApp): IParseMessageResponseResult {
+export function parseMessageResponsePayload(payload: IMessageResponsePayload | string | undefined, appId: string): IParseMessageResponseResult {
     if (!payload) {
         return { instructions: DEFAULT_INSTRUCTIONS };
     }
@@ -47,7 +46,7 @@ export function parseMessageResponsePayload(payload: IMessageResponsePayload | s
     if (typeof payload === 'string') {
         return {
             instructions: DEFAULT_INSTRUCTIONS,
-            message: convertSlackMessageToRocketChatMessage({ text: payload }, app.getID()),
+            message: convertSlackMessageToRocketChatMessage({ text: payload }, appId),
         };
     }
 
@@ -57,7 +56,7 @@ export function parseMessageResponsePayload(payload: IMessageResponsePayload | s
             replaceOriginal: !!payload.replace_original,
             deleteOriginal: !!payload.delete_original,
         },
-        message: convertSlackMessageToRocketChatMessage(payload, app.getID()),
+        message: convertSlackMessageToRocketChatMessage(payload, appId),
     }
 }
 

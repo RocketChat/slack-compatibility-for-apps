@@ -5,7 +5,7 @@ import { mockApp } from '../__mocks__/SlackCompatibleAppMock';
 
 describe('Message Response Payload Parser', () => {
     it('should correctly parse a plain text response', () => {
-        const parsedResponse = parseMessageResponsePayload('Plain text response', mockApp);
+        const parsedResponse = parseMessageResponsePayload('Plain text response', mockApp.getID());
 
         expect(parsedResponse).to.deep.equal({
             instructions: {
@@ -31,7 +31,7 @@ describe('Message Response Payload Parser', () => {
             thread_ts: 'random_thread_ts',
         };
 
-        const parsedResponse = parseMessageResponsePayload(mockPayload, mockApp);
+        const parsedResponse = parseMessageResponsePayload(mockPayload, mockApp.getID());
 
         expect(parsedResponse).to.deep.equal({
             instructions: {
@@ -53,7 +53,7 @@ describe('Message Response Payload Parser', () => {
             delete_original: true,
         };
 
-        const parsedResponse = parseMessageResponsePayload(mockPayload, mockApp);
+        const parsedResponse = parseMessageResponsePayload(mockPayload, mockApp.getID());
 
         expect(parsedResponse).to.deep.equal({
             instructions: {

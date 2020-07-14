@@ -25,6 +25,7 @@ export interface ISlackUser {
 }
 
 export interface IBlockKitView extends View {
+    id: string;
     state?: {
         /**
          * A dictionary of objects keyed with the block_ids of any user-modified input blocks from the modal view.
