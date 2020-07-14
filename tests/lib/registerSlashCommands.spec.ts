@@ -1,13 +1,14 @@
 import { describe, it } from 'mocha';
 import { ResponseType, IParseMessageResponseResult } from '../../src/lib/messageResponsePayloadParser';
-import { IResponseTokenContext, OriginalActionType } from '../../src/lib/ResponseTokens';
+import { IResponseTokenContext, OriginalActionType } from '../../src/storage/ResponseTokens';
 import { RESPONSE_URL_EXPIRATION_TIME } from '../../src/lib/constants';
-import { IRead, IModify, IModifyCreator, INotifier } from '@rocket.chat/apps-engine/definition/accessors';
+import { IModify, IModifyCreator, INotifier } from '@rocket.chat/apps-engine/definition/accessors';
 import { IMessage } from '@rocket.chat/apps-engine/definition/messages';
-import { IRoom, RoomType } from '@rocket.chat/apps-engine/definition/rooms';
-import { IUser, UserType } from '@rocket.chat/apps-engine/definition/users';
 import { MessageBuilderMock } from '../__mocks__/MessageBuilderMock';
 import { handleSlashCommandResponsePayload } from '../../src/lib/registerSlashCommands';
+import { mockRead } from '../__mocks__/ReadMock';
+import { userRepository } from '../__mocks__/userRepository';
+import { roomRepository } from '../__mocks__/roomRepository';
 
 const chai = require('chai');
 const spies = require('chai-spies');
@@ -17,25 +18,6 @@ chai.use(spies);
 const { expect } = chai;
 
 const getValidExpiryTime = () => new Date(Date.now() + RESPONSE_URL_EXPIRATION_TIME);
-
-const userRepository: {[K: string]: IUser} = {
-    'a-user-id': {
-        id: 'a-user-id',
-        name: 'A User',
-        username: 'user.name',
-        type: UserType.USER,
-    } as IUser,
-}
-
-const roomRepository: {[K: string]: IRoom} = {
-    'a-room-id': {
-        id: 'a-room-id',
-        creator: userRepository['a-user-id'],
-        slugifiedName: 'a-room',
-        type: RoomType.CHANNEL,
-        usernames: ['user.name'],
-    }
-}
 
 describe('Slash Command Response Handler', () => {
     const mockTokenContext: IResponseTokenContext = {
@@ -47,15 +29,6 @@ describe('Slash Command Response Handler', () => {
         usageCount: 0,
         originalText: 'the original command here',
     };
-
-    const mockRead = {
-        getRoomReader: () => ({
-            getById: (id: string) => roomRepository[id],
-        }),
-        getUserReader: () => ({
-            getById: (id: string) => userRepository[id],
-        }),
-    } as any as IRead;
 
     const creatorMock = {} as IModifyCreator;
     const notifierMock = {} as INotifier;

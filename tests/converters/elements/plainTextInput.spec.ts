@@ -97,7 +97,6 @@ describe('Plain text input data structure converter', () => {
                 initial_value: faker.lorem.sentence(),
                 min_length: 3,
                 max_length: 18,
-                multiline: true,
             };
 
             const targetInput: UIKitPlainTextInput = {

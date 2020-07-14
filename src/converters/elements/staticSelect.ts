@@ -26,7 +26,7 @@ import {
  */
 export function convertToUIKit(originalElement: BlockKitStaticSelect): UIKitStaticSelect {
     const select: any = {
-        actionId: originalElement.action_id,
+        actionId: originalElement.action_id || '',
         type: BlockElementType.STATIC_SELECT,
         placeholder: convertTextElementToUIKit(originalElement.placeholder as PlainTextElement),
     };

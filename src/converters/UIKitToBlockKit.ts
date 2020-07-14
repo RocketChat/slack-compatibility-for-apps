@@ -49,9 +49,9 @@ export function convertViewToBlockKit(view: IUIKitView): IBlockKitView {
     if (!view) return {} as IBlockKitView;
 
     const { id, type, title, blocks, close, submit, state, clearOnClose, notifyOnClose } = view;
-    console.log(blocks, convertBlocksToBlockKit(blocks));
 
     return {
+        id,
         type: type === UIKitViewType.MODAL ? 'modal' : 'home',
         title: {
             ...title,
@@ -60,7 +60,6 @@ export function convertViewToBlockKit(view: IUIKitView): IBlockKitView {
         blocks: convertBlocksToBlockKit(blocks),
         close: close && { ...close.text, type: 'plain_text' },
         submit: submit && { ...submit.text, type: 'plain_text' },
-        callback_id: id,
         clear_on_close: clearOnClose,
         notify_on_close: notifyOnClose,
         state: state && convertUIKitViewStateToBlockKit(state, blocks),

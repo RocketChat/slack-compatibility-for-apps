@@ -3,7 +3,7 @@ import { IConfigurationExtend, IRead, IModify, IHttp, IPersistence, IMessageBuil
 import { ISlashCommand, SlashCommandContext } from '@rocket.chat/apps-engine/definition/slashcommands';
 import { URLSearchParams } from 'url';
 import { getTeamFields, generateResponseUrl, getChannelFields, getUserFields } from './slackCommonFields';
-import { OriginalActionType, persistResponseToken, IResponseTokenContext } from './ResponseTokens';
+import { OriginalActionType, persistResponseToken, IResponseTokenContext } from '../storage/ResponseTokens';
 import { IMessageResponsePayload, parseMessageResponsePayload, IParseMessageResponseResult, ResponseType } from './messageResponsePayloadParser';
 import { IUser } from '@rocket.chat/apps-engine/definition/users';
 import { IMessage } from '@rocket.chat/apps-engine/definition/messages';
@@ -104,7 +104,7 @@ function createSlashcommandExecutor(app: SlackCompatibleApp, descriptor: ISlashC
         if (!responsePayload) return;
 
         await handleSlashCommandResponsePayload(
-            parseMessageResponsePayload(responsePayload),
+            parseMessageResponsePayload(responsePayload, app.getID()),
             tokenContext,
             read,
             modify,

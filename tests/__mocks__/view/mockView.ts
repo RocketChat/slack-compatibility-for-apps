@@ -1,4 +1,4 @@
-import { BlockElementType, IInputBlock, IUIKitView, TextObjectType, UIKitViewType } from '@rocket.chat/apps-engine/definition/uikit';
+import { BlockElementType, IInputBlock, IUIKitView, TextObjectType, UIKitViewType, IPlainTextInputElement } from '@rocket.chat/apps-engine/definition/uikit';
 
 import { BlockKitInputBlockElementType, IBlockKitView } from '../../../src/customTypes/slack';
 
@@ -48,6 +48,7 @@ const mockBlockKitViewState: IBlockKitView['state'] = {
  */
 export const mockBlockKitView: IBlockKitView = {
     // mandatory
+    id: 'viewId',
     type: 'modal',
     title: {
         type: 'plain_text',
@@ -272,7 +273,7 @@ export const mockBlockKitView: IBlockKitView = {
 export const mockUIKitView: IUIKitView = {
     // mandatory
     appId: '1399cc03-b350-4fab-b5f2-61089b41b81a',
-    id: 'mock_view_id',
+    id: 'viewId',
     type: UIKitViewType.MODAL,
     title: {
         type: TextObjectType.PLAINTEXT,
@@ -283,16 +284,18 @@ export const mockUIKitView: IUIKitView = {
         // Plain Text Input
         {
             type: 'input',
+            appId: "1399cc03-b350-4fab-b5f2-61089b41b81a",
             blockId: 'block_plain-text-input',
             element: {
                 type: BlockElementType.PLAIN_TEXT_INPUT,
                 actionId: 'action_plain-text-input',
+                multiline: true,
                 placeholder: {
                     type: 'plain_text',
                     text: 'Placeholder for plain text input',
                     emoji: false
                 }
-            },
+            } as IPlainTextInputElement,
             label: {
                 'type': 'plain_text',
                 'text': 'Plain Text Input',
@@ -302,6 +305,7 @@ export const mockUIKitView: IUIKitView = {
         // Static Select
         {
             type: 'input',
+            appId: "1399cc03-b350-4fab-b5f2-61089b41b81a",
             blockId: 'block_static-select',
             element: {
                 type: BlockElementType.STATIC_SELECT,
@@ -339,6 +343,7 @@ export const mockUIKitView: IUIKitView = {
         // Multiple Static Select
         {
             type: 'input',
+            appId: "1399cc03-b350-4fab-b5f2-61089b41b81a",
             blockId: 'block_multi-static-select',
             element: {
                 type: BlockElementType.MULTI_STATIC_SELECT,

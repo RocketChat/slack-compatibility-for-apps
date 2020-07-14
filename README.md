@@ -36,8 +36,10 @@ by running `rc-apps deploy --url <localhost_etc> -u <user> -p <pwd>`.
 The scl will register a new endpoint in the app. We'll need the url later in
 the slack app (requests will be pointed to this endpoint).
 
+```
 npm install ../../slack-compatibility-for-apps;
 rc-apps deploy --url http://localhost:3000 -u thassio -p 123qweasd --update
+```
 
 ## Second part: slack's app, workspace and slashcommand
 
