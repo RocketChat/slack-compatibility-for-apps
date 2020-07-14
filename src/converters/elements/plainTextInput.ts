@@ -19,7 +19,7 @@ import {
  */
 export function convertToUIKit(originalElement: BlockKitPlainTextInput) : UIKitPlainTextInput {
     const input: any = {
-        ...removeObjectProperties(originalElement, ['multiline', 'min_length', 'max_length'])
+        ...removeObjectProperties(originalElement, ['min_length', 'max_length'])
     };
 
     if (originalElement.placeholder) {

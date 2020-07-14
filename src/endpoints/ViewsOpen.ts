@@ -23,7 +23,19 @@ export class ViewsOpen extends ApiEndpoint {
             return this.json({ status: HttpStatusCode.BAD_REQUEST });
         }
 
-        const slackView = JSON.parse(view) as IBlockKitView;
+        const slackView = (() => {
+            if (typeof view !== 'string') return view;
+
+            try {
+                return JSON.parse(view);
+            } catch {
+                return undefined;
+            }
+        })() as IBlockKitView | undefined;
+
+        if (!slackView) {
+            return this.json({ status: HttpStatusCode.BAD_REQUEST, content: { success: false, message: 'Invalid view definition' } });
+        }
 
         const uikitView = convertViewToUIKit(slackView, this.app.getID());
 
