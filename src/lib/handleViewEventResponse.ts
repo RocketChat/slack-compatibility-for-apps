@@ -6,7 +6,7 @@ import { ViewsOpen } from '../endpoints/ViewsOpen';
 import { ViewsUpdate } from '../endpoints/ViewsUpdate';
 
 export async function handleViewEventResponse(
-    res: IHttpResponse, triggerId: string | undefined, accessors: { app: IApp, modify: IModify, persis: IPersistence }
+    res: IHttpResponse, accessors: { app: IApp, modify: IModify, persis: IPersistence }, triggerId?: string,
 ): Promise<void> {
     // Close the current view
     if (res.statusCode === 200 && !res.data) return;

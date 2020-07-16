@@ -10,7 +10,7 @@ import { generateResponseUrl, getTeamFields, getUserFields } from '../slackCommo
 import { getBlockKitViewSkeleton } from './handleViewSubmitEvent';
 
 export async function handleViewClosedEvent(context: UIKitViewCloseInteractionContext, app: SlackCompatibleApp, persis: IPersistence, modify: IModify): Promise<IUIKitResponse> {
-    const { user, view, triggerId, appId } = context.getInteractionData();
+    const { user, view, appId } = context.getInteractionData();
 
     if (!view.notifyOnClose) {
         return context.getInteractionResponder().successResponse();
@@ -46,7 +46,7 @@ export async function handleViewClosedEvent(context: UIKitViewCloseInteractionCo
 
     const response = await app.sendInteraction(payload);
 
-    await handleViewEventResponse(response, triggerId, { app, modify, persis });
+    await handleViewEventResponse(response, { app, modify, persis });
 
     return context.getInteractionResponder().successResponse();
 }

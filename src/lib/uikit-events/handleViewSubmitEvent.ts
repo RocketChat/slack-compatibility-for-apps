@@ -61,8 +61,9 @@ export async function handleViewSubmitEvent(context: UIKitViewSubmitInteractionC
     };
 
     const response = await app.sendInteraction(payload);
+    const trigger_id = generateCompatibleTriggerId(triggerId, user);
 
-    await handleViewEventResponse(response, triggerId, { app, modify, persis });
+    await handleViewEventResponse(response, { app, modify, persis }, trigger_id);
 
     return context.getInteractionResponder().successResponse();
 }
