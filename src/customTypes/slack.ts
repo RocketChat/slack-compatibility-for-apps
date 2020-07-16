@@ -1,5 +1,5 @@
 import {
-    Action, Block, Button, Checkboxes, Datepicker, ImageElement, MrkdwnElement, MultiSelect, Overflow, PlainTextElement, RadioButtons, Select, View, Option
+    Action, Block, Button, Checkboxes, Datepicker, ImageElement, MrkdwnElement, MultiSelect, Option, Overflow, PlainTextElement, RadioButtons, Select, View
 } from '../../vendor/slack-types';
 import { Omit } from './util';
 
@@ -24,9 +24,14 @@ export interface ISlackUser {
     team_id: string;
 }
 
+export enum BlockKitViewStateValueType {
+    VALUE = 'value',
+    SELECTED_OPTIONS = 'selected_options'
+}
+
 export interface IBlockKitView extends View {
     id: string;
-    team_id: string;
+    team_id?: string;
     state?: {
         /**
          * A dictionary of objects keyed with the block_ids of any user-modified input blocks from the modal view.
@@ -41,6 +46,12 @@ export interface IBlockKitView extends View {
                 [action_id: string]: {
                     type: BlockKitInputBlockElementType,
                     value: any,
+                } | {
+                    type: BlockKitInputBlockElementType,
+                    selected_options: any,
+                } | {
+                    type: BlockKitInputBlockElementType,
+                    selected_option: any,
                 }
             }
         }

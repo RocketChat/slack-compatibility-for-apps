@@ -1,10 +1,10 @@
+import { IBlockElement, IInteractiveElement } from '@rocket.chat/apps-engine/definition/uikit';
 import { IUser } from '@rocket.chat/apps-engine/definition/users';
-import { BlockElementType, IInputBlock, IInteractiveElement, IBlockElement } from "@rocket.chat/apps-engine/definition/uikit";
 
 export function snakeCaseToCamelCase(input: string): string {
     return input.toLowerCase()
-    .replace(/_([a-z])/g, i => i.toUpperCase())
-    .replace(/_/g, '');
+        .replace(/_([a-z])/g, i => i.toUpperCase())
+        .replace(/_/g, '');
 }
 
 export function camelCaseToSnakeCase(input: string): string {
@@ -13,21 +13,21 @@ export function camelCaseToSnakeCase(input: string): string {
 
 export function renameObjectProperties(renameFunction: Function, source: object): object {
     return Object
-    .keys(source)
-    .map(key => {
-        return {[renameFunction(key)]: source[key as keyof object]};
-    })
-    .reduce((acc, curr) => (Object.assign(acc, curr)), {});
+        .keys(source)
+        .map(key => {
+            return { [renameFunction(key)]: source[key as keyof object] };
+        })
+        .reduce((acc, curr) => (Object.assign(acc, curr)), {});
 }
 
 export function removeObjectProperties(source: object, properties: string[] = []): object {
     return Object
-    .keys(source)
-    .filter(key => !properties.includes(key))
-    .map(key => {
-        return {[key]: source[key as keyof object]};
-    })
-    .reduce((acc, curr) => Object.assign(acc, curr), {});
+        .keys(source)
+        .filter(key => !properties.includes(key))
+        .map(key => {
+            return { [key]: source[key as keyof object] };
+        })
+        .reduce((acc, curr) => Object.assign(acc, curr), {});
 }
 
 export function generateCompatibleTriggerId(originalTriggerId: string, user: IUser): string {
@@ -46,7 +46,7 @@ export function parseCompatibleTriggerId(compatibleTriggerId: string): [string, 
 }
 
 export function generateToken(): string {
-    return  Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 }
 
 export function generateHashForObject(payload: object, salt: string): string {
@@ -69,12 +69,6 @@ export function generateRandomHash(): string {
 
 export function calculateExpiryDate(date: Date, millisecondsToExpire: number): Date {
     return new Date(date.valueOf() + millisecondsToExpire);
-}
-
-export function findInputBlockElementType(blocks: Array<IInputBlock>, blockId: string, actionId: string): BlockElementType | undefined {
-    const block = blocks.find(((block) => block.blockId === blockId && block.element.actionId === actionId));
-
-    return block && block.element && block.element.type;
 }
 
 export function isInteractiveElement(element?: IBlockElement): element is IInteractiveElement {

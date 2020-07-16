@@ -1,4 +1,4 @@
-import { BlockElementType, IInputBlock, IUIKitView, TextObjectType, UIKitViewType, IPlainTextInputElement } from '@rocket.chat/apps-engine/definition/uikit';
+import { BlockElementType, IInputBlock, IPlainTextInputElement, IUIKitView, TextObjectType, UIKitViewType } from '@rocket.chat/apps-engine/definition/uikit';
 
 import { BlockKitInputBlockElementType, IBlockKitView } from '../../../src/customTypes/slack';
 
@@ -28,16 +28,36 @@ const mockBlockKitViewState: IBlockKitView['state'] = {
         'block_static-select': {
             'action_static-select': {
                 type: BlockKitInputBlockElementType.STATIC_SELECT,
-                value: 'value-1'
+                selected_option: {
+                    text: {
+                        type: "plain_text",
+                        text: "option 1",
+                        emoji: true
+                    },
+                    value: "value-1"
+                }
             }
         },
         'block_multi-static-select': {
             'action_multi-static-select': {
                 type: BlockKitInputBlockElementType.MULTI_STATIC_SELECT,
-                value: [
-                    'value-0',
-                    'value-1'
-                ]
+                selected_options: [
+                    {
+                        text: {
+                            type: "plain_text",
+                            text: "option 0",
+                            emoji: true
+                        },
+                        value: "value-0"
+                    },
+                    {
+                        text: {
+                            type: "plain_text",
+                            text: "option 1",
+                            emoji: true
+                        },
+                        value: "value-1"
+                    }]
             }
         }
     }

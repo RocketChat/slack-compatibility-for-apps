@@ -12,6 +12,7 @@ import { generateResponseUrl, getTeamFields, getUserFields } from '../slackCommo
 export const getBlockKitViewSkeleton = (
     appId: string, teamId: string, appUserId: string
 ): Partial<IBlockKitView> => ({
+    team_id: teamId,
     root_view_id: null,
     app_id: appId,
     external_id: '',
@@ -66,5 +67,3 @@ export async function handleViewSubmitEvent(context: UIKitViewSubmitInteractionC
 
     return context.getInteractionResponder().successResponse();
 }
-
-expo

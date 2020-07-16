@@ -1,11 +1,8 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
 
-import { BlockElementType, IInputBlock } from '@rocket.chat/apps-engine/definition/uikit';
-
-import { calculateExpiryDate, camelCaseToSnakeCase, findInputBlockElementType, snakeCaseToCamelCase } from '../../src/helpers';
+import { calculateExpiryDate, camelCaseToSnakeCase, snakeCaseToCamelCase } from '../../src/helpers';
 import { RESPONSE_URL_EXPIRATION_TIME } from '../../src/lib/constants';
-import { mockUIKitView } from '../__mocks__/view/mockView';
 
 describe('Helper functions', () => {
     describe('Case style translator', () => {
@@ -30,17 +27,6 @@ describe('Helper functions', () => {
             const result = calculateExpiryDate(date, RESPONSE_URL_EXPIRATION_TIME);
 
             expect(result).to.deep.equal(expiryDate);
-        });
-    });
-
-    describe('findUIKitInputBlockElementTypeByBlockIdAndActionId', () => {
-        const mockBlocks = mockUIKitView.blocks as Array<IInputBlock>;
-
-        it('should find the correct block element type according blockId and actionId provided', () => {
-            const blockId = 'block_static-select';
-            const actionId = 'action_static-select';
-
-            expect(findInputBlockElementType(mockBlocks, blockId, actionId)).to.deep.equal(BlockElementType.STATIC_SELECT);
         });
     });
 });
