@@ -46,7 +46,5 @@ export async function handleViewClosedEvent(context: UIKitViewCloseInteractionCo
 
     const response = await app.sendInteraction(payload);
 
-    await handleViewEventResponse(response, { app, modify, persis });
-
-    return context.getInteractionResponder().successResponse();
+    return handleViewEventResponse(response, context.getInteractionResponder(), { app, modify, persis });
 }

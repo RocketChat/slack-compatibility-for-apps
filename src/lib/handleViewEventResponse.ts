@@ -1,43 +1,36 @@
 import { IHttpResponse, IModify, IPersistence } from '@rocket.chat/apps-engine/definition/accessors';
 import { IApp } from '@rocket.chat/apps-engine/definition/IApp';
+import { IUIKitResponse } from '@rocket.chat/apps-engine/definition/uikit';
+import { UIKitInteractionResponder } from '@rocket.chat/apps-engine/definition/uikit/UIKitInteractionResponder';
 
+import { convertViewToUIKit } from '../converters/BlockKitToUIKit';
 import { BlockKitViewResponseAction, IBlockKitViewEventResponsePayload } from '../customTypes/slack';
-import { ViewsOpen } from '../endpoints/ViewsOpen';
-import { ViewsUpdate } from '../endpoints/ViewsUpdate';
 
 export async function handleViewEventResponse(
-    res: IHttpResponse, accessors: { app: IApp, modify: IModify, persis: IPersistence }, triggerId?: string,
-): Promise<void> {
+    res: IHttpResponse, responder: UIKitInteractionResponder, accessors: { app: IApp, modify: IModify, persis: IPersistence }, triggerId?: string,
+): Promise<IUIKitResponse> {
     // Close the current view
-    if (res.statusCode === 200 && !res.data) return;
+    if (res.statusCode === 200 && !res.data) return responder.successResponse();
 
     const { response_action, errors, view } = res.data as IBlockKitViewEventResponsePayload;
 
-    if (!response_action) return;
+    if (!response_action) return responder.successResponse();
 
     switch (response_action) {
         case BlockKitViewResponseAction.UPDATE:
-            if (!view || !triggerId) return;
+            if (!view || !view.id) return responder.successResponse();
 
-            try {
-                await ViewsUpdate.executeViewUpdate(view, triggerId, accessors);
-            } catch (err) {
-                console.warn(err);
-            }
-            return;
+            return responder.updateModalViewResponse(convertViewToUIKit(view, accessors.app.getID()));
         case BlockKitViewResponseAction.ERRORS:
-            throw errors;
-        case BlockKitViewResponseAction.PUSH:
-            if (!view || !triggerId) return;
+            if (!view || !view.id || !errors) return responder.successResponse();
 
-            try {
-                await ViewsOpen.executeViewOpen(view, triggerId, accessors);
-            } catch (err) {
-                console.warn(err);
-            }
-            return;
+            return responder.viewErrorResponse({ viewId: view.id, errors });
+        case BlockKitViewResponseAction.PUSH:
+            if (!view) return responder.successResponse();
+
+            return responder.openModalViewResponse(convertViewToUIKit(view, accessors.app.getID()));
         case BlockKitViewResponseAction.CLEAR:
             // Same as closing the current view
-            return;
+            return responder.successResponse();
     }
 }
