@@ -1,33 +1,63 @@
-import { IHttp, IModify, IPersistence, IRead, HttpStatusCode } from '@rocket.chat/apps-engine/definition/accessors';
+import { HttpStatusCode, IHttp, IModify, IPersistence, IRead } from '@rocket.chat/apps-engine/definition/accessors';
 import { ApiEndpoint, IApiEndpointInfo, IApiRequest, IApiResponse } from '@rocket.chat/apps-engine/definition/api';
+import { IApp } from '@rocket.chat/apps-engine/definition/IApp';
+
 import { convertViewToUIKit } from '../converters/BlockKitToUIKit';
-import { parseCompatibleTriggerId } from '../helpers';
-import { PersistView } from '../storage/PersistView';
+import { IBlockKitView } from '../customTypes/slack';
+import { parseCompatibleTriggerId, uuid } from '../helpers';
+import { persistView } from '../storage/PersistView';
 
 export class ViewsUpdate extends ApiEndpoint {
     public path = 'views.update';
 
-    // tslint:disable-next-line:max-line-length
-    public async post(request: IApiRequest, endpoint: IApiEndpointInfo, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<IApiResponse> {
+    public static async executeViewUpdate(
+        view: IBlockKitView | undefined, triggerId: string | undefined, accessors: { app: IApp, modify: IModify, persis: IPersistence }
+    ): Promise<void> {
+        if (!view || !triggerId) {
+            throw { status: HttpStatusCode.BAD_REQUEST, content: { sucess: false, message: 'Invalid view or trigger_id' }};
+        }
+
+        const slackView = (() => {
+            if (typeof view !== 'string') return view;
+
+            try {
+                return JSON.parse(view);
+            } catch {
+                return undefined;
+            }
+        })() as IBlockKitView | undefined;
+
+        if (!slackView) {
+            throw { status: HttpStatusCode.BAD_REQUEST, content: { sucess: false, message: 'Invalid view definition' }};
+        }
+
+        if (!slackView.id) {
+            slackView.id = uuid();
+        }
+
+        const { app, modify, persis } = accessors;
+        const [trigger_id, userId] = parseCompatibleTriggerId(triggerId);
+        const uikitView = convertViewToUIKit(slackView, app.getID());
+        const user = await app.getAccessors().reader.getUserReader().getById(userId);
+
+        if (!trigger_id || !user) {
+            throw { status: HttpStatusCode.BAD_REQUEST, content: { sucess: false, message: 'Invalid trigger_id' }};
+        }
+
+        await persistView(slackView, persis);
+        await modify.getUiController().updateModalView(uikitView, { triggerId: trigger_id }, user);
+    }
+
+    public async post(
+        request: IApiRequest, endpoint: IApiEndpointInfo, read: IRead, modify: IModify, http: IHttp, persis: IPersistence
+    ): Promise<IApiResponse> {
         const { view, trigger_id } = request.content;
 
-        if(!view || !trigger_id) {
-            return this.json({ status: HttpStatusCode.BAD_REQUEST });
+        try {
+            await ViewsUpdate.executeViewUpdate(view, trigger_id, { app: this.app, modify, persis });
+        } catch (err) {
+            return this.json(err);
         }
-
-        const [triggerId, userId] = parseCompatibleTriggerId(trigger_id);
-
-        if(!triggerId || !userId) {
-            return this.json({ status: HttpStatusCode.BAD_REQUEST });
-        }
-
-        const uikitView = convertViewToUIKit(JSON.parse(view), this.app.getID());
-
-        await PersistView(uikitView, persis);
-
-        const user = await read.getUserReader().getById(userId);
-
-        await modify.getUiController().updateModalView(uikitView, { triggerId }, user);
 
         return this.success();
     }
