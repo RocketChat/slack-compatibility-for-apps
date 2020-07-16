@@ -13,7 +13,7 @@ export async function handleViewClosedEvent(context: UIKitViewCloseInteractionCo
         team: await getTeamFields(app.getAccessors().reader),
         user: await getUserFields(user, app.getAccessors().reader),
         view: convertViewToBlockKit(view),
-        is_cleared: false, // Todo (shiqi.mei): should set value according the actual situation
+        is_cleared: false, // UIKit doesn't support clearing the whole view stack, so it's always false
     };
 
     const response = await app.sendInteraction(payload);
