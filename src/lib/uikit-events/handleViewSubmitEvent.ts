@@ -3,11 +3,26 @@ import { IUIKitResponse, UIKitViewSubmitInteractionContext } from '@rocket.chat/
 
 import { SlackCompatibleApp } from '../../../SlackCompatibleApp';
 import { convertViewToBlockKit } from '../../converters/UIKitToBlockKit';
-import { BlockKitEventType, IBlockKitViewSubmissionPayload } from '../../customTypes/slack';
+import { BlockKitEventType, IBlockKitView, IBlockKitViewSubmissionPayload } from '../../customTypes/slack';
 import { generateCompatibleTriggerId, generateRandomHash } from '../../helpers';
 import { OriginalActionType, persistResponseToken } from '../../storage/ResponseTokens';
 import { handleViewEventResponse } from '../handleViewEventResponse';
 import { generateResponseUrl, getTeamFields, getUserFields } from '../slackCommonFields';
+
+export function getBlockKitViewSkeleton(appId: string, teamId: string, appUserId: string): Partial<IBlockKitView> {
+    return {
+        root_view_id: null,
+        app_id: appId,
+        external_id: '',
+        app_installed_team_id: teamId,
+        bot_id: appUserId,
+        private_metadata: '',
+        blocks: [],
+        callback_id: '',
+        clear_on_close: false,
+        notify_on_close: false
+    };
+}
 
 export async function handleViewSubmitEvent(context: UIKitViewSubmitInteractionContext, app: SlackCompatibleApp, persis: IPersistence, modify: IModify): Promise<IUIKitResponse> {
     const { user, view, triggerId, appId, room } = context.getInteractionData();
@@ -22,14 +37,25 @@ export async function handleViewSubmitEvent(context: UIKitViewSubmitInteractionC
 
     await persistResponseToken(tokenContext, persis);
 
+    const team = await getTeamFields(app.getAccessors().reader);
+    const appUser = await app.getAccessors().reader.getUserReader().getAppUser(app.getID());
+
+    if (!appUser) {
+        app.getLogger().error(['Failed to obtain app user']);
+        return context.getInteractionResponder().successResponse();
+    }
+
     const payload: IBlockKitViewSubmissionPayload = {
         api_app_id: appId,
         trigger_id: generateCompatibleTriggerId(triggerId, user),
         token: tokenContext.token,
         type: BlockKitEventType.VIEW_SUBMISSION,
-        team: await getTeamFields(app.getAccessors().reader),
+        team,
         user: await getUserFields(user, app.getAccessors().reader),
-        view: convertViewToBlockKit(view),
+        view: {
+            ...getBlockKitViewSkeleton(appId, team.id, appUser.id),
+            ...convertViewToBlockKit(view),
+        },
         hash: generateRandomHash(),
         response_urls: [responseUrl],
     };
@@ -40,3 +66,5 @@ export async function handleViewSubmitEvent(context: UIKitViewSubmitInteractionC
 
     return context.getInteractionResponder().successResponse();
 }
+
+expo

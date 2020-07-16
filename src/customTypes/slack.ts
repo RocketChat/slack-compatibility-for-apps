@@ -45,6 +45,11 @@ export interface IBlockKitView extends View {
             }
         }
     };
+    root_view_id?: null | string;
+    app_id?: string;
+    external_id?: string;
+    app_installed_team_id?: string;
+    bot_id?: string;
 }
 
 export enum BlockKitEventType {
