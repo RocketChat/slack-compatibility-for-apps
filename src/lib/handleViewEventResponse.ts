@@ -17,17 +17,19 @@ export async function handleViewEventResponse(
 
     switch (response_action) {
         case BlockKitViewResponseAction.UPDATE:
-            if (!view || !triggerId) return;
+            if (!view) return;
 
             try {
                 await ViewsUpdate.executeViewUpdate(view, triggerId, accessors);
             } catch (err) {
                 console.warn(err);
             }
-            break;
+            return;
         case BlockKitViewResponseAction.ERRORS:
             throw errors;
         case BlockKitViewResponseAction.PUSH:
+            if (!view) return;
+
             try {
                 await ViewsOpen.executeViewOpen(view, triggerId, accessors);
             } catch (err) {
