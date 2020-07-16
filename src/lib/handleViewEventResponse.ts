@@ -1,6 +1,6 @@
 import { IHttpResponse, IModify, IPersistence } from '@rocket.chat/apps-engine/definition/accessors';
 import { IApp } from '@rocket.chat/apps-engine/definition/IApp';
-import { IUIKitResponse, IUIKitView } from '@rocket.chat/apps-engine/definition/uikit';
+import { BlockType, IInputBlock, IUIKitResponse, IUIKitView } from '@rocket.chat/apps-engine/definition/uikit';
 import { UIKitInteractionResponder } from '@rocket.chat/apps-engine/definition/uikit/UIKitInteractionResponder';
 
 import { convertViewToUIKit } from '../converters/BlockKitToUIKit';
@@ -25,7 +25,9 @@ export async function handleViewEventResponse(
         case BlockKitViewResponseAction.ERRORS:
             if (!uikitView || !uikitView.id || !errors) return responder.successResponse();
 
-            return responder.viewErrorResponse({ viewId: uikitView.id, errors });
+            const blocks = uikitView.blocks.filter(({ type }) => type === BlockType.INPUT) as Array<IInputBlock>;
+
+            return responder.viewErrorResponse({ viewId: uikitView.id, errors: convertBlockKitErrorsToUIKit(errors, blocks) });
         case BlockKitViewResponseAction.PUSH:
             if (!view) return responder.successResponse();
 
@@ -34,4 +36,25 @@ export async function handleViewEventResponse(
             // Same as closing the current view
             return responder.successResponse();
     }
+}
+
+/**
+ * @note
+ * BlockKit errors format is {
+ *     [block_id: string]: string;
+ * }
+ * UIKit errors format is {
+ *     [actionId: string]: string
+ * }
+ */
+function convertBlockKitErrorsToUIKit(errors: { [block_id: string]: string }, blocks: Array<IInputBlock>): { [actionId: string]: string } {
+    return Object.entries(errors)
+        .map(([block_id, value]) => {
+            const block = blocks.find(({ blockId }) => blockId === block_id);
+
+            if (!block) return { [block_id]: value };
+
+            return { [block.element.actionId]: value };
+        })
+        .reduce((acc, cur) => Object.assign(acc, cur), {});
 }
