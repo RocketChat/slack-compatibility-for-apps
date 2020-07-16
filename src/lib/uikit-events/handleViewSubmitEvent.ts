@@ -10,7 +10,7 @@ import { SlackCompatibleApp } from '../../../SlackCompatibleApp';
 export async function handleViewSubmitEvent(context: UIKitViewSubmitInteractionContext, app: SlackCompatibleApp, persis: IPersistence, modify: IModify): Promise<IUIKitResponse> {
     const { user, view, triggerId } = context.getInteractionData();
 
-    if (!triggerId) return;
+    if (!triggerId) return context.getInteractionResponder().successResponse();
 
     const payload: IBlockKitViewSubmissionPayload = {
         type: BlockKitEventType.VIEW_SUBMISSION,
