@@ -46,7 +46,7 @@ export class ViewsOpen extends ApiEndpoint {
 
         // We need this to store the view
         await persistView(slackView, persis);
-        await modify.getUiController().openModalView(uikitView, { triggerId }, user);
+        await modify.getUiController().openModalView(uikitView, { triggerId: trigger_id }, user);
     }
 
     public async post(
