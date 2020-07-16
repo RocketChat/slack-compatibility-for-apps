@@ -33,7 +33,6 @@ export interface Dialog {
 }
 
 export interface View {
-  id: string;
   title?: PlainTextElement;
   type: 'home' | 'modal';
   blocks: (KnownBlock | Block)[];

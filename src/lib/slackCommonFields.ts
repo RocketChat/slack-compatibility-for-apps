@@ -43,8 +43,8 @@ export async function generateResponseUrl(
 {
     const tokenContext: IResponseTokenContext = {
         token: generateToken(),
-        room: room.id,
-        recipient: user.id,
+        room: room && room.id,
+        recipient: user && user.id,
         originalAction: action,
         originalText: text,
         expiresAt: calculateExpiryDate(new Date(), RESPONSE_URL_EXPIRATION_TIME),

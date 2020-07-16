@@ -6,6 +6,8 @@ import { RocketChatAssociationRecord, RocketChatAssociationModel } from "@rocket
 export enum OriginalActionType {
     COMMAND = 'command',
     BLOCK_ACTION = 'block_action',
+    VIEW_SUBMISSION = 'view_submission',
+    VIEW_CLOSED = 'view_closed'
 }
 
 export interface IResponseTokenContext {

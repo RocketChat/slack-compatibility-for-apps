@@ -1,17 +1,30 @@
 import { IUIKitResponse, UIKitViewCloseInteractionContext } from '@rocket.chat/apps-engine/definition/uikit';
 import { IModify, IPersistence } from '@rocket.chat/apps-engine/definition/accessors';
 import { IBlockKitViewClosedPayload, BlockKitEventType } from '../../customTypes/slack';
-import { getTeamFields, getUserFields } from '../slackCommonFields';
+import { generateResponseUrl, getTeamFields, getUserFields } from '../slackCommonFields';
 import { convertViewToBlockKit } from '../../converters/UIKitToBlockKit';
 import { handleViewEventResponse } from '../handleViewEventResponse';
 import { SlackCompatibleApp } from '../../../SlackCompatibleApp';
+import { OriginalActionType, persistResponseToken } from '../../storage/ResponseTokens';
 
 export async function handleViewClosedEvent(context: UIKitViewCloseInteractionContext, app: SlackCompatibleApp, persis: IPersistence, modify: IModify): Promise<IUIKitResponse> {
-    const { user, view, triggerId } = context.getInteractionData();
+    const { user, view, triggerId, appId, room } = context.getInteractionData();
 
-    if (!triggerId) return context.getInteractionResponder().successResponse();
+    if (!view.notifyOnClose) {
+        return context.getInteractionResponder().successResponse();
+    }
+
+    const { tokenContext } = await generateResponseUrl({
+        action: OriginalActionType.VIEW_CLOSED,
+        room: room,
+        user: user,
+    }, app);
+
+    await persistResponseToken(tokenContext, persis);
 
     const payload: IBlockKitViewClosedPayload = {
+        api_app_id: appId,
+        token: tokenContext.token,
         type: BlockKitEventType.VIEW_SUBMISSION,
         team: await getTeamFields(app.getAccessors().reader),
         user: await getUserFields(user, app.getAccessors().reader),

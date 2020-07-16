@@ -26,6 +26,7 @@ export interface ISlackUser {
 
 export interface IBlockKitView extends View {
     id: string;
+    team_id: string;
     state?: {
         /**
          * A dictionary of objects keyed with the block_ids of any user-modified input blocks from the modal view.
@@ -100,6 +101,10 @@ export interface IBlockKitBlockActionsEventPayload {
 export type BlockKitViewEventType = Exclude<BlockKitEventType, BlockKitEventType.BLOCK_ACTIONS>;
 
 export interface IBlockKitViewEventPayload {
+    api_app_id: string;
+    token: string;
+    trigger_id: string;
+    response_urls: Array<string>;
     /**
      * Helps identify the source of the payload.
      * The type for this interaction is view_submission or view_closed.
@@ -131,7 +136,7 @@ export interface IBlockKitViewEventPayload {
 
 export type IBlockKitViewSubmissionPayload = Omit<IBlockKitViewEventPayload, 'is_cleared'>;
 
-export type IBlockKitViewClosedPayload = Omit<IBlockKitViewEventPayload, 'hash'>;
+export type IBlockKitViewClosedPayload = Omit<IBlockKitViewEventPayload, 'hash' | 'trigger_id' | 'response_urls'>;
 
 export enum BlockKitViewResponseAction {
     /**
