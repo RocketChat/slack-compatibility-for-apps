@@ -1,22 +1,38 @@
-import { IHttpResponse } from "@rocket.chat/apps-engine/definition/accessors";
-import { BlockKitViewResponseAction, IBlockKitViewEventResponsePayload } from "../customTypes/slack";
+import { IHttpResponse, IModify, IPersistence } from '@rocket.chat/apps-engine/definition/accessors';
+import { IApp } from '@rocket.chat/apps-engine/definition/IApp';
 
-export async function handleViewEventResponse(res: IHttpResponse): Promise<void> {
+import { BlockKitViewResponseAction, IBlockKitViewEventResponsePayload } from '../customTypes/slack';
+import { ViewsOpen } from '../endpoints/ViewsOpen';
+import { ViewsUpdate } from '../endpoints/ViewsUpdate';
+
+export async function handleViewEventResponse(
+    res: IHttpResponse, triggerId: string, accessors: { app: IApp, modify: IModify, persis: IPersistence }
+): Promise<void> {
     // Close the current view
     if (res.statusCode === 200 && !res.data) return;
 
-    const { response_action, errors } = res.data as IBlockKitViewEventResponsePayload;
+    const { response_action, errors, view } = res.data as IBlockKitViewEventResponsePayload;
 
     if (!response_action) return;
 
     switch (response_action) {
         case BlockKitViewResponseAction.UPDATE:
-            // todo (shiqi.mei): wait for @thassio.carvalho's work
+            if (!view || !triggerId) return;
+
+            try {
+                await ViewsUpdate.executeViewUpdate(view, triggerId, accessors);
+            } catch (err) {
+                console.warn(err);
+            }
             break;
         case BlockKitViewResponseAction.ERRORS:
             throw errors;
         case BlockKitViewResponseAction.PUSH:
-            // RocketChat doesn't support this feature yet, ignored.
+            try {
+                await ViewsOpen.executeViewOpen(view, triggerId, accessors);
+            } catch (err) {
+                console.warn(err);
+            }
             return;
         case BlockKitViewResponseAction.CLEAR:
             // Same as closing the current view

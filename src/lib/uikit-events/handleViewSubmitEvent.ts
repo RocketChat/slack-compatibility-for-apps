@@ -7,8 +7,8 @@ import { generateRandomHash } from '../../helpers';
 import { handleViewEventResponse } from '../handleViewEventResponse';
 import { SlackCompatibleApp } from '../../../SlackCompatibleApp';
 
-export async function handleViewSubmitEvent(context: UIKitViewSubmitInteractionContext, app: SlackCompatibleApp, persistence: IPersistence, modify: IModify): Promise<IUIKitResponse> {
-    const { user, view } = context.getInteractionData();
+export async function handleViewSubmitEvent(context: UIKitViewSubmitInteractionContext, app: SlackCompatibleApp, persis: IPersistence, modify: IModify): Promise<IUIKitResponse> {
+    const { user, view, triggerId } = context.getInteractionData();
     const payload: IBlockKitViewSubmissionPayload = {
         type: BlockKitEventType.VIEW_SUBMISSION,
         team: await getTeamFields(app.getAccessors().reader),
@@ -19,7 +19,7 @@ export async function handleViewSubmitEvent(context: UIKitViewSubmitInteractionC
 
     const response = await app.sendInteraction(payload);
 
-    await handleViewEventResponse(response);
+    await handleViewEventResponse(response, triggerId, { app, modify, persis });
 
     return context.getInteractionResponder().successResponse();
 
