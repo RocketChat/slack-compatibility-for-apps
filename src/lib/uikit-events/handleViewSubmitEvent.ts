@@ -9,20 +9,20 @@ import { OriginalActionType, persistResponseToken } from '../../storage/Response
 import { handleViewEventResponse } from '../handleViewEventResponse';
 import { generateResponseUrl, getTeamFields, getUserFields } from '../slackCommonFields';
 
-export function getBlockKitViewSkeleton(appId: string, teamId: string, appUserId: string): Partial<IBlockKitView> {
-    return {
-        root_view_id: null,
-        app_id: appId,
-        external_id: '',
-        app_installed_team_id: teamId,
-        bot_id: appUserId,
-        private_metadata: '',
-        blocks: [],
-        callback_id: '',
-        clear_on_close: false,
-        notify_on_close: false
-    };
-}
+export const getBlockKitViewSkeleton = (
+    appId: string, teamId: string, appUserId: string
+): Partial<IBlockKitView> => ({
+    root_view_id: null,
+    app_id: appId,
+    external_id: '',
+    app_installed_team_id: teamId,
+    bot_id: appUserId,
+    private_metadata: '',
+    blocks: [],
+    callback_id: '',
+    clear_on_close: false,
+    notify_on_close: false
+});
 
 export async function handleViewSubmitEvent(context: UIKitViewSubmitInteractionContext, app: SlackCompatibleApp, persis: IPersistence, modify: IModify): Promise<IUIKitResponse> {
     const { user, view, triggerId, appId, room } = context.getInteractionData();
