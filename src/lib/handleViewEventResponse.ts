@@ -1,13 +1,14 @@
 import { IHttpResponse, IModify, IPersistence } from '@rocket.chat/apps-engine/definition/accessors';
 import { IApp } from '@rocket.chat/apps-engine/definition/IApp';
-import { IUIKitResponse } from '@rocket.chat/apps-engine/definition/uikit';
+import { IUIKitResponse, IUIKitView } from '@rocket.chat/apps-engine/definition/uikit';
 import { UIKitInteractionResponder } from '@rocket.chat/apps-engine/definition/uikit/UIKitInteractionResponder';
 
 import { convertViewToUIKit } from '../converters/BlockKitToUIKit';
 import { BlockKitViewResponseAction, IBlockKitViewEventResponsePayload } from '../customTypes/slack';
 
 export async function handleViewEventResponse(
-    res: IHttpResponse, responder: UIKitInteractionResponder, accessors: { app: IApp, modify: IModify, persis: IPersistence }, triggerId?: string,
+    uikitView: IUIKitView, res: IHttpResponse, responder: UIKitInteractionResponder,
+    accessors: { app: IApp, modify: IModify, persis: IPersistence }, triggerId?: string,
 ): Promise<IUIKitResponse> {
     // Close the current view
     if (res.statusCode === 200 && !res.data) return responder.successResponse();
@@ -22,9 +23,9 @@ export async function handleViewEventResponse(
 
             return responder.updateModalViewResponse(convertViewToUIKit(view, accessors.app.getID()));
         case BlockKitViewResponseAction.ERRORS:
-            if (!view || !view.id || !errors) return responder.successResponse();
+            if (!uikitView || !uikitView.id || !errors) return responder.successResponse();
 
-            return responder.viewErrorResponse({ viewId: view.id, errors });
+            return responder.viewErrorResponse({ viewId: uikitView.id, errors });
         case BlockKitViewResponseAction.PUSH:
             if (!view) return responder.successResponse();
 
