@@ -4,7 +4,7 @@ import { BlockType, IInputBlock, IUIKitView, TextObjectType } from '@rocket.chat
 
 import { convertViewToUIKit } from '../../src/converters/BlockKitToUIKit';
 import { convertViewToBlockKit } from '../../src/converters/UIKitToBlockKit';
-import { BlockKitInputBlockElementType, IBlockKitView } from '../../src/customTypes/slack';
+import { IBlockKitView } from '../../src/customTypes/slack';
 import { mockBlockKitView, mockUIKitView } from '../__mocks__/view/mockView';
 
 describe('View converters', () => {
@@ -15,9 +15,6 @@ describe('View converters', () => {
             delete mockCompatibleBlockKitView.private_metadata;
             delete mockCompatibleBlockKitView.callback_id;
             mockCompatibleBlockKitView.blocks = mockCompatibleBlockKitView.blocks.slice(0, 3);
-            mockCompatibleBlockKitView.blocks.forEach((block: any) =>
-                block.element.type === BlockKitInputBlockElementType.PLAIN_TEXT_INPUT && delete block.element.multiline
-            );
 
             expect(convertViewToBlockKit(mockUIKitView)).to.deep.equal(mockCompatibleBlockKitView);
         });
