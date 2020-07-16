@@ -6,7 +6,7 @@ import { ViewsOpen } from '../endpoints/ViewsOpen';
 import { ViewsUpdate } from '../endpoints/ViewsUpdate';
 
 export async function handleViewEventResponse(
-    res: IHttpResponse, triggerId: string, accessors: { app: IApp, modify: IModify, persis: IPersistence }
+    res: IHttpResponse, triggerId: string | undefined, accessors: { app: IApp, modify: IModify, persis: IPersistence }
 ): Promise<void> {
     // Close the current view
     if (res.statusCode === 200 && !res.data) return;
@@ -17,7 +17,7 @@ export async function handleViewEventResponse(
 
     switch (response_action) {
         case BlockKitViewResponseAction.UPDATE:
-            if (!view) return;
+            if (!view || !triggerId) return;
 
             try {
                 await ViewsUpdate.executeViewUpdate(view, triggerId, accessors);
@@ -28,7 +28,7 @@ export async function handleViewEventResponse(
         case BlockKitViewResponseAction.ERRORS:
             throw errors;
         case BlockKitViewResponseAction.PUSH:
-            if (!view) return;
+            if (!view || !triggerId) return;
 
             try {
                 await ViewsOpen.executeViewOpen(view, triggerId, accessors);

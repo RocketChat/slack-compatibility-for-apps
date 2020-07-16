@@ -49,13 +49,13 @@ export function convertUIKitViewStateToBlockKit(state: IUIKitView['state'], bloc
                             case BlockKitInputBlockElementType.PLAIN_TEXT_INPUT:
                                 return { [actionId]: { type, value } };
                             case BlockKitInputBlockElementType.STATIC_SELECT:
-                                const { text } = (options as Array<IOptionObject>).find(({ value: val }) => val === value);
+                                const option = (options as Array<IOptionObject>).find(({ value: val }) => val === value);
 
                                 return {
                                     [actionId]: {
                                         type,
                                         selected_option: {
-                                            text: convertTextObjectToBlockKit(text),
+                                            text: option && convertTextObjectToBlockKit(option.text),
                                             value: "value-1"
                                         }
                                     }
@@ -65,10 +65,10 @@ export function convertUIKitViewStateToBlockKit(state: IUIKitView['state'], bloc
                                     [actionId]: {
                                         type,
                                         selected_options: (value as Array<string>).map((val) => {
-                                            const { text } = (options as Array<IOptionObject>).find(({ value }) => value === val);
+                                            const option = (options as Array<IOptionObject>).find(({ value }) => value === val);
 
                                             return {
-                                                text: convertTextObjectToBlockKit(text),
+                                                text: option && convertTextObjectToBlockKit(option.text),
                                                 value: val
                                             };
                                         }),
@@ -99,14 +99,14 @@ function getBlockKitInputBlockElementInfo(blocks: Array<IBlock>, blockId: string
     const inputBlocks = blocks.filter(({ type }) => type === BlockType.INPUT) as Array<IInputBlock>;
     const element = findInputBlockElement(inputBlocks, blockId, actionId);
 
+    if (!element) return [BlockKitInputBlockElementType.PLAIN_TEXT_INPUT, null];
+
     switch (element.type) {
         case BlockElementType.STATIC_SELECT:
             return [BlockKitInputBlockElementType.STATIC_SELECT, (element as IStaticSelectElement).options];
         case BlockElementType.MULTI_STATIC_SELECT:
             return [BlockKitInputBlockElementType.MULTI_STATIC_SELECT, (element as IMultiStaticSelectElement).options];
-        case BlockElementType.PLAIN_TEXT_INPUT:
-            return [BlockKitInputBlockElementType.PLAIN_TEXT_INPUT, null];
         default:
-            return [null, null];
+            return [BlockKitInputBlockElementType.PLAIN_TEXT_INPUT, null];
     }
 }

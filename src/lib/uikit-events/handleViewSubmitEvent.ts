@@ -26,13 +26,12 @@ export const getBlockKitViewSkeleton = (
 });
 
 export async function handleViewSubmitEvent(context: UIKitViewSubmitInteractionContext, app: SlackCompatibleApp, persis: IPersistence, modify: IModify): Promise<IUIKitResponse> {
-    const { user, view, triggerId, appId, room } = context.getInteractionData();
+    const { user, view, triggerId, appId } = context.getInteractionData();
 
     if (!triggerId) return context.getInteractionResponder().successResponse();
 
     const { responseUrl, tokenContext } = await generateResponseUrl({
         action: OriginalActionType.VIEW_SUBMISSION,
-        room: room,
         user: user,
     }, app);
 

@@ -113,7 +113,7 @@ function createSlashcommandExecutor(app: SlackCompatibleApp, descriptor: ISlashC
 }
 
 export async function handleSlashCommandResponsePayload({instructions, message}: IParseMessageResponseResult, tokenContext: IResponseTokenContext, read: IRead, modify: IModify): Promise<void> {
-    if (!message) return;
+    if (!message || !tokenContext.room) return;
 
     const recipient = await read.getUserReader().getById(tokenContext.recipient);
     const room = await read.getRoomReader().getById(tokenContext.room);

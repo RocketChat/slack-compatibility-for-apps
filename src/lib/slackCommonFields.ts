@@ -26,7 +26,7 @@ export const getUserFields = async (user: IUser, read: IRead): Promise<ISlackUse
 
 export interface IGenerateResponseUrlParams {
     user: IUser;
-    room: IRoom;
+    room?: IRoom;
     action: OriginalActionType;
     text?: string;
 }
@@ -43,13 +43,16 @@ export async function generateResponseUrl(
 {
     const tokenContext: IResponseTokenContext = {
         token: generateToken(),
-        room: room && room.id,
         recipient: user && user.id,
         originalAction: action,
         originalText: text,
         expiresAt: calculateExpiryDate(new Date(), RESPONSE_URL_EXPIRATION_TIME),
         usageCount: 0,
     };
+
+    if (room) {
+        tokenContext.room = room.id;
+    }
 
     const siteUrl = await app.getAccessors().environmentReader.getServerSettings().getValueById('Site_Url');
     const apiRoute = app.getAccessors().providedApiEndpoints.find(metadata => metadata.path.indexOf(RESPONSE_URL_ENDPOINT_BASE_PATH) !== -1);

@@ -13,7 +13,7 @@ export enum OriginalActionType {
 export interface IResponseTokenContext {
     token: string;
     recipient: IUser['id'];
-    room: IRoom['id'];
+    room?: IRoom['id'];
     originalAction: OriginalActionType;
     originalText?: string;
     expiresAt: Date;
