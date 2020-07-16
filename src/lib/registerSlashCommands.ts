@@ -42,7 +42,7 @@ export function registerSlashCommands(app: SlackCompatibleApp, configuration: IC
     if (!app.slashcommands) return Promise.resolve();
 
     return Promise.all(app.slashcommands.map(descriptor => configuration.slashCommands.provideSlashCommand({
-        command: descriptor.command,
+        command: descriptor.command[0] === '/' ? descriptor.command.substring(1) : descriptor.command,
         i18nDescription: descriptor.shortDescription,
         i18nParamsExample: descriptor.usageHint || '',
         providesPreview: false,
@@ -57,7 +57,9 @@ export function registerSlashCommands(app: SlackCompatibleApp, configuration: IC
  */
 function createSlashcommandExecutor(app: SlackCompatibleApp, descriptor: ISlashCommandDescriptor): ISlashCommand['executor'] {
     return async (context: SlashCommandContext, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<void> => {
-        const originalMessage = `${descriptor.command} ${context.getArguments().join(' ')}`;
+        const command = descriptor.command[0] === '/' ? descriptor.command : `/${descriptor.command}`;
+
+        const originalMessage = `${command} ${context.getArguments().join(' ')}`;
 
         const {responseUrl: response_url, tokenContext} = await generateResponseUrl({
             action: OriginalActionType.COMMAND,
@@ -69,11 +71,11 @@ function createSlashcommandExecutor(app: SlackCompatibleApp, descriptor: ISlashC
         await persistResponseToken(tokenContext, persis);
 
         const payload: ISlashCommandPayload = {
+            command,
             token: '', // Slack deprecated
             enterprise_id: undefined, // we have no equivalent
             enterprise_name: undefined, // we have no equivalent
             response_url,
-            command: descriptor.command,
             text: context.getArguments().join(' '),
             trigger_id: generateCompatibleTriggerId(context.getTriggerId() || '', context.getSender()),
             ...await getTeamFields(read),
