@@ -10,7 +10,7 @@ import { generateResponseUrl, getTeamFields, getUserFields } from '../slackCommo
 import { getBlockKitViewSkeleton } from './handleViewSubmitEvent';
 
 export async function handleViewClosedEvent(context: UIKitViewCloseInteractionContext, app: SlackCompatibleApp, persis: IPersistence, modify: IModify): Promise<IUIKitResponse> {
-    const { user, view, appId } = context.getInteractionData();
+    const { user, view, appId, isCleared } = context.getInteractionData();
 
     if (!view.notifyOnClose) {
         return context.getInteractionResponder().successResponse();
@@ -41,7 +41,7 @@ export async function handleViewClosedEvent(context: UIKitViewCloseInteractionCo
             ...getBlockKitViewSkeleton(appId, team.id, appUser.id),
             ...convertViewToBlockKit(view)
         },
-        is_cleared: false, // UIKit doesn't support clearing the whole view stack, so it's always false
+        is_cleared: isCleared,
     };
 
     const response = await app.sendInteraction(payload);
