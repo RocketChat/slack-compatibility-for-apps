@@ -1,4 +1,5 @@
-import { uuid } from '../helpers';
+import { uuid, generateHashForObject } from '../helpers';
+
 import {
     Block,
     ActionsBlock,
@@ -9,17 +10,17 @@ import {
     InputBlock,
 } from '../../vendor/slack-types';
 import { IBlock, IUIKitView, BlockType, BlockElementType, UIKitViewType, TextObjectType } from '@rocket.chat/apps-engine/definition/uikit';
-import {
-    convertToUIKit as convertTextToUIKit,
-} from '../converters/objects/text';
 import { convertToUIKit as convertActionBlockToUIKit } from './blocks/action';
 import { convertToUIKit as convertSectionBlockToUIKit } from './blocks/section';
 import { convertToUIKit as convertDiviverBlockToUIKit } from './blocks/divider';
 import { convertToUIKit as convertImageBlockToUIKit } from './blocks/image';
 import { convertToUIKit as convertContextBlockToUIKit } from './blocks/context';
 import { convertToUIKit as convertInputBlockToUIKit } from './blocks/input';
+import { convertToUIKit as convertTextToUIKit } from './objects/text';
+import { IBlockKitView } from '../customTypes/slack';
+import { convertBlockKitViewStateToUIKit } from './view/viewStateConverter';
 
-export function convertBlocksToUIKit(blocks?: Array<Block>): Array<IBlock> {
+export function convertBlocksToUIKit(blocks: Array<Block> | undefined, appId: string): Array<IBlock> {
     if (!Array.isArray(blocks)) return [];
 
     return blocks.map((block) => {
@@ -41,20 +42,31 @@ export function convertBlocksToUIKit(blocks?: Array<Block>): Array<IBlock> {
                 return null;
         }
     })
-    .filter(block => block) as Array<IBlock>;
+        .map((block, index) => {
+            if (!block || block.type === BlockType.DIVIDER) return block;
+
+            block.appId = appId;
+
+            if (!block.blockId) {
+                block.blockId = generateHashForObject(block, `blockId${index}`);
+            }
+
+            return block;
+        })
+        .filter(block => block) as Array<IBlock>;
 }
 
-export function convertViewToUIKit(view: any, appId: string): IUIKitView {
+export function convertViewToUIKit(view: IBlockKitView, appId: string): IUIKitView {
     if (!view) return {} as IUIKitView;
 
-    const { type, title, blocks, close, submit, callback_id } = view;
+    const { id, type, title, blocks, close, submit, clear_on_close, notify_on_close, state } = view;
 
     return {
         appId,
-        id: callback_id || uuid(),
+        id: id || uuid(),
         type: type === 'modal' ? UIKitViewType.MODAL : UIKitViewType.HOME,
         title: convertTextToUIKit(title || { type: TextObjectType.PLAINTEXT, text: '' }),
-        blocks: convertBlocksToUIKit(blocks),
+        blocks: convertBlocksToUIKit(blocks, appId),
         close: close && {
             type: BlockElementType.BUTTON,
             text: convertTextToUIKit(close),
@@ -65,5 +77,8 @@ export function convertViewToUIKit(view: any, appId: string): IUIKitView {
             text: convertTextToUIKit(submit),
             actionId: uuid(),
         },
+        state: state && convertBlockKitViewStateToUIKit(state),
+        clearOnClose: clear_on_close,
+        notifyOnClose: notify_on_close
     };
 }

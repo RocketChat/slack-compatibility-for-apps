@@ -3,7 +3,7 @@ import { IConfigurationExtend, IRead, IModify, IHttp, IPersistence, IMessageBuil
 import { ISlashCommand, SlashCommandContext } from '@rocket.chat/apps-engine/definition/slashcommands';
 import { URLSearchParams } from 'url';
 import { getTeamFields, generateResponseUrl, getChannelFields, getUserFields } from './slackCommonFields';
-import { OriginalActionType, persistResponseToken, IResponseTokenContext } from './ResponseTokens';
+import { OriginalActionType, persistResponseToken, IResponseTokenContext } from '../storage/ResponseTokens';
 import { IMessageResponsePayload, parseMessageResponsePayload, IParseMessageResponseResult, ResponseType } from './messageResponsePayloadParser';
 import { IUser } from '@rocket.chat/apps-engine/definition/users';
 import { IMessage } from '@rocket.chat/apps-engine/definition/messages';
@@ -70,6 +70,9 @@ function createSlashcommandExecutor(app: SlackCompatibleApp, descriptor: ISlashC
 
         await persistResponseToken(tokenContext, persis);
 
+        const { id: team_id, domain: team_domain } = await getTeamFields(read);
+        const { id: user_id, name: user_name } = await getUserFields(context.getSender(), read);
+
         const payload: ISlashCommandPayload = {
             command,
             token: '', // Slack deprecated
@@ -78,9 +81,11 @@ function createSlashcommandExecutor(app: SlackCompatibleApp, descriptor: ISlashC
             response_url,
             text: context.getArguments().join(' '),
             trigger_id: generateCompatibleTriggerId(context.getTriggerId() || '', context.getSender()),
-            ...await getTeamFields(read),
-            ...getChannelFields(context.getRoom()),
-            ...getUserFields(context.getSender()),
+            team_id,
+            team_domain,
+            user_id,
+            user_name,
+            ...await getChannelFields(context.getRoom()),
         };
 
         const response = await http.post(descriptor.requestURL, {
@@ -101,7 +106,7 @@ function createSlashcommandExecutor(app: SlackCompatibleApp, descriptor: ISlashC
         if (!responsePayload) return;
 
         await handleSlashCommandResponsePayload(
-            parseMessageResponsePayload(responsePayload),
+            parseMessageResponsePayload(responsePayload, app.getID()),
             tokenContext,
             read,
             modify,
@@ -110,7 +115,7 @@ function createSlashcommandExecutor(app: SlackCompatibleApp, descriptor: ISlashC
 }
 
 export async function handleSlashCommandResponsePayload({instructions, message}: IParseMessageResponseResult, tokenContext: IResponseTokenContext, read: IRead, modify: IModify): Promise<void> {
-    if (!message) return;
+    if (!message || !tokenContext.room) return;
 
     const recipient = await read.getUserReader().getById(tokenContext.recipient);
     const room = await read.getRoomReader().getById(tokenContext.room);

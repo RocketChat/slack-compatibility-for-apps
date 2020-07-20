@@ -22,7 +22,7 @@ import { convertToUIKit as convertOptionToUIKit } from '../objects/option';
  */
 export function convertToUIKit(originalElement: BlockKitMultiStaticSelect): UIKitMultiStaticSelect {
     const select: any = {
-        actionId: originalElement.action_id,
+        actionId: originalElement.action_id || '',
         type: BlockElementType.MULTI_STATIC_SELECT,
         placeholder: convertTextElementToUIKit(originalElement.placeholder as PlainTextElement),
     };

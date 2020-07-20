@@ -1,11 +1,7 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
 
-import {
-    camelCaseToSnakeCase,
-    snakeCaseToCamelCase,
-    calculateExpiryDate,
-} from '../../src/helpers';
+import { calculateExpiryDate, camelCaseToSnakeCase, snakeCaseToCamelCase } from '../../src/helpers';
 import { RESPONSE_URL_EXPIRATION_TIME } from '../../src/lib/constants';
 
 describe('Helper functions', () => {
@@ -32,5 +28,5 @@ describe('Helper functions', () => {
 
             expect(result).to.deep.equal(expiryDate);
         });
-    })
+    });
 });

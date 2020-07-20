@@ -1,5 +1,6 @@
-import { MessageAttachment } from '../../vendor/slack-types';
 import { IMessage } from '@rocket.chat/apps-engine/definition/messages';
+
+import { MessageAttachment } from '../../vendor/slack-types';
 import { convertBlocksToUIKit } from '../converters/BlockKitToUIKit';
 
 export enum ResponseType {
@@ -38,7 +39,7 @@ const DEFAULT_INSTRUCTIONS = {
     deleteOriginal: false,
 }
 
-export function parseMessageResponsePayload(payload: IMessageResponsePayload | string | undefined): IParseMessageResponseResult {
+export function parseMessageResponsePayload(payload: IMessageResponsePayload | string | undefined, appId: string): IParseMessageResponseResult {
     if (!payload) {
         return { instructions: DEFAULT_INSTRUCTIONS };
     }
@@ -46,7 +47,7 @@ export function parseMessageResponsePayload(payload: IMessageResponsePayload | s
     if (typeof payload === 'string') {
         return {
             instructions: DEFAULT_INSTRUCTIONS,
-            message: convertSlackMessageToRocketChatMessage({ text: payload }),
+            message: convertSlackMessageToRocketChatMessage({ text: payload }, appId),
         };
     }
 
@@ -56,16 +57,26 @@ export function parseMessageResponsePayload(payload: IMessageResponsePayload | s
             replaceOriginal: !!payload.replace_original,
             deleteOriginal: !!payload.delete_original,
         },
-        message: convertSlackMessageToRocketChatMessage(payload),
+        message: convertSlackMessageToRocketChatMessage(payload, appId),
     }
 }
 
-function convertSlackMessageToRocketChatMessage(message?: IMessagePayload): ResponseMessage | undefined {
+function convertSlackMessageToRocketChatMessage(message: IMessagePayload | undefined, appId: string): ResponseMessage | undefined {
     if (!message || (!message.text && !message.blocks)) return undefined;
+
+    const blocks = (() => {
+        if (typeof message.blocks === 'object') return message.blocks;
+
+        try {
+            return JSON.parse(message.blocks || '""');
+        } catch {
+            return [];
+        }
+    })();
 
     return {
         text: message.text,
-        blocks: convertBlocksToUIKit(JSON.parse(message.blocks || '""')),
+        blocks: convertBlocksToUIKit(blocks, appId),
         attachments: [], // deprecated by Slack, should we support?
         threadId: message.thread_ts,
     };

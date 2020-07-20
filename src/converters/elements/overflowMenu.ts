@@ -26,6 +26,7 @@ import {
 export function convertToUIKit(originalElement: BlockKitOverflowMenu): UIKitOverflowMenu {
         const menu = {
             ...removeObjectProperties(originalElement, ['confirm']),
+            action_id: originalElement.action_id || '',
             options: originalElement.options.map(option => convertOptionToUIKit(option as BlockKitOptionObject)),
         };
 
