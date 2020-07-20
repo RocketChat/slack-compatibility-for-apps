@@ -4,7 +4,9 @@
   "description": "Initialize your Rocket.Chat App with bindings that make it compatible with your Slack implementation",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha -r ts-node/register './tests/**/*.spec.ts'",
+    "test:watch": "mocha --require ts-node/register --watch --watch-files src, 'tests/**/*.ts'",
+    "postinstall": "node ./postinstall.js"
   },
   "repository": {
     "type": "git",
@@ -23,5 +25,22 @@
   "bugs": {
     "url": "https://github.com/RocketChat/slack-compatibility-for-apps/issues"
   },
-  "homepage": "https://github.com/RocketChat/slack-compatibility-for-apps#readme"
+  "homepage": "https://github.com/RocketChat/slack-compatibility-for-apps#readme",
+  "dependencies": {
+    "@rocket.chat/apps-engine": "^1.14.0",
+    "fs-extra": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.2.11",
+    "@types/chai-spies": "^1.0.1",
+    "@types/faker": "^4.1.12",
+    "@types/mocha": "^7.0.2",
+    "@types/node": "^14.0.13",
+    "chai": "^4.2.0",
+    "chai-spies": "^1.0.0",
+    "eslint": "^6.8.0",
+    "faker": "^4.1.0",
+    "mocha": "^7.2.0",
+    "ts-node": "^8.10.2"
+  }
 }
