@@ -39,9 +39,9 @@ export interface ISlashCommandPayload {
 }
 
 export function registerSlashCommands(app: SlackCompatibleApp, configuration: IConfigurationExtend): Promise<void> {
-    if (!app.slashcommands) return Promise.resolve();
+    if (!app.config.slashCommands) return Promise.resolve();
 
-    return Promise.all(app.slashcommands.map(descriptor => configuration.slashCommands.provideSlashCommand({
+    return Promise.all(app.config.slashCommands.map(descriptor => configuration.slashCommands.provideSlashCommand({
         command: descriptor.command[0] === '/' ? descriptor.command.substring(1) : descriptor.command,
         i18nDescription: descriptor.shortDescription,
         i18nParamsExample: descriptor.usageHint || '',

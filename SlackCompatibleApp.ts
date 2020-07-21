@@ -14,20 +14,33 @@ import { handleBlockActionEvent } from './src/lib/uikit-events/handleBlockAction
 import { handleViewSubmitEvent } from './src/lib/uikit-events/handleViewSubmitEvent';
 import { handleViewClosedEvent } from './src/lib/uikit-events/handleViewClosedEvent';
 
-export abstract class SlackCompatibleApp extends App implements IUIKitInteractionHandler {
+export interface ISlackCompatibleAppConfig {
     /**
      * Any interactions with modals, or interactive components (such as buttons, overflow menus)
      * will be sent to a URL you specify. [Learn more.](https://api.slack.com/messaging/interactivity#components)
      *
      * Rocket.Chat will send an HTTP POST request with information to this URL when users interact with a interactive component.
      */
-    public interactiveEndpoint: string;
-    public slashcommands?: Array<ISlashCommandDescriptor>;
+    interactiveEndpoint?: string;
+    slashCommands?: Array<ISlashCommandDescriptor>;
+}
+
+const DEFAULT_CONFIG: ISlackCompatibleAppConfig = {
+    interactiveEndpoint: '',
+    slashCommands: [],
+};
+
+export abstract class SlackCompatibleApp extends App implements IUIKitInteractionHandler {
+    public config: ISlackCompatibleAppConfig = DEFAULT_CONFIG;
 
     constructor(info: IAppInfo, logger: ILogger, accessors?: IAppAccessors) {
         super(info, logger, accessors);
 
-        this.slashcommands = [].concat(this.slashcommands as any).filter((descriptor?: ISlashCommandDescriptor) => descriptor && descriptor.command && descriptor.shortDescription);
+        if (this.config === DEFAULT_CONFIG) {
+            logger.warn("This app hasn't defined any configuration, it's basically an empty shell. Make sure to configure it properly before deploying to production");
+        }
+
+        this.config.slashCommands = [].concat(this.config.slashCommands as any).filter((descriptor?: ISlashCommandDescriptor) => descriptor && descriptor.command && descriptor.shortDescription);
     }
 
     public async initialize(configurationExtend: IConfigurationExtend, environmentRead: IEnvironmentRead): Promise<void> {
@@ -62,7 +75,7 @@ export abstract class SlackCompatibleApp extends App implements IUIKitInteractio
     }
 
     public sendInteraction(payload: object): Promise<IHttpResponse> {
-        return this.getAccessors().http.post(this.interactiveEndpoint, {
+        return this.getAccessors().http.post(this.config.interactiveEndpoint, {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
