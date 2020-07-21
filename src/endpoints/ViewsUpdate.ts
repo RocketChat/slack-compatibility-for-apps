@@ -12,7 +12,7 @@ export class ViewsUpdate extends ApiEndpoint {
         let uikitView, triggerId, user;
         try {
             [uikitView, [triggerId, user]] = await Promise.all([
-                incomingViewHandler(view, persis),
+                incomingViewHandler(view, this.app.getID(), persis),
                 incomingTriggeridHandler(trigger_id, read),
             ]);
         } catch (viewHandlingError) {

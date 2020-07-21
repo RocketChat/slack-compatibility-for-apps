@@ -43,7 +43,7 @@ export async function incomingTriggeridHandler(trigger_id: string, read: IRead):
  *
  * @returns Promise<IUIKitView>
  */
-export async function incomingViewHandler(view: any, persis: IPersistence): Promise<IUIKitView> {
+export async function incomingViewHandler(view: any, appId: string, persis: IPersistence): Promise<IUIKitView> {
     const slackView = (() => {
         if (typeof view !== 'string') return view;
 
@@ -65,5 +65,5 @@ export async function incomingViewHandler(view: any, persis: IPersistence): Prom
 
     await persistView(slackView, persis);
 
-    return convertViewToUIKit(slackView, this.app.getID());
+    return convertViewToUIKit(slackView, appId);
 }
