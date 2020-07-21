@@ -8,6 +8,8 @@ Look no further!
 
 This "compatibility layer" will help you make your Rocket.Chat App talk to your backend in no time :)
 
+Learn more [in our docs](https://docs.rocket.chat/apps-development/slack-compatibility);
+
 ## Some documentation about how to develop/extend scl
 
 The moving parts of this scenario
