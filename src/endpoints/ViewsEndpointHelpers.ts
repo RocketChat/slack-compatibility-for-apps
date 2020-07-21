@@ -39,6 +39,7 @@ export async function incomingTriggeridHandler(trigger_id: string, read: IRead):
  * Handles parsing and storage of an incoming view
  *
  * @param view any The object that represents the view
+ * @param appId string The uuid of the App
  * @param persis IPersistence
  *
  * @returns Promise<IUIKitView>
