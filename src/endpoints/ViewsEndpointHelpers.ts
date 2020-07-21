@@ -39,11 +39,12 @@ export async function incomingTriggeridHandler(trigger_id: string, read: IRead):
  * Handles parsing and storage of an incoming view
  *
  * @param view any The object that represents the view
+ * @param appId string The uuid of the App
  * @param persis IPersistence
  *
  * @returns Promise<IUIKitView>
  */
-export async function incomingViewHandler(view: any, persis: IPersistence): Promise<IUIKitView> {
+export async function incomingViewHandler(view: any, appId: string, persis: IPersistence): Promise<IUIKitView> {
     const slackView = (() => {
         if (typeof view !== 'string') return view;
 
@@ -65,5 +66,5 @@ export async function incomingViewHandler(view: any, persis: IPersistence): Prom
 
     await persistView(slackView, persis);
 
-    return convertViewToUIKit(slackView, this.app.getID());
+    return convertViewToUIKit(slackView, appId);
 }
