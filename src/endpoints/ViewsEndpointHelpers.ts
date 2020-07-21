@@ -16,8 +16,8 @@ import { parseCompatibleTriggerId } from '../helpers';
  * @returns Promise<[string, IUser]>
  */
 export async function incomingTriggeridHandler(trigger_id: string, read: IRead): Promise<[string, IUser]> {
-        if(!trigger_id) {
-            throw new Error('No trigger_id provided');
+        if(!trigger_id || typeof trigger_id !== 'string') {
+            throw new Error('Invalid trigger_id provided');
         }
 
         const [triggerId, userId] = parseCompatibleTriggerId(trigger_id);
