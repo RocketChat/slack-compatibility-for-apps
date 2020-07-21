@@ -34,7 +34,7 @@ export async function handleViewClosedEvent(context: UIKitViewCloseInteractionCo
     const payload: IBlockKitViewClosedPayload = {
         api_app_id: appId,
         token: tokenContext.token,
-        type: BlockKitEventType.VIEW_SUBMISSION,
+        type: BlockKitEventType.VIEW_CLOSED,
         team,
         user: await getUserFields(user, app.getAccessors().reader),
         view: {
